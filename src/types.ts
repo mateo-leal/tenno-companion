@@ -1,0 +1,68 @@
+export interface DialogueNode {
+  type: Type;
+  Id: number;
+  Incoming?: number[];
+  GraphPos?: number[];
+  Content?: string;
+  Outgoing?: number[];
+  ChemistryDelta?: number;
+  TrueNodes?: number[];
+  FalseNodes?: number[];
+  CompletionType?: number;
+  OtherDialogueInfos?: OtherDialogueInfo[];
+  Outputs?: Output[];
+  CounterName?: string;
+  Speaker?: Speaker;
+  Script?: Script;
+}
+
+export interface OtherDialogueInfo {
+  Dialogue: string;
+  Tag: string;
+  Value: number;
+}
+
+export interface Output {
+  Expression: string;
+  Outgoing: number[];
+  Values: unknown[];
+  CompareOperators: unknown[];
+  LogicalOperators: unknown[];
+}
+
+export interface Script {
+  Script: string;
+  Function: string;
+  _counter: number;
+  _collectibleType: string;
+  _syndicate: string;
+  _syndicateRank: number;
+  _dialogueType: string;
+  _rank: number;
+  _count: number;
+  _storyCount: number;
+}
+
+export enum Speaker {
+  Unknown = "Unknown",
+}
+
+export enum Type {
+  CheckBooleanDialogueNode = "/EE/Types/Engine/CheckBooleanDialogueNode",
+  CheckBooleanScriptDialogueNode = "/EE/Types/Engine/CheckBooleanScriptDialogueNode",
+  CheckCounterDialogueNode = "/EE/Types/Engine/CheckCounterDialogueNode",
+  CheckMultiBooleanDialogueNode = "/EE/Types/Engine/CheckMultiBooleanDialogueNode",
+  ChemistryDialogueNode = "/EE/Types/Engine/ChemistryDialogueNode",
+  DialogueNode = "/EE/Types/Engine/DialogueNode",
+  EndDialogueNode = "/EE/Types/Engine/EndDialogueNode",
+  IncCounterDialogueNode = "/EE/Types/Engine/IncCounterDialogueNode",
+  PlayerChoiceDialogueNode = "/EE/Types/Engine/PlayerChoiceDialogueNode",
+  ResetBooleanDialogueNode = "/EE/Types/Engine/ResetBooleanDialogueNode",
+  SetBooleanDialogueNode = "/EE/Types/Engine/SetBooleanDialogueNode",
+  SpecialCompletionDialogueNode = "/EE/Types/Engine/SpecialCompletionDialogueNode",
+  StartDialogueNode = "/EE/Types/Engine/StartDialogueNode",
+}
+
+export type DialoguePayload =
+  | DialogueNode[]
+  | { Nodes?: DialogueNode[]; nodes?: DialogueNode[] };
