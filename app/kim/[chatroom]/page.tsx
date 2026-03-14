@@ -1,35 +1,185 @@
+import { DialogueSelectorPanel } from '@/components/dialogue-selector-panel'
+import { notFound } from 'next/navigation'
+import {
+  DEFAULT_DICT_SOURCE,
+  getBooleanName,
+  getConversationName,
+  getCounterName,
+  loadDictionary,
+  loadNodes,
+  resolveContent,
+  resolveStartNodes,
+} from '@/lib/core/pathfinder'
+import { Type, type DialogueNode } from '@/lib/types'
+
+const BOOLEAN_CHECK_TYPES = new Set<Type>([
+  Type.CheckBooleanDialogueNode,
+  Type.CheckBooleanScriptDialogueNode,
+  Type.CheckMultiBooleanDialogueNode,
+])
+
+type SimulationRequirements = {
+  booleans: string[]
+  counters: Array<{
+    name: string
+    expressions: string[]
+  }>
+}
+
+const CHATROOM_SOURCE_BY_ID: Record<string, string> = {
+  // Hex
+  hex: 'https://kim.browse.wf/data/HexDialogue_rom.dialogue.json',
+  arthur: 'https://kim.browse.wf/data/ArthurDialogue_rom.dialogue.json',
+  eleanor: 'https://kim.browse.wf/data/EleanorDialogue_rom.dialogue.json',
+  lettie: 'https://kim.browse.wf/data/LettieDialogue_rom.dialogue.json',
+  amir: 'https://kim.browse.wf/data/JabirDialogue_rom.dialogue.json',
+  aoi: 'https://kim.browse.wf/data/AoiDialogue_rom.dialogue.json',
+  quincy: 'https://kim.browse.wf/data/QuincyDialogue_rom.dialogue.json',
+  flare: 'https://kim.browse.wf/data/FlareDialogue_rom.dialogue.json',
+  kaya: 'https://kim.browse.wf/data/KayaDialogue_rom.dialogue.json',
+  'minerva-velimir':
+    'https://kim.browse.wf/data/MinervaVelemirDialogue_rom.dialogue.json',
+  // Cathedrale
+  loid: 'https://kim.browse.wf/data/LoidDialogue_rom.dialogue.json',
+  lyon: 'https://kim.browse.wf/data/LyonDialogue_rom.dialogue.json',
+  marie: 'https://kim.browse.wf/data/MarieDialogue_rom.dialogue.json',
+  roathe: 'https://kim.browse.wf/data/RoatheDialogue_rom.dialogue.json',
+}
+
+export async function generateStaticParams() {
+  return Object.keys(CHATROOM_SOURCE_BY_ID).map((id) => ({ chatroom: id }))
+}
+
+function collectSimulationRequirements(
+  byId: Map<number, DialogueNode>,
+  startId: number
+): SimulationRequirements {
+  const visited = new Set<number>()
+  const queue: number[] = [startId]
+  const booleans = new Set<string>()
+  const counters = new Map<string, Set<string>>()
+
+  while (queue.length > 0) {
+    const currentId = queue.shift()
+    if (typeof currentId !== 'number' || visited.has(currentId)) {
+      continue
+    }
+
+    visited.add(currentId)
+    const node = byId.get(currentId)
+    if (!node) {
+      continue
+    }
+
+    if (BOOLEAN_CHECK_TYPES.has(node.type)) {
+      booleans.add(getBooleanName(node))
+    }
+
+    if (node.type === Type.CheckCounterDialogueNode) {
+      const counterName = getCounterName(node)
+      const values = counters.get(counterName) ?? new Set<string>()
+      for (const output of node.Outputs ?? []) {
+        const expression = output.Expression?.trim()
+        if (expression) {
+          values.add(expression)
+        }
+      }
+      counters.set(counterName, values)
+    }
+
+    for (const nextId of node.Outgoing ?? []) {
+      if (!visited.has(nextId)) {
+        queue.push(nextId)
+      }
+    }
+
+    for (const nextId of node.TrueNodes ?? []) {
+      if (!visited.has(nextId)) {
+        queue.push(nextId)
+      }
+    }
+
+    for (const nextId of node.FalseNodes ?? []) {
+      if (!visited.has(nextId)) {
+        queue.push(nextId)
+      }
+    }
+
+    for (const output of node.Outputs ?? []) {
+      for (const nextId of output.Outgoing ?? []) {
+        if (!visited.has(nextId)) {
+          queue.push(nextId)
+        }
+      }
+    }
+  }
+
+  return {
+    booleans: [...booleans].sort((a, b) => a.localeCompare(b)),
+    counters: [...counters.entries()]
+      .map(([name, expressions]) => ({
+        name,
+        expressions: [...expressions],
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
+  }
+}
+
 export default async function Page({ params }: PageProps<'/kim/[chatroom]'>) {
   const { chatroom } = await params
+  const source = CHATROOM_SOURCE_BY_ID[chatroom]
+
+  if (!source) {
+    notFound()
+  }
+
+  const [nodes, dictionary] = await Promise.all([
+    loadNodes(source),
+    loadDictionary(DEFAULT_DICT_SOURCE).catch(() => new Map<string, string>()),
+  ])
+
+  const startNodes = resolveStartNodes(nodes)
+  const byId = new Map<number, DialogueNode>(
+    nodes.map((node) => [node.Id, node])
+  )
+
+  const dialogueOptions = startNodes.map((startNode, index) => {
+    const fallbackName = getConversationName(source, startNode)
+    const label =
+      typeof startNode.Content === 'string' && startNode.Content.length > 0
+        ? resolveContent(startNode.Content, dictionary)
+        : fallbackName
+
+    return {
+      option: index + 1,
+      id: startNode.Id,
+      label,
+    }
+  })
+
+  const requirementsByStartId = Object.fromEntries(
+    startNodes.map((startNode) => [
+      String(startNode.Id),
+      collectSimulationRequirements(byId, startNode.Id),
+    ])
+  )
 
   return (
     <article className="kim-window relative z-10 mt-20 ml-auto flex h-[58svh] w-full max-w-220 flex-col md:mt-16 md:mr-10 md:h-[65svh]">
       <header className="window-titlebar">
-        <p className="capitalize text-2xl">{chatroom}</p>
+        <p className="window-title capitalize">{chatroom}.dialogue</p>
       </header>
 
-      <div className="window-content flex flex-1 flex-col border-t border-[#8f5d1f] bg-[#040404] p-2 sm:p-3">
-        <div className="mt-3 flex-1 space-y-3 overflow-y-auto border border-[#8f5d1f] bg-black p-2 sm:p-3">
-          {/* {messages.map((message, index) => {
-                  const toneClass =
-                    message.tone === "npc-warning"
-                      ? "text-[#f44336]"
-                      : message.tone === "player"
-                        ? "text-[#f4ede0]"
-                        : "text-[#ddd7c9]";
+      <div className="window-content flex min-h-0 flex-1 flex-col border-t border-[#8f5d1f] bg-[#040404] p-2 sm:p-3">
+        <div className="border border-[#8f5d1f] bg-[#151006] px-2 py-1 text-sm text-[#d8c79f]">
+          Selecciona la conversacion ({dialogueOptions.length} disponibles)
+        </div>
 
-                  return (
-                    <article key={`${message.speaker}-${index}`}>
-                      <p className="font-title text-2xl text-[#f0bb5f]">
-                        {message.speaker}:
-                      </p>
-                      <p
-                        className={`-mt-0.5 text-[1.16rem] leading-snug sm:text-[1.22rem] ${toneClass}`}
-                      >
-                        {message.text}
-                      </p>
-                    </article>
-                  );
-                })} */}
+        <div className="mt-2 grid min-h-0 flex-1 gap-2 md:grid-cols-[minmax(0,270px)_minmax(0,1fr)]">
+          <DialogueSelectorPanel
+            dialogueOptions={dialogueOptions}
+            requirementsByStartId={requirementsByStartId}
+          />
         </div>
       </div>
     </article>
