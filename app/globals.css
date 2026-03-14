@@ -1,0 +1,160 @@
+@import 'tailwindcss';
+
+:root {
+  --background: #0a0f17;
+  --foreground: #e8dcc0;
+  --primary: #cba063;
+  --accent: #300000;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-ui-sans);
+  --font-title: var(--font-ui-title);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background:
+    radial-gradient(
+      circle at 15% 8%,
+      rgba(235, 204, 130, 0.11) 0,
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 80% 10%,
+      rgba(90, 111, 133, 0.17) 0,
+      transparent 30%
+    ),
+    linear-gradient(140deg, #050608 0, #101721 38%, #040507 100%);
+  color: var(--foreground);
+  font-family: var(--font-ui-sans), sans-serif;
+}
+
+.kim-background {
+  background-image:
+    linear-gradient(rgba(201, 168, 87, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 168, 87, 0.1) 1px, transparent 1px);
+  background-size: 22px 22px;
+  animation: glow-shift 10s linear infinite alternate;
+}
+
+.kim-frame {
+  animation: frame-rise 380ms ease-out both;
+}
+
+.desktop-area {
+  background:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(194, 145, 55, 0.15),
+      transparent 26%
+    ),
+    radial-gradient(
+      circle at 82% 20%,
+      rgba(101, 133, 166, 0.18),
+      transparent 22%
+    ),
+    linear-gradient(170deg, rgba(7, 7, 7, 0.9), rgba(16, 16, 16, 0.7));
+}
+
+.kim-window {
+  border: 2px solid #8f5d1f;
+  background: #020202;
+  box-shadow:
+    0 0 0 2px #2b1907,
+    4px 5px 0 0 #120b03;
+  animation: frame-rise 380ms ease-out both;
+}
+
+.window-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #3f1f07;
+  background: linear-gradient(180deg, #590600 0, #390200 100%);
+  color: #f1b85a;
+  font-family: var(--font-ui-title), serif;
+  font-size: 1.25rem;
+  letter-spacing: 0.03em;
+  padding: 0.22rem 0.48rem;
+}
+
+.window-actions {
+  color: #e8d8b8;
+  font-family: var(--font-ui-sans), sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+.window-content {
+  position: relative;
+}
+
+.window-content::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.024) 0,
+    rgba(255, 255, 255, 0.024) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.taskbar {
+  background: linear-gradient(180deg, #8bad78 0, #6f8f5f 55%, #5f7853 100%);
+  box-shadow:
+    0 -1px 0 #aec49d,
+    inset 0 1px 0 rgba(232, 247, 223, 0.5);
+}
+
+.font-title {
+  font-family: var(--font-ui-title), serif;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1d1406;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 1px solid #2f1d09;
+  background: #bf9554;
+}
+
+@keyframes glow-shift {
+  from {
+    background-position:
+      0 0,
+      0 0;
+  }
+  to {
+    background-position:
+      11px 8px,
+      6px 12px;
+  }
+}
+
+@keyframes frame-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
