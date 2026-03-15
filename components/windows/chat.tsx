@@ -41,10 +41,6 @@ const NON_DIALOGUE_PREVIEW_TYPES = new Set<Type>([
   Type.SpecialCompletionDialogueNode,
 ])
 
-export async function generateStaticParams() {
-  return Object.keys(CHATROOM_SOURCE_BY_ID).map((id) => ({ chatroom: id }))
-}
-
 function collectSimulationRequirements(
   byId: Map<number, DialogueNode>,
   startId: number
