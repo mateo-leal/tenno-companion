@@ -20,6 +20,7 @@ export type PreferredPathOption = {
   chemistry: number
   thermostat: number
   activatedBooleans: number
+  booleanMutations: Record<string, boolean>
   chatLines: Array<
     | {
         user: string

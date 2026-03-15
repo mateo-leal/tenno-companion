@@ -12,6 +12,33 @@ import {
   type SimulationRequirements,
 } from './dialogue-selector-panel/types'
 
+const BOOLEANS_STORAGE_KEY = 'wf-kim:booleans'
+
+function loadBooleansFromStorage(): Record<string, boolean> {
+  try {
+    const raw = localStorage.getItem(BOOLEANS_STORAGE_KEY)
+    if (!raw) return {}
+    const parsed = JSON.parse(raw) as unknown
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed))
+      return {}
+    return parsed as Record<string, boolean>
+  } catch {
+    return {}
+  }
+}
+
+function saveBooleansToStorage(mutations: Record<string, boolean>): void {
+  try {
+    const current = loadBooleansFromStorage()
+    localStorage.setItem(
+      BOOLEANS_STORAGE_KEY,
+      JSON.stringify({ ...current, ...mutations })
+    )
+  } catch {
+    // ignore storage errors
+  }
+}
+
 type DialogueSelectorPanelProps = {
   chatroom: string
   dialogueOptions: DialogueOption[]
@@ -66,8 +93,14 @@ export function DialogueSelectorPanel({
       return
     }
 
+    const storedBooleans = loadBooleansFromStorage()
     setBooleanValues(
-      Object.fromEntries(requirements.booleans.map((name) => [name, true]))
+      Object.fromEntries(
+        requirements.booleans.map((name) => [
+          name,
+          storedBooleans[name] ?? true,
+        ])
+      )
     )
     setCounterValues(
       Object.fromEntries(
@@ -144,7 +177,21 @@ export function DialogueSelectorPanel({
                 preferredPaths={preferredPaths}
                 selectedPreferredPathId={selectedPreferredPathId}
                 onSelectPreferredPath={setSelectedPreferredPathId}
-                onShowConversation={() => setShowConversation(true)}
+                onConfirmBooleanUpdate={() => {
+                  const selected = preferredPaths.find(
+                    (p) => p.id === selectedPreferredPathId
+                  )
+                  if (selected) {
+                    saveBooleansToStorage(selected.booleanMutations)
+                    setBooleanValues((current) => ({
+                      ...current,
+                      ...selected.booleanMutations,
+                    }))
+                  }
+                }}
+                onShowConversation={() => {
+                  setShowConversation(true)
+                }}
                 showConversation={showConversation}
                 chatroomIcon={chatroomIcon}
               />

@@ -6,6 +6,7 @@ type PreferredPathPanelProps = {
   preferredPaths: PreferredPathOption[]
   selectedPreferredPathId: string | null
   onSelectPreferredPath: (id: string) => void
+  onConfirmBooleanUpdate: () => void
   onShowConversation: () => void
   showConversation: boolean
   chatroomIcon: string
@@ -37,6 +38,7 @@ export function PreferredPathPanel({
   preferredPaths,
   selectedPreferredPathId,
   onSelectPreferredPath,
+  onConfirmBooleanUpdate,
   onShowConversation,
   showConversation,
   chatroomIcon,
@@ -71,6 +73,15 @@ export function PreferredPathPanel({
           ))}
         </ul>
       </div>
+
+      <button
+        type="button"
+        disabled={!selectedPreferredPathId}
+        onClick={onConfirmBooleanUpdate}
+        className="w-full border border-[#7a6c2a] bg-[#1f220b] px-3 py-2 font-title text-lg text-[#e2d57c] transition hover:bg-[#2e3311] disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        Actualizar estado de booleans
+      </button>
 
       <button
         type="button"

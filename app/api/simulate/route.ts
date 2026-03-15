@@ -119,6 +119,7 @@ export async function GET(request: Request) {
       chemistry: option.result.chemistry,
       thermostat: option.result.thermostat,
       activatedBooleans: option.result.activatedBooleans,
+      booleanMutations: option.result.booleanMutations,
       chatLines: formatPathAsChat(
         option.result,
         byId,

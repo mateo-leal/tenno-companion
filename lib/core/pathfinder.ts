@@ -7,6 +7,7 @@ export type PathResult = {
   thermostat: number
   hasThermostatCounter: boolean
   activatedBooleans: number
+  booleanMutations: Record<string, boolean>
   textLines: string[]
 }
 
@@ -157,7 +158,7 @@ export function getCounterName(node: DialogueNode): string {
 
 export function getBooleanName(node: DialogueNode): string {
   if (node.Content && node.Content.trim().length > 0) {
-    return node.Content.trim()
+    return node.Content.trim().split(',')[0]?.trim() || node.Content.trim()
   }
 
   return `boolean-node-${node.Id}`
@@ -223,6 +224,7 @@ export async function explorePaths(
     thermostat: 0,
     hasThermostatCounter: false,
     activatedBooleans: 0,
+    booleanMutations: {},
     textLines: [],
   }
 
@@ -333,12 +335,20 @@ function applyNodeMetrics(
 
   const resolvedContent = node.Content ? resolveText(node.Content) : undefined
 
+  const booleanMutation: Record<string, boolean> = {}
+  if (node.type === Type.SetBooleanDialogueNode) {
+    booleanMutation[getBooleanName(node)] = true
+  } else if (node.type === Type.ResetBooleanDialogueNode) {
+    booleanMutation[getBooleanName(node)] = false
+  }
+
   return {
     path: [...acc.path, node.Id],
     chemistry: acc.chemistry + (node.ChemistryDelta ?? 0),
     thermostat: acc.thermostat + thermoFromTags + thermostatFromCounterNode,
     hasThermostatCounter: acc.hasThermostatCounter || hasThermostatCounter,
     activatedBooleans: acc.activatedBooleans + countBooleanActivations(node),
+    booleanMutations: { ...acc.booleanMutations, ...booleanMutation },
     textLines: resolvedContent
       ? [...acc.textLines, resolvedContent]
       : acc.textLines,
