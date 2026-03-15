@@ -5,12 +5,14 @@ type DialogueOptionsListProps = {
   dialogueOptions: DialogueOption[]
   selectedStartId: number | null
   onSelect: (startId: number) => void
+  isLoading?: boolean
 }
 
 export function DialogueOptionsList({
   dialogueOptions,
   selectedStartId,
   onSelect,
+  isLoading = false,
 }: DialogueOptionsListProps) {
   const [query, setQuery] = useState('')
 
@@ -28,7 +30,7 @@ export function DialogueOptionsList({
 
   return (
     <div className="h-full min-h-0 overflow-y-auto border border-[#8f5d1f] bg-black p-2">
-      <div className="mb-2">
+      <div className="mb-2 relative">
         <input
           type="search"
           value={query}
@@ -36,11 +38,16 @@ export function DialogueOptionsList({
           placeholder="Search by dialogue or codename"
           className="w-full border border-[#6b4820] bg-[#120e08] px-2 py-1.5 text-sm text-[#ddd7c9] outline-none placeholder:text-[#8f7b5d] focus:border-[#cfad73]"
         />
+        {isLoading && (
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-[#9f8a67] animate-pulse">
+            ...
+          </span>
+        )}
       </div>
 
       {filteredOptions.length === 0 ? (
         <p className="px-1 text-sm text-[#9f8a67]">
-          No hay dialogos que coincidan con la busqueda.
+          There are no dialogues that match your search.
         </p>
       ) : null}
 

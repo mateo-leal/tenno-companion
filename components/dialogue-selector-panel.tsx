@@ -54,13 +54,15 @@ export function DialogueSelectorPanel({
   dialogueOptions,
   requirementsByStartId,
 }: DialogueSelectorPanelProps) {
+  const [options, setOptions] = useState<DialogueOption[]>(dialogueOptions)
+  const [isLoadingOptions, setIsLoadingOptions] = useState(false)
   const [selectedStartId, setSelectedStartId] = useState<number | null>(
     dialogueOptions[0]?.id ?? null
   )
 
   const selectedOption = useMemo(
-    () => dialogueOptions.find((item) => item.id === selectedStartId),
-    [dialogueOptions, selectedStartId]
+    () => options.find((item) => item.id === selectedStartId),
+    [options, selectedStartId]
   )
 
   const requirements =
@@ -100,6 +102,43 @@ export function DialogueSelectorPanel({
     setShowConversation(false)
     setSimulateError(null)
   }, [language])
+
+  useEffect(() => {
+    // Keep static/server-rendered labels for default language.
+    if (language === DEFAULT_LANGUAGE) {
+      setOptions(dialogueOptions)
+      setSelectedStartId((current) => {
+        const stillExists = dialogueOptions.some((o) => o.id === current)
+        return stillExists ? current : (dialogueOptions[0]?.id ?? null)
+      })
+      setIsLoadingOptions(false)
+      return
+    }
+
+    let cancelled = false
+    setIsLoadingOptions(true)
+    const params = new URLSearchParams({ chatroom, language })
+    fetch(`/api/dialogues?${params.toString()}`)
+      .then((res) => res.json())
+      .then((data: { options?: DialogueOption[] }) => {
+        if (cancelled) return
+        const newOptions = data.options ?? []
+        setOptions(newOptions)
+        setSelectedStartId((current) => {
+          const stillExists = newOptions.some((o) => o.id === current)
+          return stillExists ? current : (newOptions[0]?.id ?? null)
+        })
+      })
+      .catch(() => {
+        // keep existing options on error
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoadingOptions(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [language, chatroom, dialogueOptions])
 
   useEffect(() => {
     if (!requirements) {
@@ -175,9 +214,10 @@ export function DialogueSelectorPanel({
   return (
     <>
       <DialogueOptionsList
-        dialogueOptions={dialogueOptions}
+        dialogueOptions={options}
         selectedStartId={selectedStartId}
         onSelect={setSelectedStartId}
+        isLoading={isLoadingOptions}
       />
 
       <section className="min-h-0 border border-[#8f5d1f] bg-black p-3 h-full overflow-y-auto">
