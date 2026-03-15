@@ -1,92 +1,165 @@
 # wf-kim-pathfinder
 
-TypeScript CLI app to evaluate conversation paths from the `browse.wf` kimulacrum API graph.
+KIM Pathfinder is a Next.js web app that explores and simulates Warframe KIM dialogue graphs.
 
-It scores and compares paths by:
+Contributors can use this project to:
 
-- Chemistry gain (`ChemistryDelta`)
-- Thermostat gain (from `OtherDialogueInfos` tags containing `thermostat`)
-- Number of boolean activations (from set/reset boolean nodes)
+- Browse available chatrooms and conversations.
+- Simulate preferred conversation paths based on boolean and counter state.
+- Compare paths by chemistry, thermostat, and boolean activations.
+- View simulated conversations as chat transcripts.
+- Switch language dictionaries for translated dialogue labels.
 
-It also asks for boolean condition status on check nodes to resolve conditional branches.
-It resolves `Content` localization keys using the dictionary API.
+## Tech Stack
 
-## Setup
+- Next.js 16 (App Router)
+- React 19
+- TypeScript (strict)
+- Tailwind CSS 4
+- pnpm
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 20+
+- pnpm 9+
+
+### Install
 
 ```bash
 pnpm install
 ```
 
-## Run in dev mode
-
-```bash
-pnpm dev -- --source "https://your-api-endpoint" --dict "https://kim.browse.wf/dicts/es.json" --startId 1 --maxDepth 100 --maxPaths 5000
-```
-
-## Run all current conversation APIs (default)
+### Run locally
 
 ```bash
 pnpm dev
 ```
 
-By default, the CLI first asks which chatroom (endpoint) you want to use, then lists that chatroom's conversations (all `StartDialogueNode` entries) and asks which one to simulate.
-You can choose by menu option number or by `startId`.
+Open http://localhost:3000.
 
-When no `--source` is provided, the CLI uses these conversation URLs by default:
-
-- `https://kim.browse.wf/data/AoiDialogue_rom.dialogue.json`
-- `https://kim.browse.wf/data/ArthurDialogue_rom.dialogue.json`
-- `https://kim.browse.wf/data/EleanorDialogue_rom.dialogue.json`
-- `https://kim.browse.wf/data/FlareDialogue_rom.dialogue.json`
-- `https://kim.browse.wf/data/HexDialogue_rom.dialogue.json`
-- `https://kim.browse.wf/data/JabirDialogue_rom.dialogue.json`
-- `https://kim.browse.wf/data/KayaDialogue_rom.dialogue.json`
-- `https://kim.browse.wf/data/LettieDialogue_rom.dialogue.json`
-- `https://kim.browse.wf/data/MinervaVelemirDialogue_rom.dialogue.json`
-- `https://kim.browse.wf/data/QuincyDialogue_rom.dialogue.json`
-- `https://kim.browse.wf/data/LoidDialogue_rom.dialogue.json`
-- `https://kim.browse.wf/data/LyonDialogue_rom.dialogue.json`
-- `https://kim.browse.wf/data/MarieDialogue_rom.dialogue.json`
-- `https://kim.browse.wf/data/RoatheDialogue_rom.dialogue.json`
-
-Default dictionary:
-
-- `https://kim.browse.wf/dicts/es.json`
-
-## Analyze multiple specific sources
-
-```bash
-pnpm dev -- \
-	--source "https://kim.browse.wf/data/AoiDialogue_rom.dialogue.json" \
-	--source "https://kim.browse.wf/data/ArthurDialogue_rom.dialogue.json" \
-	--dict "https://kim.browse.wf/dicts/es.json"
-```
-
-## Run with local JSON file
-
-```bash
-pnpm dev -- --source "./dialogue.json"
-```
-
-## Build and run
+### Build and run production
 
 ```bash
 pnpm build
-pnpm start -- --source "./dialogue.json"
+pnpm start
 ```
 
-## Notes
+### Lint
 
-- `--source` accepts a URL or local file path and can be repeated.
-- `--dict` accepts a URL or local file path to a localization dictionary object.
-- `--startId` is optional. If provided, it skips the picker and simulates that start node.
-- `--maxDepth` is optional (default: `100`) and prevents infinite traversal loops.
-- `--maxPaths` is optional (default: `5000`) and caps DFS expansion on very large graphs.
+```bash
+pnpm lint
+```
 
 ## Project Structure
 
-- `src/core/pathfinder.ts` contains reusable loading, traversal, scoring, ranking, and transcript-formatting logic.
-- `src/cli/app.ts` contains the readline-based CLI flow, prompts, and console output.
-- `src/index.ts` is a thin entrypoint that starts the CLI app.
+Top-level folders used most often:
 
-For a future UI, you can import the core module directly and replace the CLI prompt/output layer with components or API handlers.
+- app: Next.js routes, layouts, and API handlers.
+- components: UI components for chatroom selection, dialogue simulation, and transcript rendering.
+- lib/core: Pathfinder engine and graph traversal logic.
+- lib/chatrooms.ts: Chatroom metadata and source JSON endpoints.
+- lib/language.ts: Supported language list and dictionary URL resolver.
+- lib/types.ts: Shared graph node and transcript types.
+
+Important entry points:
+
+- app/kim/[chatroom]/page.tsx: SSG route for each chatroom view.
+- components/windows/chat.tsx: Server component that loads graph data and prepares simulation requirements.
+- components/dialogue-selector-panel.tsx: Client state for language, booleans, counters, and simulation requests.
+- app/api/simulate/route.ts: Simulation API endpoint.
+- app/api/dialogues/route.ts: Language-aware dialogue option labels endpoint.
+
+## Data Flow Overview
+
+1. A user opens a chatroom route under /kim/[chatroom].
+2. The server loads graph nodes from browse.wf and builds dialogue options.
+3. The client panel collects user state (booleans/counters) and calls /api/simulate.
+4. The simulation engine traverses the graph, ranks preferred paths, and returns transcript lines.
+5. The UI shows ranked path cards and a rendered chat transcript.
+
+Language behavior:
+
+- Default language is English (en) and uses server-rendered labels.
+- Selecting another language fetches translated labels from /api/dialogues.
+- Selected language is persisted in localStorage (wf-kim:language).
+
+Boolean persistence:
+
+- Boolean mutations can be saved to localStorage (wf-kim:booleans) from a simulated transcript.
+- Saved booleans are reused when preparing subsequent simulations.
+
+## API Endpoints
+
+### GET /api/dialogues
+
+Query params:
+
+- chatroom (required): chatroom id such as hex, arthur, marie.
+- language (optional): one of the supported language codes.
+
+Response:
+
+- options: array of { option, id, label, codename }.
+
+### GET /api/simulate
+
+Query params:
+
+- chatroom (required)
+- startId (required)
+- language (optional)
+- booleans (optional JSON object)
+- counters (optional JSON object)
+
+Response:
+
+- conversationName
+- options: ranked preferred paths with metrics, booleanMutations, and chatLines.
+
+## Core Simulation Concepts
+
+- Chemistry: sum of ChemistryDelta changes along a path.
+- Thermostat: sum of thermostat-tagged OtherDialogueInfos values.
+- Boolean activations: count of set/reset boolean mutations.
+- Counter checks: evaluate Output expressions against provided counter values.
+- Multi-boolean checks: route selection using check expressions in output branches.
+
+Implementation is centered in lib/core/pathfinder.ts.
+
+## Static Generation
+
+- /kim/[chatroom] is pre-rendered with generateStaticParams from app/kim/[chatroom]/page.tsx.
+- Chatrooms are generated from keys in lib/chatrooms.ts.
+
+If you add a new chatroom id to CHATROOM_SOURCE_BY_ID, it will be included in static generation automatically.
+
+## Contributing
+
+### Typical workflow
+
+1. Fork and clone.
+2. Create a branch from main.
+3. Make focused changes.
+4. Run pnpm lint and pnpm build.
+5. Open a pull request with a clear problem statement and screenshots/GIFs for UI changes.
+
+### Contribution guidelines
+
+- Keep PRs small and scoped.
+- Preserve TypeScript strictness and avoid any casts unless required.
+- Reuse existing helpers in lib/core/pathfinder.ts before adding duplicates.
+- Keep UI style consistent with the KIM in-game visual direction.
+- Add or update documentation when behavior changes.
+
+## Known Gaps
+
+- No automated test suite is configured yet.
+- Some metadata and labels are still coupled to upstream browse.wf payload conventions.
+
+Contributions for tests, resilience, and API hardening are welcome.
+
+## License
+
+This project is licensed under the GNU General Public License v3.0 (GPL-3.0).
