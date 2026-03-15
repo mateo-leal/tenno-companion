@@ -1,5 +1,11 @@
 import { readFile } from 'node:fs/promises'
-import { DialogueNode, DialoguePayload, Output, Type } from '../types'
+import {
+  DialogueNode,
+  DialoguePayload,
+  Output,
+  TranscriptLine,
+  Type,
+} from '../types'
 
 export type PathResult = {
   path: number[]
@@ -587,8 +593,8 @@ export function formatPathAsChat(
   byId: Map<number, DialogueNode>,
   characterName: string,
   resolveText: (value: string) => string
-): { user: string; content: string }[] {
-  const lines: { user: string; content: string }[] = []
+): TranscriptLine[] {
+  const lines: TranscriptLine[] = []
 
   for (const nodeId of result.path) {
     const node = byId.get(nodeId)
@@ -598,8 +604,7 @@ export function formatPathAsChat(
 
     if (node.type === Type.ChemistryDialogueNode) {
       const delta = node.ChemistryDelta ?? 0
-      const sign = delta >= 0 ? '+' : ''
-      lines.push({ user: 'system', content: `[Chemistry ${sign}${delta}]` })
+      lines.push({ user: 'system', content: String(delta), type: node.type })
       continue
     }
 
@@ -621,7 +626,7 @@ export function formatPathAsChat(
       speaker = 'player'
     }
 
-    lines.push({ user: speaker, content: text })
+    lines.push({ user: speaker, content: text, type: node.type })
   }
 
   return lines

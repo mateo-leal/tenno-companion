@@ -109,7 +109,7 @@ export function SimulationForm({
         type="submit"
         className="w-full border border-[#8f5d1f] bg-[#2c1300] px-3 py-2 font-title text-lg text-[#f0bb5f] transition hover:bg-[#4a2000]"
       >
-        Simular
+        Simulate
       </button>
     </form>
   )

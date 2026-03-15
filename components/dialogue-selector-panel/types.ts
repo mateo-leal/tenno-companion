@@ -1,3 +1,5 @@
+import { TranscriptLine } from '@/lib/types'
+
 export type DialogueOption = {
   option: number
   id: number
@@ -22,11 +24,5 @@ export type PreferredPathOption = {
   thermostat: number
   activatedBooleans: number
   booleanMutations: Record<string, boolean>
-  chatLines: Array<
-    | {
-        user: string
-        content: string
-      }
-    | string
-  >
+  chatLines: Array<TranscriptLine>
 }

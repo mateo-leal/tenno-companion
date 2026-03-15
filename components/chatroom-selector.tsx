@@ -38,11 +38,11 @@ export function ChatroomSelector() {
           className="p-0 border-4 border-primary/50 data-active:border-primary"
         >
           <Image
-            src="https://wiki.warframe.com/images/LotusSymbolGlyph.png"
+            src="https://wiki.warframe.com/images/ScaldraIcon.png"
             alt="La Cathédrale"
             width={60}
             height={60}
-            className="bg-[#2a3314]"
+            className="bg-[#1c0e0c]"
           />
         </TabsTrigger>
       </TabsList>

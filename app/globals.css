@@ -45,27 +45,8 @@ body {
   animation: glow-shift 10s linear infinite alternate;
 }
 
-.kim-frame {
-  animation: frame-rise 380ms ease-out both;
-}
-
-.desktop-area {
-  background:
-    radial-gradient(
-      circle at 15% 10%,
-      rgba(194, 145, 55, 0.15),
-      transparent 26%
-    ),
-    radial-gradient(
-      circle at 82% 20%,
-      rgba(101, 133, 166, 0.18),
-      transparent 22%
-    ),
-    linear-gradient(170deg, rgba(7, 7, 7, 0.9), rgba(16, 16, 16, 0.7));
-}
-
 .kim-window {
-  border: 2px solid #8f5d1f;
+  border: 2px solid var(--primary);
   background: #020202;
   box-shadow:
     0 0 0 2px #2b1907,
@@ -84,13 +65,6 @@ body {
   font-size: 1.25rem;
   letter-spacing: 0.03em;
   padding: 0.22rem 0.48rem;
-}
-
-.window-actions {
-  color: #e8d8b8;
-  font-family: var(--font-ui-sans), sans-serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
 }
 
 .window-content {

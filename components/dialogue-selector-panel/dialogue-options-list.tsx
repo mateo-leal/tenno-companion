@@ -33,7 +33,7 @@ export function DialogueOptionsList({
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Buscar por dialogo o codename"
+          placeholder="Search by dialogue or codename"
           className="w-full border border-[#6b4820] bg-[#120e08] px-2 py-1.5 text-sm text-[#ddd7c9] outline-none placeholder:text-[#8f7b5d] focus:border-[#cfad73]"
         />
       </div>

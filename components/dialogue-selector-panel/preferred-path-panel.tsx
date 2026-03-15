@@ -1,5 +1,7 @@
-import Image from 'next/image'
 import { type PreferredPathOption } from './types'
+import { TranscriptLine } from '@/lib/types'
+import { ChatLine } from '../chat-line'
+import { SystemChatLine } from '../system-chat-line'
 
 type PreferredPathPanelProps = {
   selectedOptionId: number
@@ -9,27 +11,15 @@ type PreferredPathPanelProps = {
   onConfirmBooleanUpdate: () => void
   onShowConversation: () => void
   showConversation: boolean
-  chatroomIcon: string
 }
 
-function normalizeChatLine(line: PreferredPathOption['chatLines'][number]): {
-  user: string
-  content: string
-} {
-  if (typeof line === 'string') {
-    const separatorIndex = line.indexOf(':')
-    if (separatorIndex > -1) {
-      const user = line.slice(0, separatorIndex).trim().toLowerCase()
-      const content = line.slice(separatorIndex + 1).trim()
-      return { user, content }
-    }
-
-    return { user: 'system', content: line }
-  }
-
+function normalizeChatLine(
+  line: PreferredPathOption['chatLines'][number]
+): TranscriptLine {
   return {
     user: String(line.user).trim().toLowerCase(),
     content: String(line.content ?? '').trim(),
+    type: line.type,
   }
 }
 
@@ -41,7 +31,6 @@ export function PreferredPathPanel({
   onConfirmBooleanUpdate,
   onShowConversation,
   showConversation,
-  chatroomIcon,
 }: PreferredPathPanelProps) {
   const selectedPreferredPath = preferredPaths.find(
     (option) => option.id === selectedPreferredPathId
@@ -80,7 +69,7 @@ export function PreferredPathPanel({
         onClick={onShowConversation}
         className="w-full border border-[#8f5d1f] bg-[#2c1300] px-3 py-2 font-title text-lg text-[#f0bb5f] transition hover:bg-[#4a2000] disabled:cursor-not-allowed disabled:opacity-60"
       >
-        Mostrar conversacion
+        Show conversation
       </button>
 
       {showConversation && selectedPreferredPath ? (
@@ -96,44 +85,9 @@ export function PreferredPathPanel({
                 return (
                   <li key={`${selectedPreferredPath.id}-${index}`}>
                     {normalized.user === 'system' ? (
-                      <>
-                        <strong className="capitalize">
-                          {normalized.user}:
-                        </strong>{' '}
-                        {normalized.content}
-                      </>
-                    ) : normalized.user === 'player' ? (
-                      <div className="flex items-center gap-2">
-                        <Image
-                          src="https://wiki.warframe.com/images/LotusSymbolGlyph.png"
-                          alt="Player"
-                          width={55}
-                          height={55}
-                          className="border-2 border-primary/50"
-                        />
-                        <div className="flex flex-col">
-                          <span className="text-primary text-xl capitalize">
-                            {normalized.user}:
-                          </span>
-                          <span>{normalized.content}</span>
-                        </div>
-                      </div>
+                      <SystemChatLine line={normalized} />
                     ) : (
-                      <div className="flex items-center gap-2">
-                        <Image
-                          src={chatroomIcon}
-                          alt="Chatroom"
-                          width={55}
-                          height={55}
-                          className="border-2 border-primary/50 bg-[#2a3314]"
-                        />
-                        <div className="flex flex-col">
-                          <span className="text-primary text-xl capitalize">
-                            {normalized.user}:
-                          </span>
-                          <span>{normalized.content}</span>
-                        </div>
-                      </div>
+                      <ChatLine line={normalized} />
                     )}
                   </li>
                 )
@@ -150,8 +104,11 @@ export function PreferredPathPanel({
             onClick={onConfirmBooleanUpdate}
             className="mt-3 w-full border border-[#7a6c2a] bg-[#1f220b] px-3 py-2 font-title text-lg text-[#e2d57c] transition hover:bg-[#2e3311]"
           >
-            Actualizar estado de booleans
+            Update boolean values based on this conversation
           </button>
+          <p className="mt-1 text-center text-xs text-[#b9ac8f]">
+            This will affect the dialogues available in future simulations
+          </p>
         </div>
       ) : null}
     </div>

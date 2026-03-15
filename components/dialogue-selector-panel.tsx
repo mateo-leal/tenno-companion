@@ -1,6 +1,5 @@
 'use client'
 
-import { CATHEDRALE_CHATROOMS, HEX_CHATROOMS } from '@/lib/chatrooms'
 import { useEffect, useMemo, useState } from 'react'
 import { DialogueOptionsList } from './dialogue-selector-panel/dialogue-options-list'
 import { SimulationLoadingState } from './dialogue-selector-panel/loading-state'
@@ -77,14 +76,6 @@ export function DialogueSelectorPanel({
     string | null
   >(null)
   const [showConversation, setShowConversation] = useState(false)
-
-  const chatroomIcon = useMemo(() => {
-    return (
-      [...HEX_CHATROOMS, ...CATHEDRALE_CHATROOMS].find(
-        (room) => room.id === chatroom.toLowerCase()
-      )?.icon ?? 'https://wiki.warframe.com/images/LotusSymbolGlyph.png'
-    )
-  }, [chatroom])
 
   useEffect(() => {
     if (!requirements) {
@@ -195,7 +186,6 @@ export function DialogueSelectorPanel({
                   setShowConversation(true)
                 }}
                 showConversation={showConversation}
-                chatroomIcon={chatroomIcon}
               />
             ) : (
               <SimulationForm

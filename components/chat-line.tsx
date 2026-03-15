@@ -1,0 +1,30 @@
+import { CATHEDRALE_CHATROOMS, HEX_CHATROOMS } from '@/lib/chatrooms'
+import { TranscriptLine } from '@/lib/types'
+import Image from 'next/image'
+import { useMemo } from 'react'
+
+export function ChatLine({ line }: { line: TranscriptLine }) {
+  const chatroomIcon = useMemo(() => {
+    return (
+      [...HEX_CHATROOMS, ...CATHEDRALE_CHATROOMS].find(
+        (room) => room.id === line.user.toLowerCase()
+      )?.icon ?? 'https://wiki.warframe.com/images/LotusSymbolGlyph.png'
+    )
+  }, [line.user])
+
+  return (
+    <div className="flex items-center gap-2">
+      <Image
+        src={chatroomIcon}
+        alt={line.user}
+        width={55}
+        height={55}
+        className="border-2 border-primary/50"
+      />
+      <div className="flex flex-col">
+        <span className="text-primary text-xl capitalize">{line.user}:</span>
+        <span>{line.content}</span>
+      </div>
+    </div>
+  )
+}
