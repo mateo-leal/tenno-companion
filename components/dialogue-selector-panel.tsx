@@ -92,18 +92,13 @@ export function DialogueSelectorPanel({
     setShowConversation(false)
 
     try {
-      const response = await fetch('/api/simulate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          chatroom,
-          startId: selectedOption.id,
-          booleans: booleanValues,
-          counters: counterValues,
-        }),
+      const params = new URLSearchParams({
+        chatroom,
+        startId: String(selectedOption.id),
+        booleans: JSON.stringify(booleanValues),
+        counters: JSON.stringify(counterValues),
       })
+      const response = await fetch(`/api/simulate?${params.toString()}`)
 
       const payload = (await response.json()) as {
         error?: string

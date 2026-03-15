@@ -18,22 +18,15 @@ import {
 import { CHATROOM_SOURCE_BY_ID } from '@/lib/chatrooms'
 import { type DialogueNode } from '@/lib/types'
 
-type SimulateRequestBody = {
-  chatroom?: string
-  startId?: number
-  booleans?: Record<string, boolean>
-  counters?: Record<string, number>
-}
-
 function unique(values: number[]): number[] {
   return [...new Set(values)]
 }
 
-export async function POST(request: Request) {
+export async function GET(request: Request) {
   try {
-    const body = (await request.json()) as SimulateRequestBody
-    const chatroom = String(body.chatroom ?? '')
-    const startId = Number(body.startId)
+    const url = new URL(request.url)
+    const chatroom = String(url.searchParams.get('chatroom') ?? '')
+    const startId = Number(url.searchParams.get('startId'))
 
     if (!chatroom || !Number.isInteger(startId)) {
       return NextResponse.json(
@@ -69,8 +62,8 @@ export async function POST(request: Request) {
 
     const resolveText = (value: string) => resolveContent(value, dictionary)
 
-    const booleans = body.booleans ?? {}
-    const counters = body.counters ?? {}
+    const booleans = parseRecordParam<boolean>(url.searchParams.get('booleans'))
+    const counters = parseRecordParam<number>(url.searchParams.get('counters'))
 
     const results = await explorePaths({
       byId,
@@ -142,5 +135,22 @@ export async function POST(request: Request) {
     const message =
       error instanceof Error ? error.message : 'Simulation failed.'
     return NextResponse.json({ error: message }, { status: 500 })
+  }
+}
+
+function parseRecordParam<T>(raw: string | null): Record<string, T> {
+  if (!raw) {
+    return {}
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as unknown
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      return {}
+    }
+
+    return parsed as Record<string, T>
+  } catch {
+    return {}
   }
 }

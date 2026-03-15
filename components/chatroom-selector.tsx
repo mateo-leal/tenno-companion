@@ -23,7 +23,7 @@ export function ChatroomSelector() {
       <TabsList className="shrink-0 gap-1 p-0">
         <TabsTrigger
           value="hex"
-          className="p-0 border-4 border-primary/50 data-active:border-b-primary"
+          className="p-0 border-4 border-primary/50 data-active:border-primary"
         >
           <Image
             src="https://wiki.warframe.com/images/HexIcon.png"
@@ -35,7 +35,7 @@ export function ChatroomSelector() {
         </TabsTrigger>
         <TabsTrigger
           value="cathedrale"
-          className="p-0 border-4 border-primary/50 data-active:border-b-primary"
+          className="p-0 border-4 border-primary/50 data-active:border-primary"
         >
           <Image
             src="https://wiki.warframe.com/images/LotusSymbolGlyph.png"

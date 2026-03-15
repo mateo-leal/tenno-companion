@@ -551,7 +551,9 @@ export function formatPathAsChat(
     }
 
     let speaker = 'system'
-    if (node.type === Type.DialogueNode) {
+    if (node.Speaker) {
+      speaker = resolveText(node.Speaker)
+    } else if (node.type === Type.DialogueNode) {
       speaker = characterName
     } else if (node.type === Type.PlayerChoiceDialogueNode) {
       speaker = 'player'
