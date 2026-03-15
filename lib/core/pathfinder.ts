@@ -164,6 +164,24 @@ export function getBooleanName(node: DialogueNode): string {
   return `boolean-node-${node.Id}`
 }
 
+export function getMultiBooleanNames(node: DialogueNode): string[] {
+  if (node.type !== Type.CheckMultiBooleanDialogueNode) {
+    return []
+  }
+
+  const names = new Set<string>()
+  for (const output of node.Outputs ?? []) {
+    const expression = output.Expression?.trim()
+    if (!expression || expression.toLowerCase() === 'false') {
+      continue
+    }
+
+    names.add(expression)
+  }
+
+  return [...names]
+}
+
 export function evaluateCounterOutput(
   output: Output,
   counterValue: number
@@ -414,6 +432,40 @@ async function getOutgoingForNode(
   askCounterBranch: (node: DialogueNode) => Promise<number[]>,
   booleanState: Map<string, boolean>
 ): Promise<number[]> {
+  if (node.type === Type.CheckMultiBooleanDialogueNode) {
+    const outputs = node.Outputs ?? []
+    if (outputs.length === 0) {
+      return unique(node.Outgoing ?? [])
+    }
+
+    let fallback: number[] | undefined
+    for (const output of outputs) {
+      const expression = output.Expression?.trim()
+      if (!expression) {
+        continue
+      }
+
+      if (expression.toLowerCase() === 'false') {
+        fallback = output.Outgoing ?? []
+        continue
+      }
+
+      let decision: boolean
+      if (booleanState.has(expression)) {
+        decision = booleanState.get(expression) as boolean
+      } else {
+        decision = await askBooleanDecision(node, expression)
+        booleanState.set(expression, decision)
+      }
+
+      if (decision) {
+        return unique(output.Outgoing ?? [])
+      }
+    }
+
+    return unique(fallback ?? node.FalseNodes ?? node.Outgoing ?? [])
+  }
+
   if (BOOLEAN_CHECK_TYPES.has(node.type)) {
     const booleanName = getBooleanName(node)
     let decision: boolean

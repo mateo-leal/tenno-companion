@@ -6,6 +6,7 @@ import {
   getBooleanName,
   getConversationName,
   getCounterName,
+  getMultiBooleanNames,
   loadDictionary,
   loadNodes,
   resolveContent,
@@ -52,7 +53,11 @@ function collectSimulationRequirements(
       continue
     }
 
-    if (BOOLEAN_CHECK_TYPES.has(node.type)) {
+    if (node.type === Type.CheckMultiBooleanDialogueNode) {
+      for (const booleanName of getMultiBooleanNames(node)) {
+        booleans.add(booleanName)
+      }
+    } else if (BOOLEAN_CHECK_TYPES.has(node.type)) {
       booleans.add(getBooleanName(node))
     }
 
