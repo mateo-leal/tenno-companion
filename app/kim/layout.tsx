@@ -10,13 +10,9 @@ export default function Layout({ children }: LayoutProps<'/kim'>) {
   return (
     <div className="relative min-h-0 flex-1 overflow-y-auto md:overflow-hidden">
       <div className="flex min-h-full flex-col gap-2 md:block">
-        {isKimHome ? (
+        <div className={isKimHome ? undefined : 'hidden md:block'}>
           <KimWindow />
-        ) : (
-          <div className="hidden md:block">
-            <KimWindow />
-          </div>
-        )}
+        </div>
         {children}
       </div>
     </div>
