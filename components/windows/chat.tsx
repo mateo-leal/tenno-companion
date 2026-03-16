@@ -1,5 +1,6 @@
 import { DialogueSelectorPanel } from '@/components/dialogue-selector-panel'
 import { CHATROOM_SOURCE_BY_ID } from '@/lib/chatrooms'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import {
   DEFAULT_DICT_SOURCE,
@@ -245,9 +246,16 @@ export async function ChatWindow({ chatroom }: { chatroom: string }) {
   )
 
   return (
-    <article className="kim-window relative z-10 mt-20 ml-auto flex h-[58svh] w-full max-w-220 flex-col md:mt-16 md:mr-10 md:h-[65svh]">
+    <article className="kim-window relative z-10 mt-0 flex h-[calc(100svh-5.5rem)] min-h-75 w-full max-w-none flex-col md:mt-16 md:mr-10 md:ml-auto md:h-[65svh] md:max-w-220">
       <header className="window-titlebar">
         <p className="window-title capitalize">{chatroom}.dialogue</p>
+        <Link
+          href="/kim"
+          aria-label="Close chat window"
+          className="inline-flex h-7 min-w-7 items-center justify-center border border-[#8f5d1f] bg-[#240800] px-2 text-sm leading-none text-[#ffd38c] transition hover:bg-[#3a0f00]"
+        >
+          X
+        </Link>
       </header>
 
       <div className="window-content flex min-h-0 flex-1 flex-col border-t border-[#8f5d1f] bg-[#040404] p-2 sm:p-3">
@@ -255,7 +263,7 @@ export async function ChatWindow({ chatroom }: { chatroom: string }) {
           Select the dialogue ({dialogueOptions.length} available)
         </div>
 
-        <div className="mt-2 grid min-h-0 flex-1 gap-2 md:grid-cols-[minmax(0,270px)_minmax(0,1fr)]">
+        <div className="mt-2 grid min-h-0 flex-1 gap-2 grid-rows-[minmax(170px,30svh)_minmax(0,1fr)] md:grid-rows-1 md:grid-cols-[minmax(0,270px)_minmax(0,1fr)]">
           <DialogueSelectorPanel
             chatroom={chatroom}
             dialogueOptions={dialogueOptions}

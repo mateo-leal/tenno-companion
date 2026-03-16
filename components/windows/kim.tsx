@@ -3,7 +3,7 @@ import { ChatroomSelector } from '../chatroom-selector'
 
 export function KimWindow() {
   return (
-    <aside className="kim-window absolute top-3 bottom-3 left-3 flex w-[320px] max-w-[calc(100%-1.5rem)] flex-col overflow-hidden">
+    <aside className="kim-window relative flex h-[calc(100svh-5.5rem)] min-h-75 w-full max-w-none flex-col overflow-hidden md:absolute md:top-3 md:bottom-3 md:left-3 md:h-auto md:w-[320px] md:max-w-[calc(100%-1.5rem)] md:max-h-none">
       <header className="window-titlebar">
         <p className="window-title">Welcome to KIM!</p>
       </header>
