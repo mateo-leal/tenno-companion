@@ -56,6 +56,25 @@ export function PreferredPathPanel({
                 <div className="min-w-0 flex-1">
                   <p className="text-sm text-[#f0bb5f]">{option.label}</p>
                   <p className="text-xs text-[#d8ccb5]">{option.metrics}</p>
+                  {Object.keys(option.booleanMutations).length > 0 && (
+                    <ul className="mt-1.5 flex flex-wrap gap-1">
+                      {Object.entries(option.booleanMutations).map(
+                        ([name, value]) => (
+                          <li
+                            key={name}
+                            className={`inline-flex items-center gap-1 border px-1.5 py-0.5 text-xs leading-tight ${
+                              value
+                                ? 'border-[#3a5c1a] bg-[#0f1f07] text-[#8fd45a]'
+                                : 'border-[#5c1a1a] bg-[#1f0707] text-[#d45a5a]'
+                            }`}
+                          >
+                            <span>{value ? '+' : '−'}</span>
+                            <span>{name}</span>
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  )}
                 </div>
               </label>
             </li>
