@@ -6,6 +6,11 @@ import { useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { CloseButton } from './close-button'
 import { cn } from '@/lib/utils'
+import { TextInput } from './ui/text-input'
+import { WindowContent } from './ui/window-content'
+import { Window } from './ui/window'
+import { WindowTitlebar } from './ui/window-titlebar'
+import { Button } from './ui/button'
 
 type BooleanState = Record<string, boolean>
 
@@ -63,7 +68,7 @@ export function KimBooleanSettings() {
     if (!name) return
     if (Object.prototype.hasOwnProperty.call(booleanState, name)) return
 
-    updateState({ ...booleanState, [name]: false })
+    updateState({ ...booleanState, [name]: true })
     setNewName('')
   }
 
@@ -94,19 +99,19 @@ export function KimBooleanSettings() {
       {isOpen
         ? createPortal(
             <section className="fixed inset-0 z-50 flex items-center justify-center p-3">
-              <div className="kim-window flex h-[min(82svh,700px)] w-full max-w-190 flex-col">
-                <header className="window-titlebar">
-                  <p className="window-title">Boolean settings</p>
+              <Window className="h-[min(82svh,700px)] max-w-190">
+                <WindowTitlebar>
+                  <p>Boolean settings</p>
                   <CloseButton
                     onClick={() => setIsOpen(false)}
                     label="Close boolean settings"
                   />
-                </header>
+                </WindowTitlebar>
 
-                <div className="window-content flex min-h-0 flex-1 flex-col border-t border-[#8f5d1f] bg-[#060606] p-2">
-                  <div className="flex gap-2 border border-[#6b4820] bg-[#120e08] p-2">
-                    <input
-                      type="text"
+                <WindowContent>
+                  <div className="flex gap-2 border border-muted-primary bg-background p-2">
+                    <TextInput
+                      id="boolean-name-input"
                       value={newName}
                       onChange={(event) => setNewName(event.target.value)}
                       onKeyDown={(event) => {
@@ -116,21 +121,16 @@ export function KimBooleanSettings() {
                         }
                       }}
                       placeholder="Add boolean name"
-                      className="w-full border border-[#6b4820] bg-[#120e08] px-2 py-1.5 text-sm text-[#ddd7c9] outline-none placeholder:text-[#8f7b5d] focus:border-[#cfad73]"
                     />
-                    <button
-                      type="button"
-                      onClick={addBoolean}
-                      className="inline-flex shrink-0 items-center gap-1 border border-[#7a6c2a] bg-[#1f220b] px-2 py-1 text-xs text-[#e2d57c] transition hover:bg-[#2e3311]"
-                    >
+                    <Button className="shrink-0" onClick={addBoolean}>
                       <PlusIcon size={14} weight="bold" />
                       Add
-                    </button>
+                    </Button>
                   </div>
 
-                  <div className="mt-2 min-h-0 flex-1 overflow-y-auto border border-[#6b4820] bg-[#120e08] p-2">
+                  <div className="mt-2 min-h-0 flex-1 overflow-y-auto border border-muted-primary bg-background p-2">
                     {entries.length === 0 ? (
-                      <p className="text-sm text-[#b9ac8f]">
+                      <p className="text-sm text-foreground">
                         No booleans saved yet.
                       </p>
                     ) : (
@@ -138,50 +138,42 @@ export function KimBooleanSettings() {
                         {entries.map(([name, value]) => (
                           <li
                             key={name}
-                            className="border border-[#3f2a11] bg-[#0f0a06] p-2"
+                            className="border border-muted-primary bg-background p-2"
                           >
-                            <p className="text-sm text-[#f0bb5f] break-all">
+                            <p className="text-sm text-foreground break-all">
                               {name}
                             </p>
                             <div className="mt-2 flex flex-wrap gap-2 text-xs">
-                              <button
-                                type="button"
+                              <Button
+                                variant={value ? 'default' : 'outline'}
+                                size="sm"
                                 onClick={() => setBoolean(name, true)}
-                                className={`border px-2 py-1 transition ${
-                                  value
-                                    ? 'border-[#3a5c1a] bg-[#0f1f07] text-[#8fd45a]'
-                                    : 'border-[#6b4820] bg-[#120e08] text-[#d8ccb5] hover:bg-[#1d140c]'
-                                }`}
                               >
                                 Activate
-                              </button>
-                              <button
-                                type="button"
+                              </Button>
+                              <Button
+                                variant={!value ? 'destructive' : 'outline'}
+                                size="sm"
                                 onClick={() => setBoolean(name, false)}
-                                className={`border px-2 py-1 transition ${
-                                  !value
-                                    ? 'border-[#5c1a1a] bg-[#1f0707] text-[#d45a5a]'
-                                    : 'border-[#6b4820] bg-[#120e08] text-[#d8ccb5] hover:bg-[#1d140c]'
-                                }`}
                               >
                                 Deactivate
-                              </button>
-                              <button
-                                type="button"
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                size="sm"
                                 onClick={() => removeBoolean(name)}
-                                className="inline-flex items-center gap-1 border border-[#5c1a1a] bg-[#1f0707] px-2 py-1 text-[#d45a5a] transition hover:bg-[#2b0b0b]"
                               >
                                 <TrashIcon size={12} weight="bold" />
                                 Remove
-                              </button>
+                              </Button>
                             </div>
                           </li>
                         ))}
                       </ul>
                     )}
                   </div>
-                </div>
-              </div>
+                </WindowContent>
+              </Window>
             </section>,
             document.body
           )

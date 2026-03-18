@@ -17,7 +17,7 @@ function normalizeChatLine(
   line: PreferredPathOption['chatLines'][number]
 ): TranscriptLine {
   return {
-    user: String(line.user).trim().toLowerCase(),
+    user: String(line.user).trim(),
     content: String(line.content ?? '').trim(),
     type: line.type,
   }

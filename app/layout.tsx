@@ -33,7 +33,7 @@ export default function RootLayout({
       <body
         className={`${oxanium.variable} ${cormorantGaramond.variable} antialiased`}
       >
-        <div className="kim-background min-h-screen overflow-y-auto text-[#ebdfbf] md:h-screen md:overflow-hidden">
+        <div className="kim-background min-h-screen overflow-y-auto text-foreground md:h-screen md:overflow-hidden">
           <main className="mx-auto flex min-h-screen w-full max-w-325 flex-col overflow-y-auto p-2 sm:p-4 md:h-screen md:overflow-hidden">
             {children}
 

@@ -18,6 +18,65 @@ export const CHATROOM_SOURCE_BY_ID: Record<string, string> = {
   roathe: 'https://kim.browse.wf/data/RoatheDialogue_rom.dialogue.json',
 }
 
+export const SPEAKERS = [
+  {
+    alias: ['Arthur', 'Broadsword'],
+    icon: 'https://wiki.warframe.com/images/ArthurPixelGlyph.png',
+  },
+  {
+    alias: ['Eleanor', 'Salem'],
+    icon: 'https://wiki.warframe.com/images/EleanorPixelGlyph.png',
+  },
+  {
+    alias: ['Lettie', 'Belladonna ~{@'],
+    icon: 'https://wiki.warframe.com/images/LettiePixelGlyph.png',
+  },
+  {
+    alias: ['Amir', 'H16h V0l7463', 'Jabir'],
+    icon: 'https://wiki.warframe.com/images/AmirPixelGlyph.png',
+  },
+  {
+    alias: ['Aoi', 'xX GLIMMER Xx'],
+    icon: 'https://wiki.warframe.com/images/AoiPixelGlyph.png',
+  },
+  {
+    alias: ['Quincy', 'Soldja1Shot1kil'],
+    icon: 'https://wiki.warframe.com/images/QuincyPixelGlyph.png',
+  },
+  {
+    alias: ['Flare', 'Liminus_Star'],
+    icon: 'https://wiki.warframe.com/images/FlarePixelGlyph.png',
+  },
+  {
+    alias: ['Kaya', 'KOLTrial_5115'],
+    icon: 'https://wiki.warframe.com/images/KayaPixelGlyph.png',
+  },
+  {
+    alias: ['Minerva', 'MomToxicated'],
+    icon: 'https://wiki.warframe.com/images/MinervaPixelGlyph.png',
+  },
+  {
+    alias: ['Velimir', 'PapaPolar'],
+    icon: 'https://wiki.warframe.com/images/VelimirPixelGlyph.png',
+  },
+  {
+    alias: ['Loid', 'POM2_LAB1'],
+    icon: 'https://wiki.warframe.com/images/LoidPrime.PNG',
+  },
+  {
+    alias: ['Lyon'],
+    icon: 'https://wiki.warframe.com/images/LyonInfobox.png',
+  },
+  {
+    alias: ['Marie'],
+    icon: 'https://wiki.warframe.com/images/MarieInfobox.png',
+  },
+  {
+    alias: ['Roathe'],
+    icon: 'https://wiki.warframe.com/images/RoatheInfobox.png',
+  },
+]
+
 export const HEX_CHATROOMS = [
   {
     id: 'hex',
@@ -66,7 +125,7 @@ export const HEX_CHATROOMS = [
   },
   {
     id: 'minerva-velimir',
-    name: 'Minerva, Velimir',
+    name: 'Minerva & Velimir',
     icon: 'https://wiki.warframe.com/images/MinervaPixelGlyph.png',
   },
 ]

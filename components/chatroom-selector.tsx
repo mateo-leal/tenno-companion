@@ -30,7 +30,7 @@ export function ChatroomSelector() {
             alt="The Hex"
             width={60}
             height={60}
-            className="bg-[#2a3314]"
+            className="bg-hex"
           />
         </TabsTrigger>
         <TabsTrigger
@@ -42,7 +42,7 @@ export function ChatroomSelector() {
             alt="La Cathédrale"
             width={60}
             height={60}
-            className="bg-[#1c0e0c]"
+            className="bg-cathedrale"
           />
         </TabsTrigger>
       </TabsList>
@@ -68,7 +68,7 @@ export function ChatroomSelector() {
                   width={65}
                   height={65}
                   className={cn('border-2 border-primary/50', {
-                    'bg-[#2a3314]': chatroom.id === 'hex',
+                    'bg-hex': chatroom.id === 'hex',
                   })}
                 />
                 <span className="text-xl">{chatroom.name}</span>

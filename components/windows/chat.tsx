@@ -1,6 +1,5 @@
 import { DialogueSelectorPanel } from '@/components/dialogue-selector-panel'
 import { CHATROOM_SOURCE_BY_ID } from '@/lib/chatrooms'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import {
   DEFAULT_DICT_SOURCE,
@@ -15,6 +14,9 @@ import {
 } from '@/lib/core/pathfinder'
 import { Type, type DialogueNode } from '@/lib/types'
 import { CloseButton } from '../close-button'
+import { Window } from '../ui/window'
+import { WindowTitlebar } from '../ui/window-titlebar'
+import { WindowContent } from '../ui/window-content'
 
 const BOOLEAN_CHECK_TYPES = new Set<Type>([
   Type.CheckBooleanDialogueNode,
@@ -247,14 +249,13 @@ export async function ChatWindow({ chatroom }: { chatroom: string }) {
   )
 
   return (
-    <article className="kim-window relative z-10 mt-0 flex h-[calc(100svh-5.5rem)] min-h-75 w-full max-w-none flex-col md:mt-16 md:mr-10 md:ml-auto md:h-[65svh] md:max-w-220">
-      <header className="window-titlebar">
+    <Window className="relative z-10 mt-0 h-[calc(100svh-5.5rem)] min-h-75 max-w-none md:mt-16 md:mr-10 md:ml-auto md:h-[65svh] md:max-w-220">
+      <WindowTitlebar>
         <p className="window-title capitalize">{chatroom}</p>
         <CloseButton href="/kim" />
-      </header>
-
-      <div className="window-content flex min-h-0 flex-1 flex-col border-t border-[#8f5d1f] bg-[#040404] p-2 sm:p-3">
-        <div className="border border-[#8f5d1f] bg-[#151006] px-2 py-1 text-sm text-[#d8c79f]">
+      </WindowTitlebar>
+      <WindowContent className="sm:p-3">
+        <div className="border border-muted-primary bg-background px-2 py-1 text-sm text-foreground">
           Select the dialogue ({dialogueOptions.length} available)
         </div>
 
@@ -265,7 +266,7 @@ export async function ChatWindow({ chatroom }: { chatroom: string }) {
             requirementsByStartId={requirementsByStartId}
           />
         </div>
-      </div>
-    </article>
+      </WindowContent>
+    </Window>
   )
 }

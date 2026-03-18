@@ -1,19 +1,52 @@
 @import 'tailwindcss';
 
 :root {
-  --background: #0a0f17;
+  --background: #120e08;
   --foreground: #e8dcc0;
-  --primary: #cba063;
+  --muted-foreground: #8f7b5d;
+  --primary: #f0bb5f;
   --accent: #300000;
   --accent-hover: #3a0f00;
+  --muted-primary: #8f5d1f;
+  --hex: #2a3314;
+  --cathedrale: #1c0e0c;
+  --error: #f3af9f;
+  --error-border: #7e2f1e;
+  --error-bg: #2a0f07;
+  --error-hover: #2b0b0b;
+  --success: #e2d57c;
+  --success-border: #7a6c2a;
+  --success-bg: #1f220b;
+  --success-hover: #2e3311;
+  --secondary-bg: #2c1300;
+  --secondary-bg-hover: #4a2000;
+}
+
+@theme {
+  --window-shadow: 0 0 0 2px #2b1907, 4px 5px 0 0 #120b03;
+  --animate-window: frame-rise 380ms ease-out both;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
   --color-primary: var(--primary);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
+  --color-muted-primary: var(--muted-primary);
+  --color-hex: var(--hex);
+  --color-cathedrale: var(--cathedrale);
+  --color-error: var(--error);
+  --color-error-border: var(--error-border);
+  --color-error-bg: var(--error-bg);
+  --color-error-hover: var(--error-hover);
+  --color-success: var(--success);
+  --color-success-border: var(--success-border);
+  --color-success-bg: var(--success-bg);
+  --color-success-hover: var(--success-hover);
+  --color-secondary-bg: var(--secondary-bg);
+  --color-secondary-bg-hover: var(--secondary-bg-hover);
   --font-sans: var(--font-ui-sans);
   --font-title: var(--font-ui-title);
 }
@@ -47,33 +80,7 @@ body {
   animation: glow-shift 10s linear infinite alternate;
 }
 
-.kim-window {
-  border: 2px solid var(--primary);
-  background: #020202;
-  box-shadow:
-    0 0 0 2px #2b1907,
-    4px 5px 0 0 #120b03;
-  animation: frame-rise 380ms ease-out both;
-}
-
-.window-titlebar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #3f1f07;
-  background: linear-gradient(180deg, #590600 0, #390200 100%);
-  color: #f1b85a;
-  font-family: var(--font-ui-title), serif;
-  font-size: 1.25rem;
-  letter-spacing: 0.03em;
-  padding: 0.22rem 0.48rem;
-}
-
-.window-content {
-  position: relative;
-}
-
-.window-content::after {
+.window-content-effect::after {
   content: '';
   position: absolute;
   inset: 0;

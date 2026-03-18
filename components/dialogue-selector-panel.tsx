@@ -219,16 +219,16 @@ export function DialogueSelectorPanel({
         isLoading={isLoadingOptions}
       />
 
-      <section className="min-h-0 border border-[#8f5d1f] bg-black p-3 h-full overflow-y-auto">
+      <section className="min-h-0 border border-muted-primary p-3 h-full overflow-y-auto">
         {selectedOption && requirements ? (
-          <div className="space-y-3 text-[#ddd7c9]">
-            <p className="font-title text-xl text-[#f0bb5f]">
+          <div className="space-y-3 text-foreground">
+            <p className="font-title text-xl text-primary">
               {selectedOption.label}
             </p>
             <div className="space-y-1">
               <label
                 htmlFor="sim-language"
-                className="block text-xs uppercase tracking-wide text-[#b9ac8f]"
+                className="block text-xs uppercase tracking-wide"
               >
                 Language
               </label>
@@ -236,7 +236,7 @@ export function DialogueSelectorPanel({
                 id="sim-language"
                 value={language}
                 onChange={(event) => setLanguage(event.target.value)}
-                className="w-full border border-[#6b4820] bg-[#120e08] px-2 py-1.5 text-sm text-[#ddd7c9] outline-none focus:border-[#cfad73]"
+                className="w-full border border-muted-primary bg-background px-2 py-1.5 text-sm outline-none focus:border-primary"
               >
                 {LANGUAGE_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -296,13 +296,13 @@ export function DialogueSelectorPanel({
             )}
 
             {simulateError ? (
-              <p className="border border-[#7e2f1e] bg-[#2a0f07] px-2 py-1 text-sm text-[#f3af9f]">
+              <p className="border border-error-border bg-error-bg px-2 py-1 text-sm text-error">
                 {simulateError}
               </p>
             ) : null}
           </div>
         ) : (
-          <p className="text-sm text-[#ddd7c9]">
+          <p className="text-sm text-foreground">
             No start dialogues found for this chatroom.
           </p>
         )}

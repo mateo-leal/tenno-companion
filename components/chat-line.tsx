@@ -1,4 +1,4 @@
-import { CATHEDRALE_CHATROOMS, HEX_CHATROOMS } from '@/lib/chatrooms'
+import { SPEAKERS } from '@/lib/chatrooms'
 import { TranscriptLine } from '@/lib/types'
 import Image from 'next/image'
 import { useMemo } from 'react'
@@ -6,8 +6,10 @@ import { useMemo } from 'react'
 export function ChatLine({ line }: { line: TranscriptLine }) {
   const chatroomIcon = useMemo(() => {
     return (
-      [...HEX_CHATROOMS, ...CATHEDRALE_CHATROOMS].find(
-        (room) => room.id === line.user.toLowerCase()
+      SPEAKERS.find((speaker) =>
+        speaker.alias.some(
+          (alias) => alias.toLowerCase() === line.user.toLowerCase()
+        )
       )?.icon ?? 'https://wiki.warframe.com/images/LotusSymbolGlyph.png'
     )
   }, [line.user])
