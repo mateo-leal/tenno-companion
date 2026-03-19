@@ -7,6 +7,7 @@ import {
   formatPathMetrics,
   getConversationName,
   getCounterName,
+  getFlirtingBooleanSignature,
   loadDictionary,
   loadNodes,
   resolveContent,
@@ -104,30 +105,69 @@ export async function GET(request: Request) {
       return NextResponse.json({ options: [] })
     }
 
-    const ranked = summarizeResults(results)
-    const options = buildPreferredPathOptions([
-      { label: 'Best chemistry path', result: ranked.byChemistry },
-      ...(ranked.byThermostat
-        ? [{ label: 'Best thermostat path', result: ranked.byThermostat }]
-        : []),
-      { label: 'Most boolean activations', result: ranked.byBooleans },
-      { label: 'Best overall path', result: ranked.byOverall },
-    ]).map((option, index) => ({
-      id: `${index + 1}`,
-      label: option.label,
-      metrics: formatPathMetrics(option.result),
-      path: option.result.path,
-      chemistry: option.result.chemistry,
-      thermostat: option.result.thermostat,
-      activatedBooleans: option.result.activatedBooleans,
-      booleanMutations: option.result.booleanMutations,
-      chatLines: formatPathAsChat(
-        option.result,
-        byId,
-        sourceLabel(source),
-        resolveText
-      ),
-    }))
+    // Group results by flirting state so each relationship decision
+    // (dating vs. no dating) gets its own ranked options
+    const flirtingGroups = new Map<string, typeof results>()
+    for (const result of results) {
+      const sig = getFlirtingBooleanSignature(result.booleanMutations)
+      const group = flirtingGroups.get(sig) ?? []
+      group.push(result)
+      flirtingGroups.set(sig, group)
+    }
+
+    const hasMultipleFlirtingStates = flirtingGroups.size > 1
+
+    function flirtingLabel(sig: string): string {
+      if (sig === 'no-flirting') return 'no flirting'
+      // Extract the boolean name(s) from the signature (e.g. 'flirting:LettieFlirt')
+      const names = sig.replace('flirting:', '').split('|').join(', ')
+      return `with ${names}`
+    }
+
+    const candidates: { label: string; result: (typeof results)[0] }[] = []
+
+    for (const [sig, groupResults] of flirtingGroups) {
+      const ranked = summarizeResults(groupResults)
+      const suffix = hasMultipleFlirtingStates ? ` (${flirtingLabel(sig)})` : ''
+
+      candidates.push({
+        label: `Best chemistry path${suffix}`,
+        result: ranked.byChemistry,
+      })
+      if (ranked.byThermostat) {
+        candidates.push({
+          label: `Best thermostat path${suffix}`,
+          result: ranked.byThermostat,
+        })
+      }
+      candidates.push({
+        label: `Most boolean activations${suffix}`,
+        result: ranked.byBooleans,
+      })
+      candidates.push({
+        label: `Best overall path${suffix}`,
+        result: ranked.byOverall,
+      })
+    }
+
+    const options = buildPreferredPathOptions(candidates).map(
+      (option, index) => ({
+        id: `${index + 1}`,
+        label: option.label,
+        metrics: formatPathMetrics(option.result),
+        path: option.result.path,
+        chemistry: option.result.chemistry,
+        thermostat: option.result.thermostat,
+        activatedBooleans: option.result.activatedBooleans,
+        booleanMutations: option.result.booleanMutations,
+        chatLines: formatPathAsChat(
+          option.result,
+          byId,
+          sourceLabel(source),
+          resolveText
+        ),
+      })
+    )
 
     return NextResponse.json({
       conversationName: getConversationName(source, startNode),

@@ -16,6 +16,7 @@ export type PathResult = {
   activatedBooleans: number
   booleanMutations: Record<string, boolean>
   textLines: string[]
+  skippedFlirtingNodeIds?: Set<number>
 }
 
 export type LoadedSource = {
@@ -171,6 +172,30 @@ export function getBooleanName(node: DialogueNode): string {
   return `boolean-node-${node.Id}`
 }
 
+function isFlirtingBoolean(booleanName: string): boolean {
+  const keywords = ['Flirt', 'Dating', 'NoFlirt', 'NoDate']
+  return keywords.some((keyword) =>
+    booleanName.toLowerCase().includes(keyword.toLowerCase())
+  )
+}
+
+export function getFlirtingBooleanSignature(
+  booleanMutations: Record<string, boolean>
+): string {
+  // Get all flirting boolean names that appear in mutations
+  const flirtingNames = Object.keys(booleanMutations).filter((name) =>
+    isFlirtingBoolean(name)
+  )
+
+  if (flirtingNames.length === 0) {
+    return 'no-flirting'
+  }
+
+  // Return a signature of which flirting booleans are explicitly set
+  // This prevents paths with different flirting decisions from merging
+  return 'flirting:' + flirtingNames.sort().join('|')
+}
+
 export function getMultiBooleanNames(node: DialogueNode): string[] {
   if (node.type !== Type.CheckMultiBooleanDialogueNode) {
     return []
@@ -251,6 +276,7 @@ export async function explorePaths(
     activatedBooleans: 0,
     booleanMutations: {},
     textLines: [],
+    skippedFlirtingNodeIds: new Set<number>(),
   }
 
   const state = { pathsCollected: 0 }
@@ -288,6 +314,131 @@ async function walk(
     return []
   }
 
+  // Check if this is a flirting boolean that should create dual paths
+  const booleanName = getBooleanName(current)
+  const isFlirtingBoolSetNode =
+    (current.type === Type.SetBooleanDialogueNode ||
+      current.type === Type.ResetBooleanDialogueNode) &&
+    isFlirtingBoolean(booleanName)
+
+  // DEBUG: Log when we encounter these nodes
+  if (isFlirtingBoolSetNode) {
+    // console.log(`[DEBUG] Found flirting boolean node: ${booleanName} (id=${current.Id})`)
+  }
+
+  if (isFlirtingBoolSetNode) {
+    // Create two branches: one where we set the boolean, one where we don't
+    // Do NOT use askBooleanDecision here—we always explore both paths
+    const all: PathResult[] = []
+
+    // Branch 1: Set the boolean (normal path)
+    {
+      const nextAcc = applyNodeMetrics(acc, current, resolveText)
+      const nextBooleanState = applyBooleanMutation(current, booleanState)
+
+      if (
+        current.type === Type.EndDialogueNode ||
+        current.type === Type.SpecialCompletionDialogueNode
+      ) {
+        state.pathsCollected += 1
+        all.push(nextAcc)
+      } else {
+        const nextIds = await getOutgoingForNode(
+          current,
+          askBooleanDecision,
+          askCounterBranch,
+          nextBooleanState
+        )
+        if (nextIds.length === 0) {
+          state.pathsCollected += 1
+          all.push(nextAcc)
+        } else {
+          for (const id of nextIds) {
+            if (state.pathsCollected >= maxPaths) {
+              break
+            }
+            const nextNode = byId.get(id)
+            if (!nextNode || nextAcc.path.includes(id)) {
+              continue
+            }
+            const childResults = await walk(
+              byId,
+              nextNode,
+              nextAcc,
+              remainingDepth - 1,
+              maxPaths,
+              state,
+              resolveText,
+              askBooleanDecision,
+              askCounterBranch,
+              new Map(nextBooleanState)
+            )
+            all.push(...childResults)
+          }
+        }
+      }
+    }
+
+    // Branch 2: Don't set the boolean (alternative path)
+    {
+      const nextAcc = applyNodeMetricsWithoutBooleanMutation(
+        acc,
+        current,
+        resolveText
+      )
+      // Track that we skipped this flirting node
+      nextAcc.skippedFlirtingNodeIds = new Set(acc.skippedFlirtingNodeIds)
+      nextAcc.skippedFlirtingNodeIds.add(current.Id)
+
+      const nextBooleanState = new Map(booleanState) // Don't apply mutation
+
+      if (
+        current.type === Type.EndDialogueNode ||
+        current.type === Type.SpecialCompletionDialogueNode
+      ) {
+        state.pathsCollected += 1
+        all.push(nextAcc)
+      } else {
+        const nextIds = await getOutgoingForNode(
+          current,
+          askBooleanDecision,
+          askCounterBranch,
+          nextBooleanState
+        )
+        if (nextIds.length === 0) {
+          state.pathsCollected += 1
+          all.push(nextAcc)
+        } else {
+          for (const id of nextIds) {
+            if (state.pathsCollected >= maxPaths) {
+              break
+            }
+            const nextNode = byId.get(id)
+            if (!nextNode || nextAcc.path.includes(id)) {
+              continue
+            }
+            const childResults = await walk(
+              byId,
+              nextNode,
+              nextAcc,
+              remainingDepth - 1,
+              maxPaths,
+              state,
+              resolveText,
+              askBooleanDecision,
+              askCounterBranch,
+              new Map(nextBooleanState)
+            )
+            all.push(...childResults)
+          }
+        }
+      }
+    }
+
+    return all
+  }
+
+  // Normal path handling for non-flirting nodes
   const nextAcc = applyNodeMetrics(acc, current, resolveText)
   const nextBooleanState = applyBooleanMutation(current, booleanState)
 
@@ -374,6 +525,32 @@ function applyNodeMetrics(
     hasThermostatCounter: acc.hasThermostatCounter || hasThermostatCounter,
     activatedBooleans: acc.activatedBooleans + countBooleanActivations(node),
     booleanMutations: { ...acc.booleanMutations, ...booleanMutation },
+    textLines: resolvedContent
+      ? [...acc.textLines, resolvedContent]
+      : acc.textLines,
+  }
+}
+
+function applyNodeMetricsWithoutBooleanMutation(
+  acc: PathResult,
+  node: DialogueNode,
+  resolveText: (value: string) => string
+): PathResult {
+  const thermostatFromCounterNode = extractThermostatDelta(node)
+  const hasThermostatCounter = isThermostatCounterNode(node)
+  const thermoFromTags = (node.OtherDialogueInfos ?? [])
+    .filter((info) => info.Tag.toLowerCase().includes('thermostat'))
+    .reduce((sum, info) => sum + info.Value, 0)
+
+  const resolvedContent = node.Content ? resolveText(node.Content) : undefined
+
+  return {
+    path: [...acc.path, node.Id],
+    chemistry: acc.chemistry + (node.ChemistryDelta ?? 0),
+    thermostat: acc.thermostat + thermoFromTags + thermostatFromCounterNode,
+    hasThermostatCounter: acc.hasThermostatCounter || hasThermostatCounter,
+    activatedBooleans: acc.activatedBooleans,
+    booleanMutations: acc.booleanMutations,
     textLines: resolvedContent
       ? [...acc.textLines, resolvedContent]
       : acc.textLines,
@@ -562,18 +739,60 @@ export function buildPreferredPathOptions(
     return options.length > 0 ? [options[0]] : []
   }
 
-  const seenLabels = new Set<string>()
-  const dedupedByLabel: PreferredPathOption[] = []
+  const mergedByOutcome = new Map<
+    string,
+    {
+      labels: string[]
+      option: PreferredPathOption
+    }
+  >()
 
   for (const option of options) {
-    if (seenLabels.has(option.label)) {
+    const booleanMutationKey = Object.entries(option.result.booleanMutations)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([name, value]) => `${name}:${value ? '1' : '0'}`)
+      .join('|')
+
+    const flirtingSignature = getFlirtingBooleanSignature(
+      option.result.booleanMutations
+    )
+
+    // Include skipped flirting node IDs to distinguish between "set" and "don't set" paths
+    const skippedNodesKey =
+      option.result.skippedFlirtingNodeIds &&
+      option.result.skippedFlirtingNodeIds.size > 0
+        ? 'skipped:' +
+          Array.from(option.result.skippedFlirtingNodeIds).sort().join(',')
+        : 'none-skipped'
+
+    const outcomeKey = [
+      option.result.chemistry,
+      option.result.thermostat,
+      option.result.hasThermostatCounter ? 'thermostat' : 'no-thermostat',
+      option.result.activatedBooleans,
+      flirtingSignature,
+      skippedNodesKey,
+      booleanMutationKey,
+    ].join('::')
+
+    const existing = mergedByOutcome.get(outcomeKey)
+    if (existing) {
+      if (!existing.labels.includes(option.label)) {
+        existing.labels.push(option.label)
+      }
       continue
     }
-    seenLabels.add(option.label)
-    dedupedByLabel.push(option)
+
+    mergedByOutcome.set(outcomeKey, {
+      labels: [option.label],
+      option,
+    })
   }
 
-  return dedupedByLabel
+  return [...mergedByOutcome.values()].map(({ labels, option }) => ({
+    ...option,
+    label: labels.join(' / '),
+  }))
 }
 
 export function formatPathMetrics(result: PathResult): string {
