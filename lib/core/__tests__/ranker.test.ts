@@ -111,7 +111,6 @@ describe('ranker', () => {
     it('should weight chemistry at 3x', () => {
       const result = createPathResult({ chemistry: 10 })
       const scoreWithThermo = overallScore(result, true)
-      const scoreWithoutThermo = overallScore(result, false)
       expect(scoreWithThermo).toBeGreaterThanOrEqual(30) // 10 * 3
     })
 
