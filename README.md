@@ -160,6 +160,10 @@ If you add a new chatroom id to CHATROOM_SOURCE_BY_ID, it will be included in st
 
 Contributions for tests, resilience, and API hardening are welcome.
 
+## Acknowledgements
+
+Special thanks to [browse.wf](https://browse.wf/) for making Warframe dialogue data easy to explore and reference. This project relies on browse.wf endpoints for chatroom graph and dictionary sources.
+
 ## License
 
 This project is licensed under the GNU General Public License v3.0 (GPL-3.0).
