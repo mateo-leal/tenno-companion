@@ -1,9 +1,18 @@
+import type { Metadata } from 'next'
 import { SystemChatLine } from '@/components/system-chat-line'
 import { Button } from '@/components/ui/button'
 import { Window } from '@/components/ui/window'
 import { WindowContent } from '@/components/ui/window-content'
 import { WindowTitlebar } from '@/components/ui/window-titlebar'
 import { Type } from '@/lib/types'
+
+export const metadata: Metadata = {
+  title: 'UI Test Page',
+  robots: {
+    index: false,
+    follow: false,
+  },
+}
 
 export default function Page() {
   return (

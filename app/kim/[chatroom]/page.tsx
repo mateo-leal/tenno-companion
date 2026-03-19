@@ -11,9 +11,31 @@ export async function generateMetadata({
   params,
 }: PageProps<'/kim/[chatroom]'>): Promise<Metadata> {
   const { chatroom } = await params
+  const source = CHATROOM_SOURCE_BY_ID[chatroom]
+
+  if (!source) {
+    return {
+      title: 'Chatroom Not Found',
+      robots: {
+        index: false,
+        follow: false,
+      },
+    }
+  }
+
+  const chatroomName = capitalizeFirstLetter(chatroom.replace('-', ' '))
 
   return {
-    title: `${capitalizeFirstLetter(chatroom)} | KIM Pathfinder`,
+    title: `${chatroomName} KIM Dialogue`,
+    description: `Simulate and analyze ${chatroomName} KIM dialogue paths with chemistry, thermostat, and boolean state outcomes.`,
+    alternates: {
+      canonical: `/kim/${chatroom}`,
+    },
+    openGraph: {
+      title: `${chatroomName} KIM Dialogue`,
+      description: `Simulate and analyze ${chatroomName} KIM dialogue paths with chemistry, thermostat, and boolean state outcomes.`,
+      url: `/kim/${chatroom}`,
+    },
   }
 }
 
