@@ -22,6 +22,7 @@ export function ChatLine({ line }: { line: TranscriptLine }) {
         width={55}
         height={55}
         className="border-2 border-primary/50"
+        loading="lazy"
       />
       <div className="flex flex-col">
         <span className="text-primary text-xl capitalize">{line.user}:</span>

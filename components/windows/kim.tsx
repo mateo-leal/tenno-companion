@@ -20,6 +20,7 @@ export function KimWindow() {
             width={70}
             height={70}
             className="border-4 border-primary/70"
+            loading="eager"
           />
           <div>
             <p className="font-title text-xl tracking-wide uppercase">
