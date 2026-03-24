@@ -172,6 +172,50 @@ describe('formatter', () => {
       expect(lines[0].user).toBe('ResolvedSpeaker')
     })
 
+    it('should interpret literal \\r\\n escape sequences as newlines', () => {
+      byId.set(1, {
+        type: Type.DialogueNode,
+        Id: 1,
+        Content: 'First line\\r\\nSecond line',
+      })
+      const result = createPathResult({ path: [1] })
+      const lines = formatPathAsChat(result, byId, 'Alice', resolveText)
+      expect(lines[0].content).toBe('First line\nSecond line')
+    })
+
+    it('should interpret literal \\n escape sequences as newlines', () => {
+      byId.set(1, {
+        type: Type.DialogueNode,
+        Id: 1,
+        Content: 'Line one\\nLine two\\nLine three',
+      })
+      const result = createPathResult({ path: [1] })
+      const lines = formatPathAsChat(result, byId, 'Alice', resolveText)
+      expect(lines[0].content).toBe('Line one\nLine two\nLine three')
+    })
+
+    it('should normalize whitespace within each line independently', () => {
+      byId.set(1, {
+        type: Type.DialogueNode,
+        Id: 1,
+        Content: '  Multi   spaced  \\r\\n  second  line  ',
+      })
+      const result = createPathResult({ path: [1] })
+      const lines = formatPathAsChat(result, byId, 'Alice', resolveText)
+      expect(lines[0].content).toBe('Multi spaced\nsecond line')
+    })
+
+    it('should preserve emoji tokens for renderer-level replacement', () => {
+      byId.set(1, {
+        type: Type.DialogueNode,
+        Id: 1,
+        Content: 'I love you <RETRO_EMOJI_HEART>',
+      })
+      const result = createPathResult({ path: [1] })
+      const lines = formatPathAsChat(result, byId, 'Alice', resolveText)
+      expect(lines[0].content).toBe('I love you <RETRO_EMOJI_HEART>')
+    })
+
     it('should skip nodes not in byId map', () => {
       byId.set(1, { type: Type.DialogueNode, Id: 1, Content: 'Present' })
       const result = createPathResult({ path: [1, 999] }) // 999 doesn't exist
