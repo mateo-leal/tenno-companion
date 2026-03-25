@@ -5,7 +5,7 @@ import {
   BOOLEAN_CHECK_TYPES,
 } from './pathfinder-types'
 import { getBooleanName } from './node-utils'
-import { isFlirtingBoolean } from './boolean-utils'
+import { isAvoidableBoolean, isFlirtingBoolean } from './boolean-utils'
 import {
   isThermostatCounterNode,
   extractThermostatDelta,
@@ -21,6 +21,7 @@ export async function explorePaths(
     thermostat: 0,
     hasThermostatCounter: false,
     activatedBooleans: 0,
+    avoidedBooleanActivations: 0,
     booleanMutations: {},
     textLines: [],
     skippedFlirtingNodeIds: new Set<number>(),
@@ -67,10 +68,13 @@ async function walk(
     (current.type === Type.SetBooleanDialogueNode ||
       current.type === Type.ResetBooleanDialogueNode) &&
     isFlirtingBoolean(booleanName)
+  const isAvoidableBoolSetNode =
+    current.type === Type.SetBooleanDialogueNode &&
+    isAvoidableBoolean(booleanName)
 
-  if (isFlirtingBoolSetNode) {
+  if (isFlirtingBoolSetNode || isAvoidableBoolSetNode) {
     // Create two branches: one where we set the boolean, one where we don't
-    // Do NOT use askBooleanDecision here—we always explore both paths
+    // Do NOT use askBooleanDecision here—we always explore both paths when possible
     const all: PathResult[] = []
 
     // Branch 1: Set the boolean (normal path)
@@ -128,9 +132,11 @@ async function walk(
         current,
         resolveText
       )
-      // Track that we skipped this flirting node
-      nextAcc.skippedFlirtingNodeIds = new Set(acc.skippedFlirtingNodeIds)
-      nextAcc.skippedFlirtingNodeIds.add(current.Id)
+      if (isFlirtingBoolSetNode) {
+        // Track that we skipped this flirting node
+        nextAcc.skippedFlirtingNodeIds = new Set(acc.skippedFlirtingNodeIds)
+        nextAcc.skippedFlirtingNodeIds.add(current.Id)
+      }
 
       const nextBooleanState = new Map(booleanState) // Don't apply mutation
 
@@ -254,6 +260,11 @@ export function applyNodeMetrics(
   const resolvedContent = node.Content ? resolveText(node.Content) : undefined
 
   const booleanMutation: Record<string, boolean> = {}
+  const avoidedBooleanActivationDelta =
+    node.type === Type.SetBooleanDialogueNode &&
+    isAvoidableBoolean(getBooleanName(node))
+      ? 1
+      : 0
   if (node.type === Type.SetBooleanDialogueNode) {
     booleanMutation[getBooleanName(node)] = true
   } else if (node.type === Type.ResetBooleanDialogueNode) {
@@ -266,6 +277,8 @@ export function applyNodeMetrics(
     thermostat: acc.thermostat + thermoFromTags + thermostatFromCounterNode,
     hasThermostatCounter: acc.hasThermostatCounter || hasThermostatCounter,
     activatedBooleans: acc.activatedBooleans + countBooleanActivations(node),
+    avoidedBooleanActivations:
+      acc.avoidedBooleanActivations + avoidedBooleanActivationDelta,
     booleanMutations: { ...acc.booleanMutations, ...booleanMutation },
     skippedFlirtingNodeIds: new Set(acc.skippedFlirtingNodeIds),
     textLines: resolvedContent
@@ -293,6 +306,7 @@ export function applyNodeMetricsWithoutBooleanMutation(
     thermostat: acc.thermostat + thermoFromTags + thermostatFromCounterNode,
     hasThermostatCounter: acc.hasThermostatCounter || hasThermostatCounter,
     activatedBooleans: acc.activatedBooleans,
+    avoidedBooleanActivations: acc.avoidedBooleanActivations,
     booleanMutations: acc.booleanMutations,
     skippedFlirtingNodeIds: new Set(acc.skippedFlirtingNodeIds),
     textLines: resolvedContent

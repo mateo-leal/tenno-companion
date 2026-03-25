@@ -1,9 +1,22 @@
 import {
+  isAvoidableBoolean,
   isFlirtingBoolean,
   getFlirtingBooleanSignature,
 } from '../boolean-utils'
 
 describe('boolean-utils', () => {
+  describe('isAvoidableBoolean', () => {
+    it('should detect explicitly avoidable booleans', () => {
+      expect(isAvoidableBoolean('LyonSuspicious')).toBe(true)
+      expect(isAvoidableBoolean('DrifterLiar')).toBe(true)
+    })
+
+    it('should return false for other booleans', () => {
+      expect(isAvoidableBoolean('AoiDating')).toBe(false)
+      expect(isAvoidableBoolean('QuestCompleted')).toBe(false)
+    })
+  })
+
   describe('isFlirtingBoolean', () => {
     it('should detect "Flirt" in boolean names', () => {
       expect(isFlirtingBoolean('LettieFlirt')).toBe(true)

@@ -6,6 +6,7 @@ export type PathResult = {
   thermostat: number
   hasThermostatCounter: boolean
   activatedBooleans: number
+  avoidedBooleanActivations: number
   booleanMutations: Record<string, boolean>
   textLines: string[]
   skippedFlirtingNodeIds?: Set<number>

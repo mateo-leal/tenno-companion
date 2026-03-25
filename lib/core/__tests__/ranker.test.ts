@@ -14,6 +14,7 @@ describe('ranker', () => {
     thermostat: 0,
     hasThermostatCounter: false,
     activatedBooleans: 0,
+    avoidedBooleanActivations: 0,
     booleanMutations: {},
     textLines: [],
     ...overrides,
@@ -121,6 +122,28 @@ describe('ranker', () => {
       const summary = summarizeResults(results)
       expect(summary.byOverall.path).toHaveLength(2)
     })
+
+    it('should prefer paths with fewer avoided boolean activations on ties', () => {
+      const results = [
+        createPathResult({
+          chemistry: 10,
+          activatedBooleans: 2,
+          avoidedBooleanActivations: 1,
+          path: [1, 2, 3],
+        }),
+        createPathResult({
+          chemistry: 10,
+          activatedBooleans: 2,
+          avoidedBooleanActivations: 0,
+          path: [1, 2, 3, 4],
+        }),
+      ]
+
+      const summary = summarizeResults(results)
+      expect(summary.byOverall.avoidedBooleanActivations).toBe(0)
+      expect(summary.byChemistry.avoidedBooleanActivations).toBe(0)
+      expect(summary.byBooleans.avoidedBooleanActivations).toBe(0)
+    })
   })
 
   describe('overallScore', () => {
@@ -169,6 +192,18 @@ describe('ranker', () => {
       })
       const score = overallScore(result, true)
       expect(score).toBe(10 * 3 + 5 * 2 + 3) // 43
+    })
+
+    it('should penalize avoided boolean activations', () => {
+      const result = createPathResult({
+        chemistry: 10,
+        thermostat: 5,
+        activatedBooleans: 3,
+        avoidedBooleanActivations: 1,
+        hasThermostatCounter: true,
+      })
+      const score = overallScore(result, true)
+      expect(score).toBe(41)
     })
   })
 

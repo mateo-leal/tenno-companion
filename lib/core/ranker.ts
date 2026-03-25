@@ -6,16 +6,35 @@ import {
 import { getFlirtingBooleanSignature } from './boolean-utils'
 
 export function summarizeResults(results: PathResult[]): RankedPaths {
-  const byChemistry = [...results].sort((a, b) => b.chemistry - a.chemistry)[0]
+  const byChemistry = [...results].sort((a, b) => {
+    const chemistryDiff = b.chemistry - a.chemistry
+    if (chemistryDiff !== 0) {
+      return chemistryDiff
+    }
+
+    return comparePreferredPathTieBreakers(a, b)
+  })[0]
   const thermostatEnabled = results.some(
     (result) => result.hasThermostatCounter
   )
   const byThermostat = thermostatEnabled
-    ? [...results].sort((a, b) => b.thermostat - a.thermostat)[0]
+    ? [...results].sort((a, b) => {
+        const thermostatDiff = b.thermostat - a.thermostat
+        if (thermostatDiff !== 0) {
+          return thermostatDiff
+        }
+
+        return comparePreferredPathTieBreakers(a, b)
+      })[0]
     : undefined
-  const byBooleans = [...results].sort(
-    (a, b) => b.activatedBooleans - a.activatedBooleans
-  )[0]
+  const byBooleans = [...results].sort((a, b) => {
+    const booleanDiff = b.activatedBooleans - a.activatedBooleans
+    if (booleanDiff !== 0) {
+      return booleanDiff
+    }
+
+    return comparePreferredPathTieBreakers(a, b)
+  })[0]
   const maxActivatedBooleans = byBooleans.activatedBooleans
   const byBooleansTies = results.filter(
     (result) => result.activatedBooleans === maxActivatedBooleans
@@ -27,7 +46,7 @@ export function summarizeResults(results: PathResult[]): RankedPaths {
       return scoreDiff
     }
 
-    return a.path.length - b.path.length
+    return comparePreferredPathTieBreakers(a, b)
   })[0]
 
   return {
@@ -45,7 +64,26 @@ export function overallScore(
   includeThermostat: boolean
 ): number {
   const thermostatScore = includeThermostat ? result.thermostat * 2 : 0
-  return result.chemistry * 3 + thermostatScore + result.activatedBooleans
+  const avoidedPenalty = result.avoidedBooleanActivations * 2
+  return (
+    result.chemistry * 3 +
+    thermostatScore +
+    result.activatedBooleans -
+    avoidedPenalty
+  )
+}
+
+function comparePreferredPathTieBreakers(
+  left: PathResult,
+  right: PathResult
+): number {
+  const avoidedDiff =
+    left.avoidedBooleanActivations - right.avoidedBooleanActivations
+  if (avoidedDiff !== 0) {
+    return avoidedDiff
+  }
+
+  return left.path.length - right.path.length
 }
 
 export function buildPreferredPathOptions(
@@ -101,6 +139,7 @@ export function buildPreferredPathOptions(
       option.result.thermostat,
       option.result.hasThermostatCounter ? 'thermostat' : 'no-thermostat',
       option.result.activatedBooleans,
+      option.result.avoidedBooleanActivations,
       flirtingSignature,
       skippedNodesKey,
       booleanMutationKey,
