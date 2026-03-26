@@ -1,0 +1,70 @@
+{
+  "ui": {
+    "hide": "Hide",
+    "expand": "Expand",
+    "clear": "Clear"
+  },
+  "checklist": {
+    "title": "Checklist",
+    "doneCount": "{count}/{total} done",
+    "locations": {
+      "title": "Location",
+      "baseOfOperations": "Base of Operations",
+      "anyRelay": "Any Relay",
+      "cetus": "Cetus, Earth",
+      "fortuna": "Fortuna, Venus",
+      "necralisk": "Necralisk, Deimos",
+      "chrysalith": "Chrysalith, Zariman",
+      "sanctumAnatomica": "Sanctum Anatomica, Deimos",
+      "hollvaniaCentralMall": "Höllvania Central Mall"
+    },
+    "terminal": {
+      "title": "Terminal",
+      "foundry": "Foundry",
+      "syndicates": "Syndicates",
+      "navigation": "Navigation"
+    },
+    "prerequisites": {
+      "title": "Prerequisite",
+      "sayasVigil": "Saya's Vigil",
+      "theWarWithin": "The War Within",
+      "voxSolaris": "Vox Solaris",
+      "heartOfDeimos": "Heart of Deimos",
+      "angelsOfTheZariman": "Angels of the Zariman",
+      "whispersInTheWalls": "Whispers in the Walls",
+      "theHex": "The Hex",
+      "theSecondDream": "The Second Dream",
+      "steelPath": "Steel Path Unlocked"
+    },
+    "daily": {
+      "title": "Daily",
+      "description": "Resets in {time}",
+      "tasks": {
+        "login": "Log in and claim daily rewards",
+        "craftForma": "Craft Forma",
+        "craftOther": "Craft other foundry resources",
+        "factionSyndicates": "Faction Syndicates Standing",
+        "factionSyndicatesInfo": "Complete any mission",
+        "worldSyndicates": "World Syndicates Standing",
+        "cephalonSimaris": "Cephalon Simaris",
+        "ostron": "Ostron",
+        "theQuills": "The Quills",
+        "solarisUnited": "Solaris United",
+        "voxSolaris": "Vox Solaris",
+        "ventkids": "Ventkids",
+        "entrati": "Entrati",
+        "necraloid": "Necraloid",
+        "theHoldfasts": "The Holdfasts",
+        "cavia": "Cavia",
+        "theHex": "The Hex"
+      }
+    },
+    "weekly": {
+      "title": "Weekly",
+      "description": "Resets in {time}"
+    },
+    "other": {
+      "title": "Other"
+    }
+  }
+}
