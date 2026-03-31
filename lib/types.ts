@@ -78,6 +78,7 @@ export type ChecklistTask = {
   prerequisite?: string
   npc?: string
   checkable?: boolean
+  resets?: 'daily' | 'weekly' | 'baro'
   subitems?: ChecklistTask[]
 }
 

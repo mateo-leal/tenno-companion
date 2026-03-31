@@ -109,6 +109,11 @@ export function ChecklistSectionCard({
                   <p className="text-sm leading-tight text-foreground">
                     {t(task.title)}
                   </p>
+                  {task.info && (
+                    <p className="text-xs text-muted-foreground">
+                      {t(task.info)}
+                    </p>
+                  )}
                 </span>
                 <span className="text-xs text-primary">
                   {isExpanded ? t('ui.hide') : t('ui.expand')}
