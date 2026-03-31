@@ -371,5 +371,45 @@ describe('ranker', () => {
       // Different paths should remain distinct
       expect(merged).toHaveLength(2)
     })
+
+    it('should simplify redundant merged labels when all three best categories match', () => {
+      const options = [
+        {
+          label: 'Best chemistry path (with ArthurConfessedFeels)',
+          result: createPathResult({
+            path: [1, 2, 3],
+            chemistry: 20,
+            activatedBooleans: 2,
+            booleanMutations: { ArthurConfessedFeels: true },
+          }),
+        },
+        {
+          label: 'Most boolean activations (with ArthurConfessedFeels)',
+          result: createPathResult({
+            path: [1, 4, 5],
+            chemistry: 20,
+            activatedBooleans: 2,
+            booleanMutations: { ArthurConfessedFeels: true },
+          }),
+        },
+        {
+          label: 'Best overall path (with ArthurConfessedFeels)',
+          result: createPathResult({
+            path: [1, 6, 7],
+            chemistry: 20,
+            activatedBooleans: 2,
+            booleanMutations: { ArthurConfessedFeels: true },
+          }),
+        },
+      ]
+      const merged = buildPreferredPathOptions(options)
+      expect(merged).toHaveLength(1)
+      // Should only include "Best overall path" when all three categories are equivalent
+      expect(merged[0].label).toBe(
+        'Best overall path (with ArthurConfessedFeels)'
+      )
+      expect(merged[0].label).not.toContain('Best chemistry path')
+      expect(merged[0].label).not.toContain('Most boolean activations')
+    })
   })
 })

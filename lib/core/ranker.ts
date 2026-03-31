@@ -86,6 +86,25 @@ function comparePreferredPathTieBreakers(
   return left.path.length - right.path.length
 }
 
+function simplifyMergedLabels(labels: string[]): string[] {
+  // If we have all three "best" categories, keep only "Best overall path"
+  const hasChemistry = labels.some((label) =>
+    label.startsWith('Best chemistry path')
+  )
+  const hasBooleans = labels.some((label) =>
+    label.startsWith('Most boolean activations')
+  )
+  const hasOverall = labels.some((label) =>
+    label.startsWith('Best overall path')
+  )
+
+  if (hasChemistry && hasBooleans && hasOverall) {
+    return labels.filter((label) => label.startsWith('Best overall path'))
+  }
+
+  return labels
+}
+
 export function buildPreferredPathOptions(
   options: PreferredPathOption[]
 ): PreferredPathOption[] {
@@ -150,6 +169,6 @@ export function buildPreferredPathOptions(
 
   return [...mergedByOutcome.values()].map(({ labels, option }) => ({
     ...option,
-    label: labels.join(' / '),
+    label: simplifyMergedLabels(labels).join(' / '),
   }))
 }
