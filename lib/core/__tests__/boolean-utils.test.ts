@@ -40,6 +40,11 @@ describe('boolean-utils', () => {
       expect(isFlirtingBoolean('nodate')).toBe(true)
     })
 
+    it('should detect explicitly listed flirting booleans', () => {
+      expect(isFlirtingBoolean('QuincyFlirtNo')).toBe(true)
+      expect(isFlirtingBoolean('ArthurConfessedFeels')).toBe(true)
+    })
+
     it('should return false for non-flirting booleans', () => {
       expect(isFlirtingBoolean('AoiBoring')).toBe(false)
       expect(isFlirtingBoolean('ArthurFamily')).toBe(false)
@@ -51,6 +56,12 @@ describe('boolean-utils', () => {
       expect(isFlirtingBoolean('FLiRt')).toBe(true)
       expect(isFlirtingBoolean('DATING')).toBe(true)
       expect(isFlirtingBoolean('DaTiNg')).toBe(true)
+      expect(isFlirtingBoolean('arthurconfessedfeels')).toBe(true)
+    })
+
+    it('should trim surrounding whitespace before matching', () => {
+      expect(isFlirtingBoolean('  ArthurConfessedFeels  ')).toBe(true)
+      expect(isFlirtingBoolean('   ')).toBe(false)
     })
   })
 

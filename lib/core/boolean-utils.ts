@@ -1,16 +1,24 @@
 const AVOIDABLE_BOOLEAN_NAMES = new Set(['LyonSuspicious', 'DrifterLiar'])
 
+const FLIRTING_BOOLEAN_KEYWORDS = ['Flirt', 'Dating', 'NoFlirt', 'NoDate']
+
+// Exact names for flirting-related booleans that do not follow keyword patterns.
+const FLIRTING_BOOLEAN_EXACT_NAMES = new Set(
+  ['QuincyFlirtNo', 'ArthurConfessedFeels'].map((name) => name.toLowerCase())
+)
+
 export function isFlirtingBoolean(booleanName: string): boolean {
-  const keywords = [
-    'Flirt',
-    'Dating',
-    'NoFlirt',
-    'NoDate',
-    'QuincyFlirtNo',
-    'ArthurConfessedFeels',
-  ]
-  return keywords.some((keyword) =>
-    booleanName.toLowerCase().includes(keyword.toLowerCase())
+  const normalizedName = booleanName.trim().toLowerCase()
+  if (!normalizedName) {
+    return false
+  }
+
+  if (FLIRTING_BOOLEAN_EXACT_NAMES.has(normalizedName)) {
+    return true
+  }
+
+  return FLIRTING_BOOLEAN_KEYWORDS.some((keyword) =>
+    normalizedName.includes(keyword.toLowerCase())
   )
 }
 
