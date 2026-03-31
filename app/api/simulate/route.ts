@@ -213,10 +213,13 @@ export async function GET(request: Request) {
         const tieSuffix =
           distinctBooleanTieResults.length > 1 ? ` #${index + 1}` : ''
 
-        candidates.push({
-          label: `Most boolean activations${tieSuffix}${suffix}`,
-          result,
-        })
+        // Only add "Most boolean activations" if there are actually activations
+        if (result.activatedBooleans > 0) {
+          candidates.push({
+            label: `Most boolean activations${tieSuffix}${suffix}`,
+            result,
+          })
+        }
       })
       candidates.push({
         label: `Best overall path${suffix}`,
