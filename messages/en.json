@@ -207,5 +207,16 @@
     "loading": "Loading items...",
     "loadFailed": "Could not load mastery data right now.",
     "emptyState": "No items match your current filter."
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "githubRepository": "GitHub Repository",
+    "about": {
+      "title": "About",
+      "description": "Tenno Companion is a fan-made tool designed to help players track their progress and manage their in-game tasks.",
+      "legalDisclaimer": "This site is not affiliated with Digital Extremes. Warframe and the Warframe logo are trademarks of Digital Extremes Ltd.",
+      "browseWfCredits": "Data and media resources are provided by <link>browse.wf</link>, a community-driven Warframe database and resource site."
+    }
   }
 }

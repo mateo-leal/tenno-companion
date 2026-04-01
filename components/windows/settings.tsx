@@ -7,7 +7,7 @@ import { Window } from '../ui/window'
 import { WindowContent } from '../ui/window-content'
 import { WindowTitlebar } from '../ui/window-titlebar'
 import { Link, usePathname, useRouter } from '@/i18n/navigation'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 type SettingsPortalProps = {
   isOpen: boolean
@@ -18,6 +18,7 @@ export function SettingsPortal({ isOpen, onClose }: SettingsPortalProps) {
   const locale = useLocale()
   const router = useRouter()
   const pathname = usePathname()
+  const t = useTranslations('settings')
 
   if (!isOpen) {
     return null
@@ -31,7 +32,7 @@ export function SettingsPortal({ isOpen, onClose }: SettingsPortalProps) {
     <section className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-3">
       <Window className="pointer-events-auto w-full max-w-sm">
         <WindowTitlebar>
-          <p>Settings</p>
+          <p>{t('title')}</p>
           <CloseButton onClick={onClose} />
         </WindowTitlebar>
         <WindowContent>
@@ -39,7 +40,7 @@ export function SettingsPortal({ isOpen, onClose }: SettingsPortalProps) {
             htmlFor="global-language-selector"
             className="mb-1 block text-xs uppercase tracking-wide"
           >
-            Language
+            {t('language')}
           </label>
           <select
             id="global-language-selector"
@@ -62,28 +63,28 @@ export function SettingsPortal({ isOpen, onClose }: SettingsPortalProps) {
             rel="noopener noreferrer"
             className="mt-3 inline-flex w-full items-center justify-center border border-muted-primary bg-background px-2 py-1.5 text-sm transition hover:bg-muted-primary/10"
           >
-            GitHub Repository
+            {t('githubRepository')}
           </Link>
 
           <section className="mt-4 border border-muted-primary/70 bg-background/50 p-2 text-xs leading-relaxed text-muted-foreground">
             <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-foreground">
-              About
+              {t('about.title')}
             </p>
-            <p>
-              This site is not affiliated with Digital Extremes. Warframe and
-              the Warframe logo are trademarks of Digital Extremes Ltd.
-            </p>
+            <p>{t('about.description')}</p>
+            <p className="mt-2">{t('about.legalDisclaimer')}</p>
             <p className="mt-2">
-              Data and media resources are provided by{' '}
-              <a
-                href="https://browse.wf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2 hover:text-foreground"
-              >
-                browse.wf
-              </a>
-              .
+              {t.rich('about.browseWfCredits', {
+                link: (chunks) => (
+                  <a
+                    href="https://browse.wf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-2 hover:text-foreground"
+                  >
+                    {chunks}
+                  </a>
+                ),
+              })}
             </p>
           </section>
         </WindowContent>

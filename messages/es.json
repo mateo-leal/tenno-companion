@@ -207,5 +207,16 @@
     "loading": "Cargando elementos...",
     "loadFailed": "No se pudo cargar los datos de maestría en este momento.",
     "emptyState": "Ningún elemento coincide con tu filtro actual."
+  },
+  "settings": {
+    "title": "Configuración",
+    "language": "Idioma",
+    "githubRepository": "Repositorio de GitHub",
+    "about": {
+      "title": "Acerca de",
+      "description": "Tenno Companion es una herramienta creada por fans diseñada para ayudar a los jugadores a seguir su progreso y gestionar sus tareas dentro del juego.",
+      "legalDisclaimer": "Este sitio no está afiliado con Digital Extremes. Warframe y el logo de Warframe son marcas registradas de Digital Extremes Ltd.",
+      "browseWfCredits": "Los datos y recursos multimedia son proporcionados por <link>browse.wf</link>, una base de datos y sitio de recursos de Warframe gestionado por la comunidad."
+    }
   }
 }
