@@ -4,6 +4,7 @@ export type PublicExportWeapon = {
   productCategory?: string
   masteryReq?: number
   partType?: string
+  maxLevelCap?: number
 }
 
 export type PublicExportWarframe = {
@@ -37,15 +38,19 @@ export type PublicExportDictionary = Record<string, string>
 export type PublicExportMap<T> = Record<string, T>
 
 const EXPORT_WEAPONS_URL =
-  'https://browse.wf/warframe-public-export-plus/ExportWeapons.json'
+  // using github for now since browse.wf is outdated and doesn't have the latest export, but ideally we should switch back to browse.wf once it's updated
+  // 'https://browse.wf/warframe-public-export-plus/ExportWeapons.json'
+  'https://raw.githubusercontent.com/calamity-inc/warframe-public-export-plus/refs/heads/senpai/ExportWeapons.json'
 const EXPORT_WARFRAMES_URL =
-  'https://browse.wf/warframe-public-export-plus/ExportWarframes.json'
+  // 'https://browse.wf/warframe-public-export-plus/ExportWarframes.json'
+  'https://raw.githubusercontent.com/calamity-inc/warframe-public-export-plus/refs/heads/senpai/ExportWarframes.json'
 const EXPORT_SENTINELS_URL =
   'https://browse.wf/warframe-public-export-plus/ExportSentinels.json'
 const EXPORT_INTRINSICS_URL =
   'https://browse.wf/warframe-public-export-plus/ExportIntrinsics.json'
 const EXPORT_DICT_BASE_URL =
-  'https://browse.wf/warframe-public-export-plus/dict'
+  // 'https://browse.wf/warframe-public-export-plus/dict'
+  'https://raw.githubusercontent.com/calamity-inc/warframe-public-export-plus/refs/heads/senpai/dict'
 const DEFAULT_DICT_LOCALE = 'en'
 
 async function fetchJson<T>(url: string): Promise<T> {

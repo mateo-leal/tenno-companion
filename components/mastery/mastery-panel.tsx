@@ -165,9 +165,16 @@ export function MasteryPanel({
     )
   }, [activeCategory, masteryData, query, resolvedActiveSubcategory])
 
+  type SubcategoryStats = {
+    done: number
+    total: number
+    masteryPointsGained: number
+    masteryPointsTotal: number
+  }
+
   const categoryStats = useMemo(() => {
     if (!masteryData) {
-      return {} as Record<string, { done: number; total: number }>
+      return {} as Record<string, SubcategoryStats>
     }
 
     return Object.fromEntries(
@@ -178,11 +185,28 @@ export function MasteryPanel({
             (count, item) => count + (progress[item.id] ? 1 : 0),
             0
           )
+          const masteryPointsGained = items.reduce(
+            (sum, item) =>
+              sum + (progress[item.id] ? (item.masteryPoints ?? 0) : 0),
+            0
+          )
+          const masteryPointsTotal = items.reduce(
+            (sum, item) => sum + (item.masteryPoints ?? 0),
+            0
+          )
 
-          return [`${category}:${subcategory}`, { done, total: items.length }]
+          return [
+            `${category}:${subcategory}`,
+            {
+              done,
+              total: items.length,
+              masteryPointsGained,
+              masteryPointsTotal,
+            },
+          ]
         })
       )
-    ) as Record<string, { done: number; total: number }>
+    ) as Record<string, SubcategoryStats>
   }, [categorySubcategories, masteryData, progress])
 
   function toggleItem(itemId: string) {
@@ -255,11 +279,13 @@ export function MasteryPanel({
                       (subcategory) => {
                         const statKey = `${category}:${subcategory}`
                         const stats = (
-                          categoryStats as Record<
-                            string,
-                            { done: number; total: number }
-                          >
-                        )[statKey] ?? { done: 0, total: 0 }
+                          categoryStats as Record<string, SubcategoryStats>
+                        )[statKey] ?? {
+                          done: 0,
+                          total: 0,
+                          masteryPointsGained: 0,
+                          masteryPointsTotal: 0,
+                        }
                         const isActive =
                           activeCategory === category &&
                           activeSubcategory === subcategory
@@ -280,15 +306,23 @@ export function MasteryPanel({
                                 : 'text-foreground hover:bg-muted-primary/10',
                             ].join(' ')}
                           >
-                            <p className="text-xs leading-tight">
+                            <p className="text-sm leading-tight">
                               {resolveSubcategoryLabel(category, subcategory)}
                             </p>
-                            <p className="text-[10px] opacity-60">
+                            <p className="text-xs opacity-60">
                               {t('doneCount', {
                                 count: stats.done,
                                 total: stats.total,
                               })}
                             </p>
+                            {stats.masteryPointsTotal > 0 && (
+                              <p className="text-xs opacity-60">
+                                {t('masteryPointsProgress', {
+                                  gained: stats.masteryPointsGained,
+                                  total: stats.masteryPointsTotal,
+                                })}
+                              </p>
+                            )}
                           </button>
                         )
                       }
@@ -388,20 +422,38 @@ export function MasteryPanel({
                     <span className="min-w-0 flex-1">
                       <span
                         className={[
-                          'block text-sm leading-tight',
+                          'flex leading-tight gap-1',
                           checked
                             ? 'text-muted-foreground line-through'
                             : 'text-foreground',
                         ].join(' ')}
                       >
                         {resolveItemLabel(item)}
+                        {typeof item.masteryReq === 'number' &&
+                          item.masteryReq > 0 && (
+                            <span className="flex text-sm text-muted-foreground">
+                              <Image
+                                src="https://browse.wf/Lotus/Interface/Icons/MasteryRankIconSmall.png"
+                                height={20}
+                                width={20}
+                                alt={t('masteryRequirement')}
+                                title={t('masteryRequirement')}
+                              />
+                              {item.masteryReq}
+                            </span>
+                          )}
                       </span>
-                      {typeof item.masteryReq === 'number' ? (
-                        <span className="text-xs text-muted-foreground">
-                          {t('masteryRequirement', { mr: item.masteryReq })}
-                        </span>
-                      ) : null}
                     </span>
+                    {typeof item.masteryPoints === 'number' && (
+                      <span
+                        className={[
+                          'shrink-0 text-xs font-medium tabular-nums',
+                          checked ? 'text-success' : 'text-muted-foreground',
+                        ].join(' ')}
+                      >
+                        {t('masteryPoints', { points: item.masteryPoints })}
+                      </span>
+                    )}
                   </button>
                 )
               })}

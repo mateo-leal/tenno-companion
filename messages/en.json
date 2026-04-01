@@ -31,20 +31,20 @@
     "helminth": "Helminth"
   },
   "quests": {
-    "sayasVigil": "Saya's Vigil",
-    "theWarWithin": "The War Within",
     "voxSolaris": "Vox Solaris",
     "heartOfDeimos": "Heart of Deimos",
+    "theSecondDream": "The Second Dream",
+    "theWarWithin": "The War Within",
+    "risingTide": "Rising Tide",
+    "theChainsOfHarrow": "The Chains of Harrow",
+    "theNewWar": "The New War",
+    "theDuviriParadox": "The Duviri Paradox",
     "angelsOfTheZariman": "Angels of the Zariman",
     "whispersInTheWalls": "Whispers in the Walls",
     "theHex": "The Hex",
-    "theSecondDream": "The Second Dream",
-    "risingTide": "Rising Tide",
     "theOldPeace": "The Old Peace",
-    "aManOfFewWords": "A Man of Few Words",
-    "theNewWar": "The New War",
-    "theDuviriParadox": "The Duviri Paradox",
-    "theChainsOfHarrow": "The Chains of Harrow"
+    "sayasVigil": "Saya's Vigil",
+    "aManOfFewWords": "A Man of Few Words"
   },
   "prerequisites": {
     "steelPath": "Steel Path Unlocked",
@@ -197,11 +197,13 @@
       "kDrive": "K-Drive"
     },
     "doneCount": "{count}/{total} done",
+    "masteryPointsProgress": "{gained, number}/{total, number} MP",
+    "masteryPoints": "{points, number} MP",
     "searchPlaceholder": "Search by name...",
     "clearCategory": "Clear category",
     "activeCategoryCount": "{count} items in {category}",
     "rankPrefix": "Rank {rank}: {item}",
-    "masteryRequirement": "Mastery Rank {mr}",
+    "masteryRequirement": "Mastery Rank",
     "loading": "Loading items...",
     "loadFailed": "Could not load mastery data right now.",
     "emptyState": "No items match your current filter."

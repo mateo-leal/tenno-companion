@@ -16,6 +16,7 @@ export type MasteryItem = {
   iconUrl?: string
   masteryReq?: number
   rankNumber?: number
+  masteryPoints?: number
 }
 
 type MasteryByCategory = {
@@ -34,9 +35,38 @@ export type MasteryData = MasteryByCategory & {
 export const CATEGORY_ORDER: MasteryCategory[] = [
   'itemCompletion',
   'railjackIntrinsic',
-  'drifterIntrinsic',
-  'starchartCompletion',
+  // 'drifterIntrinsic',
+  // 'starchartCompletion',
 ]
+
+// Items with 6000 MP
+const HIGH_MASTERY_SUBCATEGORIES = new Set([
+  'warframe',
+  'sentinel',
+  'moa',
+  'hound',
+  'beast',
+  'archwing',
+  'kDrive',
+])
+
+const RAILJACK_INTRINSIC_MASTERY_POINTS = 1500
+
+function getItemMasteryPoints(
+  subcategory: string,
+  maxLevelCap?: number
+): number {
+  if (subcategory === 'necramech') {
+    return 8000
+  }
+  if (HIGH_MASTERY_SUBCATEGORIES.has(subcategory)) {
+    return 6000
+  }
+  if (maxLevelCap === 40) {
+    return 4000
+  }
+  return 3000
+}
 
 function toSortedItems(entries: MasteryItem[]): MasteryItem[] {
   return entries.sort((a, b) =>
@@ -62,6 +92,7 @@ export function buildMasteryData(
       productCategory?: string
       masteryReq?: number
       partType?: string
+      maxLevelCap?: number
     }
   >,
   warframesMap: Record<
@@ -134,6 +165,7 @@ export function buildMasteryData(
         id: `intrinsic:${intrinsicKey}`,
         name: schoolName,
         iconUrl: buildIconUrl(intrinsic.icon),
+        masteryPoints: RAILJACK_INTRINSIC_MASTERY_POINTS,
       })
       continue
     }
@@ -148,6 +180,7 @@ export function buildMasteryData(
         name: rankName,
         iconUrl: buildIconUrl(intrinsic.icon),
         rankNumber,
+        masteryPoints: RAILJACK_INTRINSIC_MASTERY_POINTS,
       })
     }
   }
@@ -174,10 +207,14 @@ export function buildMasteryData(
       name: resolveDictName(dict, frame.name, fallback),
       iconUrl: buildIconUrl(frame.icon),
       masteryReq: frame.masteryReq,
+      masteryPoints: getItemMasteryPoints(targetSubcategory),
     })
   }
 
   for (const [path, weapon] of Object.entries(weaponsMap)) {
+    if (path === '/Lotus/Weapons/Corpus/LongGuns/CrpShotgun/CrpShotgun') {
+      console.log('Debug: Skipping CrpShotgun')
+    }
     if (
       // Exclude amp parts
       weapon.partType === 'LWPT_AMP_BRACE' ||
@@ -210,7 +247,9 @@ export function buildMasteryData(
       // Exclude PvP Variant Zaws
       (weapon.partType === 'LWPT_BLADE' && path?.includes('PvPVariant')) ||
       // Exclude duplicate Grimoire
-      path.includes('TnDoppelgangerGrimoire')
+      path.includes('TnDoppelgangerGrimoire') ||
+      // Exclude melee Vinquibus
+      path.includes('TnBayonetMeleeWeapon')
     ) {
       continue
     }
@@ -257,6 +296,10 @@ export function buildMasteryData(
       name: resolveDictName(dict, weapon.name, fallback),
       iconUrl: buildIconUrl(weapon.icon),
       masteryReq: weapon.masteryReq,
+      masteryPoints: getItemMasteryPoints(
+        targetSubcategory,
+        weapon.maxLevelCap
+      ),
     })
   }
 
@@ -280,8 +323,16 @@ export function buildMasteryData(
       name: resolveDictName(dict, sentinel.name, fallback),
       iconUrl: buildIconUrl(sentinel.icon),
       masteryReq: sentinel.masteryReq,
+      masteryPoints: getItemMasteryPoints(targetSubcategory),
     })
   }
+
+  // Add missing items
+  data.itemCompletion.railjack.push({
+    id: 'railjack-plexus',
+    name: 'Plexus',
+    masteryPoints: 6000,
+  })
 
   // Filter empty subcategories per category to avoid showing irrelevant items
   const filterEmptySubcategories = <T extends Record<string, MasteryItem[]>>(
