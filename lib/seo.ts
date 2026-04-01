@@ -10,3 +10,5 @@ export function getSiteUrl(): string {
 export function getSiteOrigin(): URL {
   return new URL(getSiteUrl())
 }
+
+export const APP_TITLE = 'Tenno Companion'

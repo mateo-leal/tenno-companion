@@ -3,7 +3,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { Cormorant_Garamond, Oxanium } from 'next/font/google'
 import { Taskbar } from '@/components/taskbar'
 import { MigrationBridge } from '@/components/migration-bridge'
-import { getSiteOrigin } from '@/lib/seo'
+import { getSiteOrigin, APP_TITLE } from '@/lib/seo'
 import './globals.css'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { routing } from '@/i18n/routing'
@@ -23,14 +23,15 @@ const cormorantGaramond = Cormorant_Garamond({
 
 export const metadata: Metadata = {
   metadataBase: getSiteOrigin(),
-  applicationName: 'Warframe Tool',
+  applicationName: APP_TITLE,
   title: {
-    default: 'Warframe Tool',
-    template: '%s | Warframe Tool',
+    default: APP_TITLE,
+    template: '%s | Tenno Companion',
   },
   description:
-    'Explore and simulate Warframe KIM dialogue paths with chemistry, thermostat, and boolean state tracking.',
+    'Your Warframe companion for KIM dialogue simulation and daily or weekly checklist tracking with live reset counters.',
   keywords: [
+    APP_TITLE,
     'Warframe',
     'KIM',
     'dialogue pathfinder',
@@ -40,17 +41,18 @@ export const metadata: Metadata = {
     'Hex',
     'chatroom',
     'WF',
+    'checklist',
   ],
   alternates: {
     canonical: '/',
   },
   openGraph: {
     type: 'website',
-    title: 'Warframe Tool',
+    title: APP_TITLE,
     description:
-      'Explore and simulate Warframe KIM dialogue paths with chemistry, thermostat, and boolean state tracking.',
+      'Your Warframe companion for KIM dialogue simulation and daily or weekly checklist tracking with live reset counters.',
     url: '/',
-    siteName: 'Warframe Tool',
+    siteName: APP_TITLE,
     locale: 'en_US',
     images: [
       {
@@ -62,9 +64,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary',
-    title: 'Warframe Tool',
+    title: APP_TITLE,
     description:
-      'Explore and simulate Warframe KIM dialogue paths with chemistry, thermostat, and boolean state tracking.',
+      'Your Warframe companion for KIM dialogue simulation and daily or weekly checklist tracking with live reset counters.',
     images: ['/favicon.ico'],
   },
   robots: {
