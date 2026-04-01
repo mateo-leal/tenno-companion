@@ -4,13 +4,12 @@ import Link from 'next/link'
 import {
   ChatCircleTextIcon,
   GearSixIcon,
-  GithubLogoIcon,
   ListChecksIcon,
   MedalMilitaryIcon,
 } from '@phosphor-icons/react'
 import { SettingsPortal } from './windows/settings'
-import { usePathname } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
+import { usePathname } from '@/i18n/navigation'
 
 export function Taskbar() {
   const pathname = usePathname()
@@ -129,21 +128,6 @@ export function Taskbar() {
             />
           </Link>
 
-          <Link
-            href="https://github.com/mateo-leal/wf-tool"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="GitHub Repository"
-            aria-label="Open GitHub repository"
-            className="group relative flex size-11 items-center justify-center rounded-2xl transition hover:bg-black/10"
-          >
-            <GithubLogoIcon
-              size={28}
-              className="transition group-hover:scale-105"
-            />
-            <span className="absolute bottom-1 h-1 w-1.5 rounded-full bg-neutral-900/60 opacity-60 transition-all group-hover:w-3" />
-          </Link>
-
           <button
             type="button"
             aria-label="Open settings"
@@ -153,9 +137,15 @@ export function Taskbar() {
           >
             <GearSixIcon
               size={28}
+              weight={isSettingsOpen ? 'fill' : 'regular'}
               className="transition group-hover:scale-105"
             />
-            <span className="absolute bottom-1 h-1 w-1.5 rounded-full bg-neutral-900/60 opacity-60 transition-all group-hover:w-3" />
+            <span
+              className={[
+                'absolute bottom-1 h-1 rounded-full bg-neutral-900 transition-all',
+                isSettingsOpen ? 'w-5' : 'w-1.5 opacity-60 group-hover:w-3',
+              ].join(' ')}
+            />
           </button>
           {/* <Link href="/test">Test</Link> */}
         </div>

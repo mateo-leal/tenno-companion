@@ -8,6 +8,7 @@ import { WindowContent } from '../ui/window-content'
 import { WindowTitlebar } from '../ui/window-titlebar'
 import { usePathname, useRouter } from '@/i18n/navigation'
 import { useLocale } from 'next-intl'
+import Link from 'next/link'
 
 type SettingsPortalProps = {
   isOpen: boolean
@@ -55,6 +56,37 @@ export function SettingsPortal({ isOpen, onClose }: SettingsPortalProps) {
               </option>
             ))}
           </select>
+
+          <Link
+            href="https://github.com/mateo-leal/wf-tool"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-flex w-full items-center justify-center border border-muted-primary bg-background px-2 py-1.5 text-sm transition hover:bg-muted-primary/10"
+          >
+            GitHub Repository
+          </Link>
+
+          <section className="mt-4 border border-muted-primary/70 bg-background/50 p-2 text-xs leading-relaxed text-muted-foreground">
+            <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-foreground">
+              About
+            </p>
+            <p>
+              This site is not affiliated with Digital Extremes. Warframe and
+              the Warframe logo are trademarks of Digital Extremes Ltd.
+            </p>
+            <p className="mt-2">
+              Data and media resources are provided by{' '}
+              <a
+                href="https://browse.wf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 hover:text-foreground"
+              >
+                browse.wf
+              </a>
+              .
+            </p>
+          </section>
         </WindowContent>
       </Window>
     </section>,
