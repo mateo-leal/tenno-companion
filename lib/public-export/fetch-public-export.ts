@@ -3,6 +3,7 @@ export type PublicExportWeapon = {
   icon?: string
   productCategory?: string
   masteryReq?: number
+  partType?: string
 }
 
 export type PublicExportWarframe = {
@@ -29,8 +30,9 @@ const EXPORT_WARFRAMES_URL =
   'https://browse.wf/warframe-public-export-plus/ExportWarframes.json'
 const EXPORT_SENTINELS_URL =
   'https://browse.wf/warframe-public-export-plus/ExportSentinels.json'
-const EXPORT_DICT_EN_URL =
-  'https://browse.wf/warframe-public-export-plus/dict.en.json'
+const EXPORT_DICT_BASE_URL =
+  'https://browse.wf/warframe-public-export-plus/dict'
+const DEFAULT_DICT_LOCALE = 'en'
 
 async function fetchJson<T>(url: string): Promise<T> {
   const response = await fetch(url, {
@@ -56,8 +58,38 @@ export function fetchPublicExportSentinels() {
   return fetchJson<PublicExportMap<PublicExportSentinel>>(EXPORT_SENTINELS_URL)
 }
 
-export function fetchPublicExportDictionary() {
-  return fetchJson<PublicExportDictionary>(EXPORT_DICT_EN_URL)
+function normalizeDictionaryLocale(locale: string | null | undefined): string {
+  const value = String(locale ?? '')
+    .trim()
+    .toLowerCase()
+
+  if (!value) {
+    return DEFAULT_DICT_LOCALE
+  }
+
+  return value.replace(/_/g, '-')
+}
+
+function buildDictionaryUrl(locale: string): string {
+  return `${EXPORT_DICT_BASE_URL}.${locale}.json`
+}
+
+export async function fetchPublicExportDictionary(locale?: string) {
+  const requestedLocale = normalizeDictionaryLocale(locale)
+
+  try {
+    return await fetchJson<PublicExportDictionary>(
+      buildDictionaryUrl(requestedLocale)
+    )
+  } catch {
+    if (requestedLocale === DEFAULT_DICT_LOCALE) {
+      throw new Error('Failed to fetch dictionary for default locale')
+    }
+
+    return fetchJson<PublicExportDictionary>(
+      buildDictionaryUrl(DEFAULT_DICT_LOCALE)
+    )
+  }
 }
 
 export function resolveDictName(

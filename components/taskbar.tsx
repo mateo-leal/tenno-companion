@@ -3,16 +3,19 @@
 import Link from 'next/link'
 import {
   ChatCircleTextIcon,
+  GearSixIcon,
   GithubLogoIcon,
   ListChecksIcon,
   MedalMilitaryIcon,
 } from '@phosphor-icons/react'
+import { SettingsPortal } from './windows/settings'
 import { usePathname } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 
 export function Taskbar() {
   const pathname = usePathname()
   const [now, setNow] = useState(() => new Date())
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -23,6 +26,23 @@ export function Taskbar() {
       window.clearInterval(interval)
     }
   }, [])
+
+  useEffect(() => {
+    if (!isSettingsOpen) {
+      return
+    }
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsSettingsOpen(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleEscape)
+    return () => {
+      window.removeEventListener('keydown', handleEscape)
+    }
+  }, [isSettingsOpen])
 
   const timeLabel = useMemo(
     () =>
@@ -123,6 +143,20 @@ export function Taskbar() {
             />
             <span className="absolute bottom-1 h-1 w-1.5 rounded-full bg-neutral-900/60 opacity-60 transition-all group-hover:w-3" />
           </Link>
+
+          <button
+            type="button"
+            aria-label="Open settings"
+            title="Settings"
+            onClick={() => setIsSettingsOpen(true)}
+            className="group relative flex size-11 items-center justify-center rounded-2xl transition hover:bg-black/10"
+          >
+            <GearSixIcon
+              size={28}
+              className="transition group-hover:scale-105"
+            />
+            <span className="absolute bottom-1 h-1 w-1.5 rounded-full bg-neutral-900/60 opacity-60 transition-all group-hover:w-3" />
+          </button>
           {/* <Link href="/test">Test</Link> */}
         </div>
       </div>
@@ -131,6 +165,11 @@ export function Taskbar() {
         <div className="font-medium tracking-widest">{timeLabel}</div>
         <div className="-tracking-tighter opacity-80">{dateLabel}</div>
       </div>
+
+      <SettingsPortal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+      />
     </footer>
   )
 }
