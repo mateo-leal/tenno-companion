@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import {
   ChatCircleTextIcon,
   GearSixIcon,
@@ -9,7 +8,7 @@ import {
 } from '@phosphor-icons/react'
 import { SettingsPortal } from './windows/settings'
 import { useEffect, useMemo, useState } from 'react'
-import { usePathname } from '@/i18n/navigation'
+import { Link, usePathname } from '@/i18n/navigation'
 
 export function Taskbar() {
   const pathname = usePathname()

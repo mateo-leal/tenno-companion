@@ -6,9 +6,8 @@ import { createPortal } from 'react-dom'
 import { Window } from '../ui/window'
 import { WindowContent } from '../ui/window-content'
 import { WindowTitlebar } from '../ui/window-titlebar'
-import { usePathname, useRouter } from '@/i18n/navigation'
+import { Link, usePathname, useRouter } from '@/i18n/navigation'
 import { useLocale } from 'next-intl'
-import Link from 'next/link'
 
 type SettingsPortalProps = {
   isOpen: boolean
