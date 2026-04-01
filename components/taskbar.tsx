@@ -5,6 +5,7 @@ import {
   ChatCircleTextIcon,
   GithubLogoIcon,
   ListChecksIcon,
+  MedalMilitaryIcon,
 } from '@phosphor-icons/react'
 import { usePathname } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
@@ -84,6 +85,26 @@ export function Taskbar() {
               className={[
                 'absolute bottom-1 h-1 rounded-full bg-neutral-900 transition-all',
                 kimIsActive ? 'w-5' : 'w-1.5 opacity-60 group-hover:w-3',
+              ].join(' ')}
+            />
+          </Link>
+          <Link
+            href="/mastery"
+            aria-label="Open Mastery Checklist"
+            title="Mastery Checklist"
+            className="group relative flex size-11 items-center justify-center rounded-2xl transition hover:bg-black/10"
+          >
+            <MedalMilitaryIcon
+              size={28}
+              weight={pathname === '/mastery' ? 'fill' : 'regular'}
+              className="transition group-hover:scale-105"
+            />
+            <span
+              className={[
+                'absolute bottom-1 h-1 rounded-full bg-neutral-900 transition-all',
+                pathname === '/mastery'
+                  ? 'w-5'
+                  : 'w-1.5 opacity-60 group-hover:w-3',
               ].join(' ')}
             />
           </Link>

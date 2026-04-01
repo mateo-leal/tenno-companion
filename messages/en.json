@@ -167,5 +167,24 @@
         "vocaTrade": "Trade for Voca"
       }
     }
+  },
+  "masteryChecklist": {
+    "title": "Mastery Checklist",
+    "categories": {
+      "warframes": "Warframes",
+      "primary": "Primary",
+      "secondary": "Secondary",
+      "melee": "Melee",
+      "robotics": "Robotics",
+      "companions": "Companions"
+    },
+    "doneCount": "{count}/{total} done",
+    "searchPlaceholder": "Search by name...",
+    "clearCategory": "Clear category",
+    "activeCategoryCount": "{count} items in {category}",
+    "masteryRequirement": "Mastery Rank {mr}",
+    "loading": "Loading items...",
+    "loadFailed": "Could not load mastery data right now.",
+    "emptyState": "No items match your current filter."
   }
 }
