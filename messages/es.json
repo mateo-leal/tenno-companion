@@ -75,7 +75,7 @@
   "checklist": {
     "title": "Checklist",
     "doneCount": "{count}/{total} hecho",
-    "prerequisite": "Prerequisito",
+    "prerequisite": "Prerrequisito",
     "counters": {
       "resetsIn": "Se reinicia en {time}",
       "arrivesIn": "Llega en {time}",
