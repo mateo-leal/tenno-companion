@@ -197,7 +197,7 @@ export function ChecklistPanel() {
       (task) => task.id !== 'other-baro'
     )
 
-    const baroTask = CHECKLIST_TASKS.other.find(
+    const baroTaskTemplate = CHECKLIST_TASKS.other.find(
       (task) => task.id === 'other-baro'
     ) as ChecklistTask
 
@@ -205,13 +205,15 @@ export function ChecklistPanel() {
       ? `locations.${baroNode}`
       : 'checklist.other.relayLocationPending'
 
-    baroTask.location = resolvedBaroLocation
+    const baroTask: ChecklistTask = {
+      ...baroTaskTemplate,
+      location: resolvedBaroLocation,
+      checkable: isBaroAvailable,
+    }
 
     if (isBaroAvailable) {
       return baroTask ? [baroTask, ...base] : base
     }
-
-    baroTask.checkable = false
 
     return [baroTask, ...base]
   })()
