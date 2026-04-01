@@ -212,9 +212,6 @@ export function buildMasteryData(
   }
 
   for (const [path, weapon] of Object.entries(weaponsMap)) {
-    if (path === '/Lotus/Weapons/Corpus/LongGuns/CrpShotgun/CrpShotgun') {
-      console.log('Debug: Skipping CrpShotgun')
-    }
     if (
       // Exclude amp parts
       weapon.partType === 'LWPT_AMP_BRACE' ||
