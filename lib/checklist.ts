@@ -151,6 +151,48 @@ export function getNextBaroAvailabilityStartUtc(now: Date): Date {
   return new Date(currentCycleStartMs + BARO_PERIOD_MS)
 }
 
+export function getTimeUntilNextBaroChange(now: Date): number {
+  const nowMs = now.getTime()
+
+  if (nowMs < BARO_ANCHOR_START_UTC) {
+    return BARO_ANCHOR_START_UTC - nowMs
+  }
+
+  const phaseMs = (nowMs - BARO_ANCHOR_START_UTC) % BARO_PERIOD_MS
+
+  if (phaseMs < BARO_ACTIVE_WINDOW_MS) {
+    return BARO_ACTIVE_WINDOW_MS - phaseMs
+  }
+
+  return BARO_PERIOD_MS - phaseMs
+}
+
+export function getChecklistTaskCounter(
+  task: Pick<ChecklistTask, 'resets'>,
+  now: Date
+): { label: 'resetsIn' | 'arrivesIn' | 'leavesIn'; time: string } | undefined {
+  switch (task.resets) {
+    case 'daily':
+      return {
+        label: 'resetsIn',
+        time: formatRemainingTime(getTimeUntilNextUtcDay(now)),
+      }
+    case 'weekly':
+      return {
+        label: 'resetsIn',
+        time: formatRemainingTime(getTimeUntilNextUtcWeek(now)),
+      }
+    case 'baro': {
+      return {
+        label: isBaroKiteerAvailable(now) ? 'leavesIn' : 'arrivesIn',
+        time: formatRemainingTime(getTimeUntilNextBaroChange(now)),
+      }
+    }
+    default:
+      return undefined
+  }
+}
+
 export function createEmptyChecklistState(now: Date): ChecklistState {
   return {
     daily: {

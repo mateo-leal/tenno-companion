@@ -75,6 +75,11 @@
     "title": "Checklist",
     "doneCount": "{count}/{total} done",
     "prerequisite": "Prerequisite",
+    "counters": {
+      "resetsIn": "Resets in {time}",
+      "arrivesIn": "Arrives in {time}",
+      "leavesIn": "Leaves in {time}"
+    },
     "daily": {
       "title": "Daily",
       "description": "Resets in {time}",

@@ -5,14 +5,13 @@ import {
   createEmptyChecklistState,
   formatRemainingTime,
   getDailyResetKey,
-  getNextBaroAvailabilityStartUtc,
   getTimeUntilNextUtcDay,
   getTimeUntilNextUtcWeek,
   getWeeklyResetKey,
   isBaroKiteerAvailable,
   normalizeChecklistState,
 } from '@/lib/checklist'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CHECKLIST_STORAGE_KEY } from '@/lib/constants'
 import { ChecklistState, ChecklistTask } from '@/lib/types'
 import { useTranslations } from 'next-intl'
@@ -152,47 +151,33 @@ export function ChecklistPanel() {
     })
   }
 
-  const dailyResetCountdown = useMemo(() => {
-    return formatRemainingTime(getTimeUntilNextUtcDay(now))
-  }, [now])
+  const dailyResetCountdown = formatRemainingTime(getTimeUntilNextUtcDay(now))
 
-  const weeklyResetCountdown = useMemo(() => {
-    return formatRemainingTime(getTimeUntilNextUtcWeek(now))
-  }, [now])
+  const weeklyResetCountdown = formatRemainingTime(getTimeUntilNextUtcWeek(now))
 
-  const dailyTasks = useMemo<ChecklistTask[]>(() => CHECKLIST_TASKS.daily, [])
-  const weeklyTasks = useMemo<ChecklistTask[]>(() => CHECKLIST_TASKS.weekly, [])
+  const dailyTasks: ChecklistTask[] = CHECKLIST_TASKS.daily
+  const weeklyTasks: ChecklistTask[] = CHECKLIST_TASKS.weekly
 
-  const otherTasks = useMemo<ChecklistTask[]>(() => {
+  const otherTasks: ChecklistTask[] = (() => {
     const isBaroAvailable = isBaroKiteerAvailable(now)
     const base = CHECKLIST_TASKS.other.filter(
       (task) => task.id !== 'other-baro'
     )
 
+    const baroTask = CHECKLIST_TASKS.other.find(
+      (task) => task.id === 'other-baro'
+    ) as ChecklistTask
+
     if (isBaroAvailable) {
-      const baroTask = CHECKLIST_TASKS.other.find(
-        (task) => task.id === 'other-baro'
-      )
       return baroTask ? [baroTask, ...base] : base
     }
 
-    const nextStart = getNextBaroAvailabilityStartUtc(now)
-    const remainingMs = Math.max(0, nextStart.getTime() - now.getTime())
-    const remainingLabel = formatRemainingTime(remainingMs)
+    baroTask.checkable = false
 
-    const baroInfoTask: ChecklistTask = {
-      id: 'other-baro-info',
-      title: `Baro Ki'Teer arrives in ${remainingLabel}`,
-      location: 'Relay with active Baro icon',
-      terminal:
-        'Biweekly weekend window (Friday 13:00 UTC to Sunday 13:00 UTC)',
-      checkable: false,
-    }
+    return [baroTask, ...base]
+  })()
 
-    return [baroInfoTask, ...base]
-  }, [now])
-
-  const otherSubtitle = 'Manual checklist for event/goal-based tasks'
+  const otherSubtitle = t('checklist.other.description')
 
   return (
     <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 xl:grid-cols-3">
@@ -202,6 +187,7 @@ export function ChecklistPanel() {
           time: dailyResetCountdown,
         })}
         tasks={dailyTasks}
+        now={now}
         completed={state.daily.completed}
         onToggle={(taskId) => toggleTask('daily', taskId)}
         onClear={() => clearSection('daily')}
@@ -213,6 +199,7 @@ export function ChecklistPanel() {
           time: weeklyResetCountdown,
         })}
         tasks={weeklyTasks}
+        now={now}
         completed={state.weekly.completed}
         onToggle={(taskId) => toggleTask('weekly', taskId)}
         onClear={() => clearSection('weekly')}
@@ -222,6 +209,7 @@ export function ChecklistPanel() {
         title={t('checklist.other.title')}
         subtitle={otherSubtitle}
         tasks={otherTasks}
+        now={now}
         completed={state.other.completed}
         onToggle={(taskId) => toggleTask('other', taskId)}
         onClear={() => clearSection('other')}
