@@ -7,14 +7,14 @@ export const revalidate = 3600 // Revalidate every hour
 export const metadata: Metadata = {
   title: 'Mastery Checklist',
   description:
-    'Track your Warframe daily, weekly, and rotating tasks with live reset counters and progression reminders.',
+    'Track your Warframe Mastery Rank progress by logging domained weapons, frames, companions, and intrinsics so you always know what to level next.',
   alternates: {
     canonical: '/mastery',
   },
   openGraph: {
     title: 'Mastery Checklist',
     description:
-      'Track your Warframe daily, weekly, and rotating tasks with live reset counters and progression reminders.',
+      'Track your Warframe Mastery Rank progress by logging domained weapons, frames, companions, and intrinsics so you always know what to level next.',
     url: '/mastery',
   },
 }
