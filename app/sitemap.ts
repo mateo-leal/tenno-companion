@@ -1,27 +1,33 @@
 import type { MetadataRoute } from 'next'
 import { CHATROOM_SOURCE_BY_ID } from '@/lib/chatrooms'
 import { getSiteUrl } from '@/lib/seo'
+import { routing } from '@/i18n/routing'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const siteUrl = getSiteUrl()
+  const localePrefixes = routing.locales.filter((locale) => locale !== 'en')
 
-  const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: `${siteUrl}/`,
-      changeFrequency: 'weekly',
-      priority: 1,
-    },
-    {
-      url: `${siteUrl}/kim`,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${siteUrl}/checklist`,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
+  const staticPages = [
+    { url: '/', priority: 1 },
+    { url: '/kim', priority: 0.9 },
+    { url: '/checklist', priority: 0.9 },
+    { url: '/mastery', priority: 0.9 },
   ]
+
+  const staticRoutes: MetadataRoute.Sitemap = staticPages.map((path) => ({
+    url: `${siteUrl}${path.url}`,
+    lastModified: new Date(),
+    priority: path.priority,
+    alternates: {
+      languages: localePrefixes.reduce(
+        (acc, locale) => {
+          acc[locale] = `${siteUrl}/${locale}${path.url}`
+          return acc
+        },
+        {} as Record<string, string>
+      ),
+    },
+  }))
 
   const chatroomRoutes: MetadataRoute.Sitemap = Object.keys(
     CHATROOM_SOURCE_BY_ID
@@ -29,6 +35,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${siteUrl}/kim/${chatroomId}`,
     changeFrequency: 'daily',
     priority: 0.8,
+    alternates: {
+      languages: localePrefixes.reduce(
+        (acc, locale) => {
+          acc[locale] = `${siteUrl}/${locale}/kim/${chatroomId}`
+          return acc
+        },
+        {} as Record<string, string>
+      ),
+    },
   }))
 
   return [...staticRoutes, ...chatroomRoutes]
