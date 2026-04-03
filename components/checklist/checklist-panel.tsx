@@ -115,26 +115,27 @@ function saveChecklistPanelState(
 export function ChecklistPanel() {
   const t = useTranslations()
 
-  const [state, setState] = useState<ChecklistState>(() => {
-    const current = new Date()
-    if (typeof window === 'undefined') {
-      return createEmptyChecklistState(current)
-    }
-
-    return loadChecklistState(current)
-  })
+  const [state, setState] = useState<ChecklistState>(() =>
+    createEmptyChecklistState(new Date())
+  )
   const [expandedGroups, setExpandedGroups] = useState<ExpandedGroupsState>(
-    () => {
-      if (typeof window === 'undefined') {
-        return createDefaultExpandedGroupsState()
-      }
-
-      return loadExpandedGroupsState()
-    }
+    createDefaultExpandedGroupsState
   )
   const [now, setNow] = useState(() => new Date())
   const [baroNode, setBaroNode] = useState<string | null>(null)
   const skipFirstPersistRef = useRef(true)
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      const current = new Date()
+      setState(loadChecklistState(current))
+      setExpandedGroups(loadExpandedGroupsState())
+    }, 0)
+
+    return () => {
+      window.clearTimeout(timeout)
+    }
+  }, [])
 
   useEffect(() => {
     if (skipFirstPersistRef.current) {
