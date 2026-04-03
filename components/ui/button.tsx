@@ -15,6 +15,7 @@ const buttonVariants = cva(
           'border-muted-primary bg-secondary-bg text-primary hover:bg-secondary-bg-hover',
         destructive:
           'border-error-border bg-error-bg text-error hover:bg-error-bg/30',
+        ghost: 'border-transparent bg-transparent hover:bg-muted-primary/30',
       },
       size: {
         default: 'text-sm',

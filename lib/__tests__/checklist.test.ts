@@ -102,6 +102,102 @@ describe('checklist reset utilities', () => {
     })
   })
 
+  it('preserves hidden items across period changes', () => {
+    const now = new Date('2026-03-30T12:00:00.000Z')
+
+    const normalized = normalizeChecklistState(
+      {
+        daily: {
+          periodKey: '2026-03-29',
+          completed: {
+            'daily-login-reward': true,
+          },
+          hidden: {
+            'daily-login-reward': true,
+            'daily-vendors': true,
+          },
+        },
+        weekly: {
+          periodKey: '2026-03-23',
+          hidden: {
+            'weekly-vendors': true,
+          },
+        },
+        other: {
+          hidden: {
+            'other-baro': true,
+          },
+        },
+      },
+      now
+    )
+
+    expect(normalized.daily.completed).toEqual({})
+    expect(normalized.daily.hidden).toEqual({
+      'daily-login-reward': true,
+      'daily-vendors': true,
+    })
+    expect(normalized.weekly.hidden).toEqual({
+      'weekly-vendors': true,
+    })
+    expect(normalized.other.hidden).toEqual({
+      'other-baro': true,
+    })
+  })
+
+  it('preserves expanded groups across period changes', () => {
+    const now = new Date('2026-03-30T12:00:00.000Z')
+
+    const normalized = normalizeChecklistState(
+      {
+        daily: {
+          periodKey: '2026-03-29',
+          expandedGroups: {
+            'daily-world-syndicates': false,
+            'daily-vendors': true,
+          },
+        },
+        weekly: {
+          periodKey: '2026-03-23',
+          expandedGroups: {
+            'weekly-vendors': false,
+          },
+        },
+      },
+      now
+    )
+
+    expect(normalized.daily.expandedGroups).toEqual({
+      'daily-world-syndicates': false,
+      'daily-vendors': true,
+    })
+    expect(normalized.weekly.expandedGroups).toEqual({
+      'weekly-search-pulses': true,
+      'weekly-vendors': false,
+    })
+  })
+
+  it('drops invalid hidden ids during normalization', () => {
+    const now = new Date('2026-03-30T12:00:00.000Z')
+
+    const normalized = normalizeChecklistState(
+      {
+        daily: {
+          periodKey: getDailyResetKey(now),
+          hidden: {
+            'daily-login-reward': true,
+            'invalid-task': true,
+          },
+        },
+      },
+      now
+    )
+
+    expect(normalized.daily.hidden).toEqual({
+      'daily-login-reward': true,
+    })
+  })
+
   it('formats remaining time with day values', () => {
     const text = formatRemainingTime(2 * 24 * 60 * 60 * 1000 + 75 * 60 * 1000)
     expect(text).toBe('2d 01h 15m')

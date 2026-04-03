@@ -19,6 +19,28 @@ export const CHECKLIST_TASKS: Record<ChecklistCategory, ChecklistTask[]> = {
   other: OTHER_TASKS,
 }
 
+const DEFAULT_EXPANDED_GROUP_IDS: Record<ChecklistCategory, string[]> = {
+  daily: ['daily-world-syndicates', 'daily-vendors'],
+  weekly: ['weekly-search-pulses', 'weekly-vendors'],
+  other: [],
+}
+
+function createDefaultExpandedGroups(
+  section: ChecklistCategory
+): Record<string, boolean> {
+  return Object.fromEntries(
+    DEFAULT_EXPANDED_GROUP_IDS[section].map((id) => [id, true])
+  )
+}
+
+function collectTaskIds(tasks: ChecklistTask[]): string[] {
+  return tasks.flatMap((task) => {
+    const childIds = task.subitems ? collectTaskIds(task.subitems) : []
+
+    return [task.id, ...childIds]
+  })
+}
+
 /**
  * Recursively collects IDs of checkable tasks and subitems.
  * @param tasks List of tasks to process
@@ -40,10 +62,28 @@ function collectCheckableTaskIds(tasks: ChecklistTask[]): string[] {
   })
 }
 
-const VALID_IDS = {
+const VALID_COMPLETED_IDS = {
   daily: new Set(collectCheckableTaskIds(DAILY_TASKS)),
   weekly: new Set(collectCheckableTaskIds(WEEKLY_TASKS)),
   other: new Set(collectCheckableTaskIds(OTHER_TASKS)),
+}
+
+const VALID_HIDDEN_IDS = {
+  daily: new Set(collectTaskIds(DAILY_TASKS)),
+  weekly: new Set(collectTaskIds(WEEKLY_TASKS)),
+  other: new Set(collectTaskIds(OTHER_TASKS)),
+}
+
+const VALID_EXPANDED_GROUP_IDS = {
+  daily: new Set(
+    DAILY_TASKS.filter((task) => task.subitems?.length).map((task) => task.id)
+  ),
+  weekly: new Set(
+    WEEKLY_TASKS.filter((task) => task.subitems?.length).map((task) => task.id)
+  ),
+  other: new Set(
+    OTHER_TASKS.filter((task) => task.subitems?.length).map((task) => task.id)
+  ),
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {
@@ -86,6 +126,41 @@ function sanitizeCompleted(
       .map(([id, checked]) => [id, Boolean(checked)])
       .filter(([, checked]) => checked)
   )
+}
+
+function sanitizeHidden(
+  value: unknown,
+  validIds: Set<string>
+): Record<string, boolean> {
+  if (!isObject(value)) {
+    return {}
+  }
+
+  return Object.fromEntries(
+    Object.entries(value)
+      .filter(([id]) => validIds.has(id))
+      .map(([id, hidden]) => [id, Boolean(hidden)])
+      .filter(([, hidden]) => hidden)
+  )
+}
+
+function sanitizeExpandedGroups(
+  value: unknown,
+  validIds: Set<string>,
+  defaults: Record<string, boolean>
+): Record<string, boolean> {
+  if (!isObject(value)) {
+    return defaults
+  }
+
+  return {
+    ...defaults,
+    ...Object.fromEntries(
+      Object.entries(value)
+        .filter(([id]) => validIds.has(id))
+        .map(([id, expanded]) => [id, Boolean(expanded)])
+    ),
+  }
 }
 
 export function getDailyResetKey(date: Date): string {
@@ -198,13 +273,19 @@ export function createEmptyChecklistState(now: Date): ChecklistState {
     daily: {
       periodKey: getDailyResetKey(now),
       completed: {},
+      hidden: {},
+      expandedGroups: createDefaultExpandedGroups('daily'),
     },
     weekly: {
       periodKey: getWeeklyResetKey(now),
       completed: {},
+      hidden: {},
+      expandedGroups: createDefaultExpandedGroups('weekly'),
     },
     other: {
       completed: {},
+      hidden: {},
+      expandedGroups: createDefaultExpandedGroups('other'),
     },
   }
 }
@@ -225,30 +306,66 @@ export function normalizeChecklistState(
 
   const dailyCompleted =
     parsed.daily?.periodKey === dailyKey
-      ? sanitizeCompleted(parsed.daily?.completed, VALID_IDS.daily)
+      ? sanitizeCompleted(parsed.daily?.completed, VALID_COMPLETED_IDS.daily)
       : {}
 
   const weeklyCompleted =
     parsed.weekly?.periodKey === weeklyKey
-      ? sanitizeCompleted(parsed.weekly?.completed, VALID_IDS.weekly)
+      ? sanitizeCompleted(parsed.weekly?.completed, VALID_COMPLETED_IDS.weekly)
       : {}
+
+  const dailyHidden = sanitizeHidden(
+    parsed.daily?.hidden,
+    VALID_HIDDEN_IDS.daily
+  )
+  const dailyExpandedGroups = sanitizeExpandedGroups(
+    parsed.daily?.expandedGroups,
+    VALID_EXPANDED_GROUP_IDS.daily,
+    createDefaultExpandedGroups('daily')
+  )
+
+  const weeklyHidden = sanitizeHidden(
+    parsed.weekly?.hidden,
+    VALID_HIDDEN_IDS.weekly
+  )
+  const weeklyExpandedGroups = sanitizeExpandedGroups(
+    parsed.weekly?.expandedGroups,
+    VALID_EXPANDED_GROUP_IDS.weekly,
+    createDefaultExpandedGroups('weekly')
+  )
 
   const otherCompleted = sanitizeCompleted(
     parsed.other?.completed,
-    VALID_IDS.other
+    VALID_COMPLETED_IDS.other
+  )
+
+  const otherHidden = sanitizeHidden(
+    parsed.other?.hidden,
+    VALID_HIDDEN_IDS.other
+  )
+  const otherExpandedGroups = sanitizeExpandedGroups(
+    parsed.other?.expandedGroups,
+    VALID_EXPANDED_GROUP_IDS.other,
+    createDefaultExpandedGroups('other')
   )
 
   return {
     daily: {
       periodKey: dailyKey,
       completed: dailyCompleted,
+      hidden: dailyHidden,
+      expandedGroups: dailyExpandedGroups,
     },
     weekly: {
       periodKey: weeklyKey,
       completed: weeklyCompleted,
+      hidden: weeklyHidden,
+      expandedGroups: weeklyExpandedGroups,
     },
     other: {
       completed: otherCompleted,
+      hidden: otherHidden,
+      expandedGroups: otherExpandedGroups,
     },
   }
 }

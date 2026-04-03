@@ -1,12 +1,26 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Button } from '../ui/button'
 import { ChecklistTask } from '@/lib/types'
 import { TaskRow } from './task-row'
+import {
+  CaretDownIcon,
+  CaretRightIcon,
+  EyeSlashIcon,
+} from '@phosphor-icons/react'
 import { useTranslations } from 'next-intl'
 
-function collectCheckableTasks(tasks: ChecklistTask[]): ChecklistTask[] {
+function collectVisibleCheckableTasks(
+  tasks: ChecklistTask[],
+  hidden: Record<string, boolean>
+): ChecklistTask[] {
   return tasks.flatMap((task) => {
-    const childTasks = task.subitems ? collectCheckableTasks(task.subitems) : []
+    if (hidden[task.id]) {
+      return []
+    }
+
+    const childTasks = task.subitems
+      ? collectVisibleCheckableTasks(task.subitems, hidden)
+      : []
 
     const isGroup = Boolean(task.subitems && task.subitems.length > 0)
     const isCheckable =
@@ -20,13 +34,28 @@ function collectCheckableTasks(tasks: ChecklistTask[]): ChecklistTask[] {
   })
 }
 
+function collectHiddenTasks(
+  tasks: ChecklistTask[],
+  hidden: Record<string, boolean>
+): ChecklistTask[] {
+  return tasks.flatMap((task) => {
+    if (hidden[task.id]) {
+      return [task]
+    }
+
+    return task.subitems ? collectHiddenTasks(task.subitems, hidden) : []
+  })
+}
+
 export function ChecklistSectionCard({
   title,
   subtitle,
   tasks,
   now,
   completed,
+  hidden,
   onToggle,
+  onToggleHidden,
   onClear,
   expandedGroups,
   onExpandedGroupsChange,
@@ -36,14 +65,54 @@ export function ChecklistSectionCard({
   tasks: ChecklistTask[]
   now: Date
   completed: Record<string, boolean>
+  hidden: Record<string, boolean>
   onToggle: (taskId: string) => void
+  onToggleHidden: (taskId: string) => void
   onClear: () => void
   expandedGroups: Record<string, boolean>
   onExpandedGroupsChange: (next: Record<string, boolean>) => void
 }) {
   const t = useTranslations()
+  const [showHiddenItems, setShowHiddenItems] = useState(false)
 
-  const checkableTasks = useMemo(() => collectCheckableTasks(tasks), [tasks])
+  const visibleTasks = useMemo(
+    () =>
+      tasks.flatMap((task) => {
+        if (hidden[task.id]) {
+          return []
+        }
+
+        if (!task.subitems || task.subitems.length === 0) {
+          return [task]
+        }
+
+        const visibleSubitems = task.subitems.filter(
+          (subitem) => !hidden[subitem.id]
+        )
+
+        if (visibleSubitems.length === 0) {
+          return []
+        }
+
+        return [
+          {
+            ...task,
+            subitems: visibleSubitems,
+          },
+        ]
+      }),
+    [hidden, tasks]
+  )
+
+  const checkableTasks = useMemo(
+    () => collectVisibleCheckableTasks(tasks, hidden),
+    [hidden, tasks]
+  )
+
+  const hiddenTasks = useMemo(
+    () => collectHiddenTasks(tasks, hidden),
+    [hidden, tasks]
+  )
 
   const completedCount = useMemo(
     () => checkableTasks.filter((task) => Boolean(completed[task.id])).length,
@@ -67,15 +136,30 @@ export function ChecklistSectionCard({
                 total: checkableTasks.length,
               })}
             </p>
-            <Button size="sm" variant="outline" onClick={onClear}>
-              {t('ui.clear')}
-            </Button>
+            <div className="mt-1 flex justify-end gap-1">
+              {hiddenTasks.length > 0 ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setShowHiddenItems((previous) => !previous)}
+                >
+                  {showHiddenItems
+                    ? t('checklist.hideHiddenItems')
+                    : t('checklist.showHiddenItems', {
+                        count: hiddenTasks.length,
+                      })}
+                </Button>
+              ) : null}
+              <Button size="sm" variant="outline" onClick={onClear}>
+                {t('ui.clear')}
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
       <div className="flex-1 space-y-2 overflow-y-auto p-2">
-        {tasks.map((task) => {
+        {visibleTasks.map((task) => {
           if (!task.subitems || task.subitems.length === 0) {
             return (
               <TaskRow
@@ -85,6 +169,7 @@ export function ChecklistSectionCard({
                 checked={Boolean(completed[task.id])}
                 checkable={task.checkable}
                 onToggle={() => onToggle(task.id)}
+                onToggleHidden={() => onToggleHidden(task.id)}
               />
             )
           }
@@ -96,18 +181,18 @@ export function ChecklistSectionCard({
               key={task.id}
               className="border border-muted-primary/70 bg-background/30"
             >
-              <button
-                type="button"
-                className="flex w-full items-start justify-between gap-3 px-2 py-2 text-left transition hover:bg-muted-primary/10"
-                aria-expanded={isExpanded}
-                onClick={() =>
-                  onExpandedGroupsChange({
-                    ...expandedGroups,
-                    [task.id]: !isExpanded,
-                  })
-                }
-              >
-                <span>
+              <div className="flex items-center justify-between gap-3 px-2 py-2 transition hover:bg-muted-primary/10">
+                <button
+                  type="button"
+                  className="min-w-0 flex-1 text-left"
+                  aria-expanded={isExpanded}
+                  onClick={() =>
+                    onExpandedGroupsChange({
+                      ...expandedGroups,
+                      [task.id]: !isExpanded,
+                    })
+                  }
+                >
                   <p className="text-sm leading-tight text-foreground">
                     {t(task.title)}
                   </p>
@@ -116,11 +201,40 @@ export function ChecklistSectionCard({
                       {t(task.info)}
                     </p>
                   )}
-                </span>
-                <span className="text-xs text-primary">
-                  {isExpanded ? t('ui.hide') : t('ui.expand')}
-                </span>
-              </button>
+                </button>
+                <div className="flex shrink-0 items-center gap-1">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => onToggleHidden(task.id)}
+                    aria-label={t('ui.hide')}
+                    title={t('ui.hide')}
+                    className="size-6 px-0"
+                  >
+                    <EyeSlashIcon size={14} weight="bold" />
+                  </Button>
+                  <Button
+                    aria-expanded={isExpanded}
+                    onClick={() =>
+                      onExpandedGroupsChange({
+                        ...expandedGroups,
+                        [task.id]: !isExpanded,
+                      })
+                    }
+                    variant="ghost"
+                    size="sm"
+                    className="size-6 px-0"
+                    aria-label={isExpanded ? t('ui.collapse') : t('ui.expand')}
+                    title={isExpanded ? t('ui.collapse') : t('ui.expand')}
+                  >
+                    {isExpanded ? (
+                      <CaretDownIcon size={14} weight="bold" />
+                    ) : (
+                      <CaretRightIcon size={14} weight="bold" />
+                    )}
+                  </Button>
+                </div>
+              </div>
 
               {isExpanded ? (
                 <div className="space-y-2 p-2 pt-0">
@@ -132,6 +246,7 @@ export function ChecklistSectionCard({
                       checked={Boolean(completed[subitem.id])}
                       checkable={subitem.checkable}
                       onToggle={() => onToggle(subitem.id)}
+                      onToggleHidden={() => onToggleHidden(subitem.id)}
                     />
                   ))}
                 </div>
@@ -139,6 +254,44 @@ export function ChecklistSectionCard({
             </section>
           )
         })}
+
+        {showHiddenItems ? (
+          <section className="border border-muted-primary/70 bg-cathedrale/35 p-2">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <p className="text-xs uppercase tracking-wide text-primary">
+                {t('checklist.hiddenItemsTitle', {
+                  count: hiddenTasks.length,
+                })}
+              </p>
+            </div>
+            <div className="space-y-2">
+              {hiddenTasks.map((task) => (
+                <div
+                  key={task.id}
+                  className="flex items-start justify-between gap-3 border border-muted-primary/70 bg-background/30 p-2"
+                >
+                  <span className="min-w-0">
+                    <p className="text-sm leading-tight text-muted-foreground">
+                      {t(task.title)}
+                    </p>
+                    {task.info ? (
+                      <p className="mt-1 text-xs leading-snug text-muted-foreground">
+                        {t(task.info)}
+                      </p>
+                    ) : null}
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => onToggleHidden(task.id)}
+                  >
+                    {t('ui.show')}
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </div>
     </section>
   )

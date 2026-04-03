@@ -82,16 +82,15 @@ export type ChecklistTask = {
   subitems?: ChecklistTask[]
 }
 
+export type ChecklistGroup = {
+  periodKey: string
+  completed: Record<string, boolean>
+  hidden: Record<string, boolean>
+  expandedGroups: Record<string, boolean>
+}
+
 export type ChecklistState = {
-  daily: {
-    periodKey: string
-    completed: Record<string, boolean>
-  }
-  weekly: {
-    periodKey: string
-    completed: Record<string, boolean>
-  }
-  other: {
-    completed: Record<string, boolean>
-  }
+  daily: ChecklistGroup
+  weekly: ChecklistGroup
+  other: Omit<ChecklistGroup, 'periodKey'>
 }

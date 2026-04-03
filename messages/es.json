@@ -1,6 +1,8 @@
 {
   "ui": {
+    "show": "Mostrar",
     "hide": "Ocultar",
+    "collapse": "Colapsar",
     "expand": "Expandir",
     "clear": "Limpiar"
   },
@@ -75,6 +77,9 @@
   "checklist": {
     "title": "Checklist",
     "doneCount": "{count}/{total} hecho",
+    "showHiddenItems": "Ocultos ({count})",
+    "hideHiddenItems": "Ocultar ocultos",
+    "hiddenItemsTitle": "Elementos ocultos ({count})",
     "prerequisite": "Prerrequisito",
     "counters": {
       "resetsIn": "Se reinicia en {time}",
