@@ -11,6 +11,8 @@ import type {
 const BARO_ANCHOR_START_UTC = Date.UTC(2026, 2, 20, 13, 0, 0)
 const BARO_PERIOD_MS = 14 * 24 * 60 * 60 * 1000
 const BARO_ACTIVE_WINDOW_MS = 48 * 60 * 60 * 1000
+const EIGHT_HOURS_ANCHOR_UTC = Date.UTC(1970, 0, 1, 8, 0, 0)
+const EIGHT_HOURS_PERIOD_MS = 8 * 60 * 60 * 1000
 
 export type StoredChecklistState = Partial<{
   daily: Partial<ChecklistState['daily']>
@@ -190,6 +192,15 @@ export function getTimeUntilNextUtcWeek(date: Date): number {
   return Math.max(0, next.getTime() - date.getTime())
 }
 
+export function getTimeUntilNextEightHourReset(date: Date): number {
+  const elapsedMs = date.getTime() - EIGHT_HOURS_ANCHOR_UTC
+  const phaseMs =
+    ((elapsedMs % EIGHT_HOURS_PERIOD_MS) + EIGHT_HOURS_PERIOD_MS) %
+    EIGHT_HOURS_PERIOD_MS
+
+  return EIGHT_HOURS_PERIOD_MS - phaseMs
+}
+
 export function formatRemainingTime(totalMs: number): string {
   const safeMs = Math.max(0, totalMs)
   const totalSeconds = Math.floor(safeMs / 1000)
@@ -261,6 +272,11 @@ export function getChecklistTaskCounter(
       return {
         label: 'resetsIn',
         time: formatRemainingTime(getTimeUntilNextUtcWeek(now)),
+      }
+    case 'eightHours':
+      return {
+        label: 'resetsIn',
+        time: formatRemainingTime(getTimeUntilNextEightHourReset(now)),
       }
     case 'baro': {
       return {

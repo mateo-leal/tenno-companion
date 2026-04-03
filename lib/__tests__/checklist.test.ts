@@ -1,8 +1,10 @@
 import {
   createEmptyChecklistState,
   formatRemainingTime,
+  getChecklistTaskCounter,
   getNextBaroAvailabilityStartUtc,
   getDailyResetKey,
+  getTimeUntilNextEightHourReset,
   getTimeUntilNextUtcDay,
   getTimeUntilNextUtcWeek,
   getWeeklyResetKey,
@@ -38,6 +40,32 @@ describe('checklist reset utilities', () => {
   it('returns positive time to next UTC monday reset', () => {
     const date = new Date('2026-03-29T12:00:00.000Z')
     expect(getTimeUntilNextUtcWeek(date)).toBe(12 * 60 * 60 * 1000)
+  })
+
+  it('returns time to next 8-hour reset anchored at 08:00 UTC', () => {
+    expect(
+      getTimeUntilNextEightHourReset(new Date('2026-03-25T07:30:00.000Z'))
+    ).toBe(30 * 60 * 1000)
+
+    expect(
+      getTimeUntilNextEightHourReset(new Date('2026-03-25T08:00:00.000Z'))
+    ).toBe(8 * 60 * 60 * 1000)
+
+    expect(
+      getTimeUntilNextEightHourReset(new Date('2026-03-25T23:30:00.000Z'))
+    ).toBe(30 * 60 * 1000)
+  })
+
+  it('returns checklist counter for 8-hour resets', () => {
+    const counter = getChecklistTaskCounter(
+      { resets: 'eightHours' },
+      new Date('2026-03-25T15:10:00.000Z')
+    )
+
+    expect(counter).toEqual({
+      label: 'resetsIn',
+      time: '00h 50m',
+    })
   })
 
   it('drops stale daily and weekly completions when periods change', () => {

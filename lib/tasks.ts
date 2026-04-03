@@ -333,7 +333,7 @@ export const OTHER_TASKS: ChecklistTask[] = [
     location: 'locations.necralisk',
     npc: 'npcs.grandmother',
     prerequisite: 'quests.heartOfDeimos',
-    resets: 'daily',
+    resets: 'eightHours',
   },
   {
     id: 'other-voidplume-trade',
@@ -341,7 +341,7 @@ export const OTHER_TASKS: ChecklistTask[] = [
     location: 'locations.chrysalith',
     npc: 'npcs.yonta',
     prerequisite: 'quests.angelsOfTheZariman',
-    resets: 'daily',
+    resets: 'eightHours',
   },
   {
     id: 'other-voca-trade',
@@ -349,6 +349,6 @@ export const OTHER_TASKS: ChecklistTask[] = [
     location: 'locations.sanctumAnatomica',
     npc: 'npcs.loid',
     prerequisite: 'quests.whispersInTheWalls',
-    resets: 'daily',
+    resets: 'eightHours',
   },
 ]
