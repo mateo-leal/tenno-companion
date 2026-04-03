@@ -3,14 +3,14 @@ import { Metadata } from 'next'
 import { setRequestLocale } from 'next-intl/server'
 
 export const metadata: Metadata = {
-  title: 'Checklist',
+  title: 'Warframe Checklist',
   description:
     'Track your Warframe daily, weekly, and rotating tasks with live reset counters and progression reminders.',
   alternates: {
     canonical: '/checklist',
   },
   openGraph: {
-    title: 'Checklist',
+    title: 'Warframe Checklist',
     description:
       'Track your Warframe daily, weekly, and rotating tasks with live reset counters and progression reminders.',
     url: '/checklist',
