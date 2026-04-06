@@ -216,7 +216,7 @@ export async function ChatWindow({ chatroom }: { chatroom: string }) {
   const locale = await getLocale()
   const t = await getTranslations('kim.chatroom')
   const source = CHATROOM_SOURCE_BY_ID[chatroom]
-  const dictirionarySource = await getKIMDictionarySource(locale)
+  const dictionarySource = getKIMDictionarySource(locale)
 
   if (!source) {
     notFound()
@@ -224,7 +224,7 @@ export async function ChatWindow({ chatroom }: { chatroom: string }) {
 
   const [nodes, dictionary] = await Promise.all([
     loadNodes(source),
-    loadDictionary(dictirionarySource).catch(() => new Map<string, string>()),
+    loadDictionary(dictionarySource).catch(() => new Map<string, string>()),
   ])
 
   const startNodes = resolveStartNodes(nodes)
