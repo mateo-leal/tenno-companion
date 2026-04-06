@@ -70,11 +70,11 @@ export async function getDictionary(
     }
     return (await response.json()) as Dictionary
   } catch {
-    if (language === DEFAULT_LANGUAGE) {
+    if (normalizeLanguage(language) === DEFAULT_LANGUAGE) {
       throw new Error('Failed to fetch dictionary for default locale')
     }
 
-    return getDictionary(DEFAULT_LANGUAGE)
+    return getDictionary(DEFAULT_LANGUAGE, source)
   }
 }
 
