@@ -50,7 +50,7 @@ function CycleCard({
   }
 
   return (
-    <div className={cn('rounded border p-2 transition-colors', accentClass)}>
+    <div className={cn('border p-2 transition-colors', accentClass)}>
       <div className="flex items-center justify-between gap-2">
         <h2 className="font-title text-lg leading-none text-foreground">
           {title}

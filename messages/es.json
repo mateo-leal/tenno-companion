@@ -235,5 +235,11 @@
       "fass": "Fass",
       "vome": "Vome"
     }
+  },
+  "newsWidget": {
+    "title": "Noticias",
+    "empty": "No hay noticias disponibles en este momento.",
+    "community": "Comunidad",
+    "official": "Oficial"
   }
 }
