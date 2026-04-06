@@ -60,7 +60,7 @@ Top-level folders used most often:
 
 - app: Next.js routes, layouts, and API handlers.
 - components: UI components for chatroom selection, dialogue simulation, and transcript rendering.
-- lib/core: Pathfinder engine and graph traversal logic.
+- lib/kim: Pathfinder engine and graph traversal logic.
 - lib/chatrooms.ts: Chatroom metadata and source JSON endpoints.
 - lib/language.ts: Supported language list and dictionary URL resolver.
 - lib/types.ts: Shared graph node and transcript types.
@@ -128,7 +128,7 @@ Response:
 - Counter checks: evaluate Output expressions against provided counter values.
 - Multi-boolean checks: route selection using check expressions in output branches.
 
-Implementation is centered in lib/core/pathfinder.ts.
+Implementation is centered in lib/kim/pathfinder.ts.
 
 ## Static Generation
 
@@ -151,7 +151,7 @@ If you add a new chatroom id to CHATROOM_SOURCE_BY_ID, it will be included in st
 
 - Keep PRs small and scoped.
 - Preserve TypeScript strictness and avoid any casts unless required.
-- Reuse existing helpers in lib/core/pathfinder.ts before adding duplicates.
+- Reuse existing helpers in lib/kim/pathfinder.ts before adding duplicates.
 - Keep UI style consistent with the KIM in-game visual direction.
 - Add or update documentation when behavior changes.
 
