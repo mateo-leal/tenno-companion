@@ -15,7 +15,7 @@ const DESKTOP_SHORTCUTS = [
   },
   {
     href: 'kim',
-    label: 'KIM',
+    label: 'kim.title',
     Icon: ChatCircleTextIcon,
   },
   {
