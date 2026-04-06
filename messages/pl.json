@@ -1,4 +1,7 @@
 {
+  "metadata": {
+    "description": "Your Warframe companion for KIM dialogue simulation and daily or weekly checklist tracking with live reset counters."
+  },
   "ui": {
     "show": "Show",
     "hide": "Hide",

@@ -1,4 +1,7 @@
 {
+  "metadata": {
+    "description": "Tu compañero en Warframe para la simulación de diálogos de KIM y el seguimiento de checklist diarios o semanales con contadores de reinicio en vivo."
+  },
   "ui": {
     "show": "Mostrar",
     "hide": "Ocultar",
