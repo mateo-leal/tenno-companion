@@ -80,6 +80,10 @@
   },
   "checklist": {
     "title": "Checklist",
+    "metadata": {
+      "title": "Warframe Checklist",
+      "description": "Realiza un seguimiento de tus tareas diarias, semanales y rotativas en Warframe con contadores de reinicio en vivo."
+    },
     "doneCount": "{count}/{total} hecho",
     "showHiddenItems": "Ocultos ({count})",
     "hideHiddenItems": "Ocultar ocultos",
@@ -178,6 +182,15 @@
   },
   "kim": {
     "title": "KIM",
+    "metadata": {
+      "title": "KIM Pathfinder",
+      "description": "Explora las salas de chat de KIM en Warframe y elige una conversación para simular los resultados de diálogo preferidos.",
+      "chatroom": {
+        "title": "{chatroomName} KIM Diálogo",
+        "description": "Simula y analiza los caminos de diálogo de {chatroomName} KIM con química, contadores y cálculo de estados booleanos.",
+        "notFound": "Sala de chat no encontrada."
+      }
+    },
     "windowTitle": "¡Bienvenidos a KIM!",
     "username": "Nombre de usuario:",
     "drifter": "Viajero",
@@ -235,6 +248,10 @@
   },
   "masteryChecklist": {
     "title": "Checklist de Maestría",
+    "metadata": {
+      "title": "Checklist de Maestría de Warframe",
+      "description": "Realiza un seguimiento de tu progreso en el Rango de Maestría de Warframe registrando armas, warframes, compañeros e intrínsecos para que siempre sepas qué dominar después."
+    },
     "categories": {
       "itemCompletion": "Completación de ítems",
       "railjackIntrinsic": "Intrínsecos del Railjack",

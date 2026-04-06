@@ -1,3 +1,5 @@
+[![Crowdin](https://badges.crowdin.net/tenno-companion/localized.svg)](https://crowdin.com/project/tenno-companion)
+
 # wf-kim-pathfinder
 
 KIM Pathfinder is a Next.js web app that explores and simulates Warframe KIM dialogue graphs.

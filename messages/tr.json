@@ -80,6 +80,10 @@
   },
   "checklist": {
     "title": "Checklist",
+    "metadata": {
+      "title": "Warframe Checklist",
+      "description": "Track your Warframe daily, weekly, and rotating tasks with live reset counters."
+    },
     "doneCount": "{count}/{total} done",
     "showHiddenItems": "Hidden ({count})",
     "hideHiddenItems": "Hide hidden",
@@ -178,6 +182,15 @@
   },
   "kim": {
     "title": "KIM",
+    "metadata": {
+      "title": "KIM Pathfinder",
+      "description": "Browse Warframe KIM chatrooms and choose a conversation to simulate preferred dialogue outcomes.",
+      "chatroom": {
+        "title": "{chatroomName} KIM Dialogue",
+        "description": "Simulate and analyze {chatroomName} KIM dialogue paths with chemistry, counters, and boolean state outcomes.",
+        "notFound": "Chatroom not found."
+      }
+    },
     "windowTitle": "Welcome to KIM!",
     "username": "Username:",
     "drifter": "Drifter",
@@ -235,6 +248,10 @@
   },
   "masteryChecklist": {
     "title": "Mastery Checklist",
+    "metadata": {
+      "title": "Warframe Mastery Checklist",
+      "description": "Track your Warframe Mastery Rank progress by logging domained weapons, frames, companions, and intrinsics so you always know what to level next."
+    },
     "categories": {
       "itemCompletion": "Item Completion",
       "railjackIntrinsic": "Railjack Intrinsic",
