@@ -8,7 +8,7 @@ const FLIRTING_BOOLEAN_KEYWORDS = ['Flirt', 'Dating', 'NoFlirt', 'NoDate']
 
 // Exact names for flirting-related booleans that do not follow keyword patterns.
 const FLIRTING_BOOLEAN_EXACT_NAMES = new Set(
-  ['QuincyFlirtNo', 'ArthurConfessedFeels', 'LettieConfession'].map((name) =>
+  ['QuincyFlirtNo', 'ArthurConfessedFeels', 'LettieConfession', 'DrifterMarie'].map((name) =>
     name.toLowerCase()
   )
 )
