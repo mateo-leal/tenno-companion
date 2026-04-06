@@ -1,6 +1,5 @@
 import { buildMasteryData, type MasteryData } from '@/lib/mastery'
 import {
-  fetchPublicExportDictionary,
   fetchPublicExportIntrinsics,
   fetchPublicExportSentinels,
   fetchPublicExportWarframes,
@@ -11,6 +10,7 @@ import { MasteryPanel } from '../mastery/mastery-panel'
 import { Window } from '../ui/window'
 import { WindowContent } from '../ui/window-content'
 import { WindowTitlebar } from '../ui/window-titlebar'
+import { getDictionary } from '@/lib/language'
 
 export async function MasteryChecklistWindow() {
   const t = await getTranslations('masteryChecklist')
@@ -22,7 +22,7 @@ export async function MasteryChecklistWindow() {
   try {
     const [dict, weaponsMap, warframesMap, sentinelsMap, intrinsicsMap] =
       await Promise.all([
-        fetchPublicExportDictionary(locale),
+        getDictionary(locale),
         fetchPublicExportWeapons(),
         fetchPublicExportWarframes(),
         fetchPublicExportSentinels(),

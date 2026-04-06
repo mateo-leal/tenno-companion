@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises'
 import { DialogueNode } from '../types'
-import { DEFAULT_LANGUAGE, getDictionarySource } from '../language'
+import { DEFAULT_LANGUAGE, getKIMDictionarySource } from '../language'
 
-export const DEFAULT_DICT_SOURCE = getDictionarySource(DEFAULT_LANGUAGE)
+export const DEFAULT_DICT_SOURCE = getKIMDictionarySource(DEFAULT_LANGUAGE)
 
 export async function loadText(source: string): Promise<string> {
   return source.startsWith('http://') || source.startsWith('https://')

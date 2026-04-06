@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { CHATROOM_SOURCE_BY_ID } from '@/lib/chatrooms'
-import { getDictionarySource, normalizeLanguage } from '@/lib/language'
+import { getKIMDictionarySource, normalizeLanguage } from '@/lib/language'
 import { type DialogueNode, Type } from '@/lib/types'
 import {
   getConversationName,
@@ -176,7 +176,7 @@ export async function GET(request: Request) {
 
     const [nodes, dictionary] = await Promise.all([
       loadNodes(source),
-      loadDictionary(getDictionarySource(language)).catch(
+      loadDictionary(getKIMDictionarySource(language)).catch(
         () => new Map<string, string>()
       ),
     ])
