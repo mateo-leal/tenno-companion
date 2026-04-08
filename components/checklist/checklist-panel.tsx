@@ -2,9 +2,12 @@
 
 import {
   CHECKLIST_TASKS,
+  clearExpiredOtherCompletions,
   createEmptyChecklistState,
   formatRemainingTime,
+  getBaroPeriodKey,
   getDailyResetKey,
+  getEightHoursPeriodKey,
   getTimeUntilNextUtcDay,
   getTimeUntilNextUtcWeek,
   getWeeklyResetKey,
@@ -84,6 +87,8 @@ export function ChecklistPanel() {
       setState((previous) => {
         const nextDaily = getDailyResetKey(current)
         const nextWeekly = getWeeklyResetKey(current)
+        const nextEightHours = getEightHoursPeriodKey(current)
+        const nextBaro = getBaroPeriodKey(current)
 
         let nextState = previous
 
@@ -112,6 +117,25 @@ export function ChecklistPanel() {
         }
 
         return nextState
+
+        const eightHoursExpired =
+          nextState.other.eightHoursPeriodKey !== nextEightHours
+        const baroExpired = nextState.other.baroPeriodKey !== nextBaro
+
+        if (eightHoursExpired || baroExpired) {
+          nextState = {
+            ...nextState,
+            other: {
+              ...nextState.other,
+              eightHoursPeriodKey: nextEightHours,
+              baroPeriodKey: nextBaro,
+              completed: clearExpiredOtherCompletions(
+                nextState.other.completed,
+                { eightHours: eightHoursExpired, baro: baroExpired }
+              ),
+            },
+          }
+        }
       })
     }, 30_000)
 

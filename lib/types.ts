@@ -92,7 +92,10 @@ export type ChecklistGroup = {
 export type ChecklistState = {
   daily: ChecklistGroup
   weekly: ChecklistGroup
-  other: Omit<ChecklistGroup, 'periodKey'>
+  other: Omit<ChecklistGroup, 'periodKey'> & {
+    eightHoursPeriodKey: string
+    baroPeriodKey: string
+  }
 }
 
 export type ChecklistCounter = {

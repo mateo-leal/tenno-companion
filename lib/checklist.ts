@@ -103,8 +103,48 @@ export type BaroApiData = {
   expiryMs: number
 }
 
+function collectIdsByReset(
+  tasks: ChecklistTask[],
+  reset: ChecklistTask['resets']
+): Set<string> {
+  return new Set(
+    tasks.flatMap((task) => {
+      const childIds = task.subitems
+        ? [...collectIdsByReset(task.subitems, reset)]
+        : []
+      return task.resets === reset ? [task.id, ...childIds] : childIds
+    })
+  )
+}
+
+function clearCompletedByIds(
+  completed: Record<string, boolean>,
+  ids: Set<string>
+): Record<string, boolean> {
+  return Object.fromEntries(
+    Object.entries(completed).filter(([id]) => !ids.has(id))
+  )
+}
+
 function isObject(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value)
+}
+
+const OTHER_EIGHT_HOURS_IDS = collectIdsByReset(OTHER_TASKS, 'eightHours')
+const OTHER_BARO_IDS = collectIdsByReset(OTHER_TASKS, 'baro')
+
+export function clearExpiredOtherCompletions(
+  completed: Record<string, boolean>,
+  expired: { eightHours?: boolean; baro?: boolean }
+): Record<string, boolean> {
+  let result = completed
+  if (expired.eightHours) {
+    result = clearCompletedByIds(result, OTHER_EIGHT_HOURS_IDS)
+  }
+  if (expired.baro) {
+    result = clearCompletedByIds(result, OTHER_BARO_IDS)
+  }
+  return result
 }
 
 function toUTCDateKey(date: Date): string {
@@ -200,6 +240,23 @@ export function getTimeUntilNextUtcWeek(date: Date): number {
   const next = new Date(start)
   next.setUTCDate(start.getUTCDate() + 7)
   return Math.max(0, next.getTime() - date.getTime())
+}
+
+export function getEightHoursPeriodKey(now: Date): string {
+  const elapsedMs = now.getTime() - EIGHT_HOURS_ANCHOR_UTC
+  const phaseMs =
+    ((elapsedMs % EIGHT_HOURS_PERIOD_MS) + EIGHT_HOURS_PERIOD_MS) %
+    EIGHT_HOURS_PERIOD_MS
+  return String(now.getTime() - phaseMs)
+}
+
+export function getBaroPeriodKey(now: Date): string {
+  const nowMs = now.getTime()
+  if (nowMs < BARO_ANCHOR_START_UTC) {
+    return String(BARO_ANCHOR_START_UTC)
+  }
+  const phaseMs = (nowMs - BARO_ANCHOR_START_UTC) % BARO_PERIOD_MS
+  return String(nowMs - phaseMs)
 }
 
 export function getTimeUntilNextEightHourReset(date: Date): number {
@@ -334,6 +391,8 @@ export function createEmptyChecklistState(now: Date): ChecklistState {
       expandedGroups: createDefaultExpandedGroups('weekly'),
     },
     other: {
+      eightHoursPeriodKey: getEightHoursPeriodKey(now),
+      baroPeriodKey: getBaroPeriodKey(now),
       completed: {},
       hidden: {},
       expandedGroups: createDefaultExpandedGroups('other'),
@@ -351,7 +410,6 @@ export function normalizeChecklistState(
   }
 
   const parsed = raw as StoredChecklistState
-
   const dailyKey = getDailyResetKey(now)
   const weeklyKey = getWeeklyResetKey(now)
 
@@ -385,10 +443,21 @@ export function normalizeChecklistState(
     createDefaultExpandedGroups('weekly')
   )
 
-  const otherCompleted = sanitizeCompleted(
+  const currentEightHoursPeriodKey = getEightHoursPeriodKey(now)
+  const currentBaroPeriodKey = getBaroPeriodKey(now)
+
+  let otherCompleted = sanitizeCompleted(
     parsed.other?.completed,
     VALID_COMPLETED_IDS.other
   )
+
+  if (parsed.other?.eightHoursPeriodKey !== currentEightHoursPeriodKey) {
+    otherCompleted = clearCompletedByIds(otherCompleted, OTHER_EIGHT_HOURS_IDS)
+  }
+
+  if (parsed.other?.baroPeriodKey !== currentBaroPeriodKey) {
+    otherCompleted = clearCompletedByIds(otherCompleted, OTHER_BARO_IDS)
+  }
 
   const otherHidden = sanitizeHidden(
     parsed.other?.hidden,
@@ -414,6 +483,8 @@ export function normalizeChecklistState(
       expandedGroups: weeklyExpandedGroups,
     },
     other: {
+      eightHoursPeriodKey: currentEightHoursPeriodKey,
+      baroPeriodKey: currentBaroPeriodKey,
       completed: otherCompleted,
       hidden: otherHidden,
       expandedGroups: otherExpandedGroups,
