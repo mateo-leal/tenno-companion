@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+import { useEffect, useRef, useState } from 'react'
 import {
   CHECKLIST_TASKS,
   clearExpiredOtherCompletions,
@@ -15,16 +17,14 @@ import {
   normalizeChecklistState,
   BaroApiData,
 } from '@/lib/checklist'
-import { useEffect, useRef, useState } from 'react'
 import { CHECKLIST_STORAGE_KEY } from '@/lib/constants'
 import { ChecklistState, ChecklistTask } from '@/lib/types'
 import {
   fetchOracleWorldState,
   getVoidTrader,
-  VoidTrader,
 } from '@/lib/world-state/fetch-world-state'
-import { useTranslations } from 'next-intl'
 import { ChecklistSectionCard } from './checklist-section-card'
+import { VoidTrader } from '@/lib/world-state/types'
 
 type ChecklistSection = 'daily' | 'weekly' | 'other'
 
@@ -116,8 +116,6 @@ export function ChecklistPanel() {
           }
         }
 
-        return nextState
-
         const eightHoursExpired =
           nextState.other.eightHoursPeriodKey !== nextEightHours
         const baroExpired = nextState.other.baroPeriodKey !== nextBaro
@@ -136,6 +134,8 @@ export function ChecklistPanel() {
             },
           }
         }
+
+        return nextState
       })
     }, 30_000)
 
