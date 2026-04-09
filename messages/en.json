@@ -7,7 +7,8 @@
     "hide": "Hide",
     "collapse": "Collapse",
     "expand": "Expand",
-    "clear": "Clear"
+    "clear": "Clear",
+    "loading": "Loading..."
   },
   "locations": {
     "title": "Location",
@@ -23,9 +24,7 @@
     "dormizone": "Dormizone, Zariman",
     "marooBazaar": "Maroo's Bazaar, Mars",
     "darkRefactory": "Dark Refactory, Base of Operations",
-    "ironWake": "Iron Wake, Earth",
-    "EarthHUB": "Strata Relay, Earth",
-    "MercuryHUB": "Larunda Relay, Mercury"
+    "ironWake": "Iron Wake, Earth"
   },
   "terminal": {
     "title": "Terminal",
@@ -114,7 +113,6 @@
         "craftOther": "Craft other foundry resources",
         "factionSyndicates": "Faction Syndicates Standing",
         "factionSyndicatesInfo": "Complete any mission",
-        "arbitration": "Arbitration",
         "nightwave": "Nightwave",
         "nightwaveInfo": "Complete daily Nightwave missions.",
         "worldSyndicates": "World Syndicates Standing",
@@ -129,7 +127,6 @@
         "theHoldfasts": "The Holdfasts",
         "cavia": "Cavia",
         "theHex": "The Hex",
-        "sortie": "Sortie",
         "sortieInfo": "Complete the 3 daily Sortie missions.",
         "focus": "Focus",
         "focusInfo": "Max out daily Focus gain.",
@@ -149,7 +146,6 @@
         "ayatanTreasureHuntInfo": "Complete Maroo's weekly Ayatan Treasure Hunt.",
         "helpClem": "Help Clem",
         "helpClemInfo": "Complete Clem's weekly bounty.",
-        "archonHunt": "Archon Hunt",
         "archonHuntInfo": "Complete the Archon Hunt mission for an Archon Shard.",
         "circuit": "Duviri Circuit",
         "circuitInfo": "Complete the Duviri Circuit mission on Normal difficulty.",
@@ -159,9 +155,7 @@
         "searchPulsesInfo": "Use 5 weekly search pulses on Netracells and Archimedeas.",
         "netracells": "Netracells",
         "netracellsInfo": "Complete up to 5 weekly Netracell missions for Archon Shard chances.",
-        "eliteDeepArchimedea": "Elite Deep Archimedea",
         "eliteDeepArchimedeaInfo": "Attempt weekly Elite Deep Archimedea for high Archon Shard chances.",
-        "eliteTemporalArchimedea": "Elite Temporal Archimedea",
         "eliteTemporalArchimedeaInfo": "Attempt weekly Elite Temporal Archimedea for high Archon Shard chances.",
         "the1999Calendar": "1999 Calendar",
         "the1999CalendarInfo": "Complete weekly Calendar tasks.",

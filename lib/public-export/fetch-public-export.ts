@@ -5,6 +5,7 @@ import {
   PublicExportSentinel,
   PublicExportWarframe,
   PublicExportWeapon,
+  Region,
 } from './types'
 
 const EXPORT_WEAPONS_URL =
@@ -20,6 +21,8 @@ const EXPORT_INTRINSICS_URL =
   'https://browse.wf/warframe-public-export-plus/ExportIntrinsics.json'
 const EXPORT_MISSION_TYPES_URL =
   'https://browse.wf/warframe-public-export-plus/ExportMissionTypes.json'
+const EXPORT_REGIONS_URL =
+  'https://browse.wf/warframe-public-export-plus/ExportRegions.json'
 
 async function fetchJson<T>(url: string): Promise<T> {
   const response = await fetch(url, {
@@ -53,4 +56,8 @@ export function fetchPublicExportIntrinsics() {
 
 export function fetchPublicExportMissionTypes() {
   return fetchJson<PublicExportMap<MissionType>>(EXPORT_MISSION_TYPES_URL)
+}
+
+export function fetchPublicExportRegions() {
+  return fetchJson<PublicExportMap<Region>>(EXPORT_REGIONS_URL)
 }

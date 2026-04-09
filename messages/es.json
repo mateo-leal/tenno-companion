@@ -7,7 +7,8 @@
     "hide": "Ocultar",
     "collapse": "Colapsar",
     "expand": "Expandir",
-    "clear": "Limpiar"
+    "clear": "Limpiar",
+    "loading": "Cargando..."
   },
   "locations": {
     "title": "Ubicación",
@@ -23,9 +24,7 @@
     "dormizone": "Dormizona, Zariman",
     "marooBazaar": "Bazar de Maroo, Marte",
     "darkRefactory": "Oscuridad Refractaria, Base de Operaciones",
-    "ironWake": "Estela de Hierro, Tierra",
-    "EarthHUB": "Repetidor Strata, Tierra",
-    "MercuryHUB": "Repetidor Larunda, Mercurio"
+    "ironWake": "Estela de Hierro, Tierra"
   },
   "terminal": {
     "title": "Terminal",
@@ -114,7 +113,6 @@
         "craftOther": "Fabrica otros recursos de la fundición",
         "factionSyndicates": "Reputación de los sindicatos de facción",
         "factionSyndicatesInfo": "Completa cualquier misión",
-        "arbitration": "Arbitraje",
         "nightwave": "Nightwave",
         "nightwaveInfo": "Completa las misiones diarias de Nightwave.",
         "worldSyndicates": "Reputación de los sindicatos globales",
@@ -129,7 +127,6 @@
         "theHoldfasts": "Los Inquebrantables",
         "cavia": "Cavia",
         "theHex": "Hex",
-        "sortie": "Incursión",
         "sortieInfo": "Completa las 3 misiones diarias de incursión.",
         "focus": "Enfoque",
         "focusInfo": "Maximiza la ganancia diaria de Enfoque.",
@@ -149,7 +146,6 @@
         "ayatanTreasureHuntInfo": "Completa la cacería semanal de tesoros Ayatan.",
         "helpClem": "Ayuda a Clem",
         "helpClemInfo": "Completa la misión semanal de Clem.",
-        "archonHunt": "Cacería de arcontes",
         "archonHuntInfo": "Completa la misión de Cacería de Arcontes para obtener un fragmento de arconte.",
         "circuit": "El Circuito de Duviri",
         "circuitInfo": "Completa el circuito de Duviri en dificultad normal.",
@@ -159,9 +155,7 @@
         "searchPulsesInfo": "Usa los 5 pulsos de búsqueda semanales en Netraceldas y Archimedeas.",
         "netracells": "Netraceldas",
         "netracellsInfo": "Completa hasta 5 misiones semanales de Netraceldas para obtener fragmentos de arconte.",
-        "eliteDeepArchimedea": "Arquimedea profunda de élite",
         "eliteDeepArchimedeaInfo": "Completa la Arquimedea profunda de élite semanal para obtener altas probabilidades de fragmentos de arconte.",
-        "eliteTemporalArchimedea": "Arquimedea temporal de élite",
         "eliteTemporalArchimedeaInfo": "Completa la Arquimedea temporal de élite semanal para obtener altas probabilidades de fragmentos de arconte.",
         "the1999Calendar": "Calendario de 1999",
         "the1999CalendarInfo": "Completa las tareas semanales del Calendario 1999.",

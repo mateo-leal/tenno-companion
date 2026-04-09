@@ -24,7 +24,10 @@ export const DAILY_TASKS: ChecklistTask[] = [
   },
   {
     id: 'daily-arbitration',
-    title: 'checklist.daily.tasks.arbitration',
+    title: {
+      key: '/Lotus/Language/Menu/AlertHardMode',
+      source: 'oracle',
+    },
     location: 'locations.baseOfOperations',
     terminal: 'terminal.navigation',
     prerequisite: 'prerequisites.erisJunction',
@@ -110,7 +113,10 @@ export const DAILY_TASKS: ChecklistTask[] = [
   },
   {
     id: 'daily-sortie',
-    title: 'checklist.daily.tasks.sortie',
+    title: {
+      key: '/Lotus/Language/Menu/SortieMissionName',
+      source: 'oracle',
+    },
     info: 'checklist.daily.tasks.sortieInfo',
     location: 'locations.baseOfOperations',
     terminal: 'terminal.navigation',
@@ -177,7 +183,10 @@ export const WEEKLY_TASKS: ChecklistTask[] = [
   },
   {
     id: 'weekly-archon-hunt',
-    title: 'checklist.weekly.tasks.archonHunt',
+    title: {
+      key: '/Lotus/Language/WorldStateWindow/LiteSortieMissionName',
+      source: 'oracle',
+    },
     info: 'checklist.weekly.tasks.archonHuntInfo',
     location: 'locations.baseOfOperations',
     terminal: 'terminal.navigation',
@@ -214,7 +223,10 @@ export const WEEKLY_TASKS: ChecklistTask[] = [
       },
       {
         id: 'weekly-search-pulses-deep-archimedea',
-        title: 'checklist.weekly.tasks.eliteDeepArchimedea',
+        title: {
+          key: '/Lotus/Language/Conquest/SolarMapLabConquestNode',
+          source: 'oracle',
+        },
         info: 'checklist.weekly.tasks.eliteDeepArchimedeaInfo',
         location: 'locations.sanctumAnatomica',
         npc: 'npcs.necraloid',
@@ -222,7 +234,10 @@ export const WEEKLY_TASKS: ChecklistTask[] = [
       },
       {
         id: 'weekly-search-pulses-temporal-archimedea',
-        title: 'checklist.weekly.tasks.eliteTemporalArchimedea',
+        title: {
+          key: '/Lotus/Language/1999Echoes/1999HexConquestNode',
+          source: 'oracle',
+        },
         info: 'checklist.weekly.tasks.eliteTemporalArchimedeaInfo',
         location: 'locations.hollvaniaCentralMall',
         npc: 'npcs.kaya',

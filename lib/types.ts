@@ -69,9 +69,14 @@ export type TranscriptLine = {
 // Checklist related types
 export type ChecklistCategory = 'daily' | 'weekly' | 'other'
 
+export type ChecklistTitleExternal = {
+  key: string
+  source?: 'oracle' | 'default'
+}
+
 export type ChecklistTask = {
   id: string
-  title: string
+  title: ChecklistTitleExternal | string
   location?: string
   terminal?: string
   info?: string

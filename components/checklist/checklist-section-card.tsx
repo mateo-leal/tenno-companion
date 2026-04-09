@@ -223,7 +223,7 @@ export function ChecklistSectionCard({
                   }
                 >
                   <p className="text-sm leading-tight text-foreground">
-                    {t(task.title)}
+                    {task.title as string}
                   </p>
                   {task.info && (
                     <p className="text-xs text-muted-foreground">

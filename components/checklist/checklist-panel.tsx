@@ -25,12 +25,17 @@ import {
 } from '@/lib/world-state/fetch-world-state'
 import { ChecklistSectionCard } from './checklist-section-card'
 import { OracleWorldState, VoidTrader } from '@/lib/world-state/types'
-import { fetchPublicExportMissionTypes } from '@/lib/public-export/fetch-public-export'
-import { Dictionary, getDictionary } from '@/lib/language'
-import { PublicExportMap, MissionType } from '@/lib/public-export/types'
+import {
+  fetchPublicExportMissionTypes,
+  fetchPublicExportRegions,
+} from '@/lib/public-export/fetch-public-export'
+import { Dictionary, getDictionary, resolveDictionary } from '@/lib/language'
+import { PublicExportMap, MissionType, Region } from '@/lib/public-export/types'
 import { toTitleCase } from '@/lib/utils'
 
 type ChecklistSection = 'daily' | 'weekly' | 'other'
+type DictionarySource = 'oracle' | 'default'
+type DictionaryBySource = Partial<Record<DictionarySource, Dictionary>>
 
 function loadChecklistState(now: Date): ChecklistState {
   try {
@@ -65,7 +70,38 @@ export function ChecklistPanel() {
   const [archonRewardLabel, setArchonRewardLabel] = useState<string | null>(
     null
   )
+  const [dictionariesBySource, setDictionariesBySource] =
+    useState<DictionaryBySource>({})
+  const [regions, setRegions] = useState<PublicExportMap<Region>>()
   const skipFirstPersistRef = useRef(true)
+
+  function applyDictionaryTitles(tasks: ChecklistTask[]): ChecklistTask[] {
+    return tasks.map((task) => {
+      let title = task.title
+
+      if (typeof task.title !== 'string') {
+        const source = task.title.source ?? 'default'
+        const dictionary = dictionariesBySource[source] ?? {}
+        let resolvedTitle = resolveDictionary(dictionary, task.title.key)
+        if (resolvedTitle === task.title.key) {
+          resolvedTitle = t('ui.loading')
+        }
+        title = toTitleCase(resolvedTitle)
+      } else {
+        title = t(task.title)
+      }
+
+      const subitems = task.subitems
+        ? applyDictionaryTitles(task.subitems)
+        : undefined
+
+      return {
+        ...task,
+        title,
+        subitems,
+      }
+    })
+  }
 
   const getArchonRewardLabel = useCallback(
     (
@@ -97,9 +133,9 @@ export function ChecklistPanel() {
         return null
       }
 
-      return `${t('quests.title')}: ${reward}`
+      return reward
     },
-    [t]
+    []
   )
 
   const getTeshinRewardLabel = useCallback(() => {
@@ -212,17 +248,26 @@ export function ChecklistPanel() {
       try {
         const worldState = await fetchOracleWorldState()
         const missionTypes = await fetchPublicExportMissionTypes()
-        const dictionary = await getDictionary(locale)
+        const regions = await fetchPublicExportRegions()
+        const dictionaries = {
+          default: await getDictionary(locale),
+          oracle: await getDictionary(locale, 'oracle'),
+        }
+
         if (!isCancelled) {
           setBaro(getVoidTrader(worldState))
           setArchonRewardLabel(
-            getArchonRewardLabel(worldState, missionTypes, dictionary)
+            getArchonRewardLabel(worldState, missionTypes, dictionaries.default)
           )
+          setDictionariesBySource(dictionaries)
+          setRegions(regions)
         }
       } catch {
         if (!isCancelled) {
           setBaro(null)
           setArchonRewardLabel(null)
+          setDictionariesBySource({})
+          setRegions(undefined)
         }
       }
     }
@@ -329,57 +374,66 @@ export function ChecklistPanel() {
     : undefined
 
   const isBaroAvailable = isBaroKiteerAvailable(now, baroApi)
-  const dailyTasks: ChecklistTask[] = CHECKLIST_TASKS.daily
-  const weeklyTasks: ChecklistTask[] = CHECKLIST_TASKS.weekly.map((task) => {
-    if (task.id === 'weekly-archon-hunt') {
-      return {
-        ...task,
-        dynamicInfo: archonRewardLabel ?? undefined,
+  const dailyTasks: ChecklistTask[] = applyDictionaryTitles(
+    CHECKLIST_TASKS.daily
+  )
+  const weeklyTasks: ChecklistTask[] = applyDictionaryTitles(
+    CHECKLIST_TASKS.weekly.map((task) => {
+      if (task.id === 'weekly-archon-hunt') {
+        return {
+          ...task,
+          dynamicInfo: archonRewardLabel ?? undefined,
+        }
       }
-    }
 
-    if (task.id === 'weekly-vendors' && task.subitems) {
-      return {
-        ...task,
-        subitems: task.subitems.map((subitem) =>
-          subitem.id === 'weekly-vendor-teshin'
-            ? {
-                ...subitem,
-                dynamicInfo: getTeshinRewardLabel(),
-              }
-            : subitem
-        ),
+      if (task.id === 'weekly-vendors' && task.subitems) {
+        return {
+          ...task,
+          subitems: task.subitems.map((subitem) =>
+            subitem.id === 'weekly-vendor-teshin'
+              ? {
+                  ...subitem,
+                  dynamicInfo: getTeshinRewardLabel(),
+                }
+              : subitem
+          ),
+        }
       }
-    }
 
-    return task
-  })
+      return task
+    })
+  )
 
-  const otherTasks: ChecklistTask[] = (() => {
-    const base = CHECKLIST_TASKS.other.filter(
-      (task) => task.id !== 'other-baro'
-    )
+  const otherTasks: ChecklistTask[] = applyDictionaryTitles(
+    (() => {
+      const base = CHECKLIST_TASKS.other.filter(
+        (task) => task.id !== 'other-baro'
+      )
 
-    const baroTaskTemplate = CHECKLIST_TASKS.other.find(
-      (task) => task.id === 'other-baro'
-    ) as ChecklistTask
+      const baroTaskTemplate = CHECKLIST_TASKS.other.find(
+        (task) => task.id === 'other-baro'
+      ) as ChecklistTask
 
-    const resolvedBaroLocation = baro?.Node
-      ? `locations.${baro.Node}`
-      : 'checklist.other.relayLocationPending'
+      let resolvedBaroLocation = t('checklist.other.relayLocationPending')
+      if (baro?.Node && regions) {
+        const region = regions[baro.Node]
+        const dictionary = dictionariesBySource.default ?? {}
+        resolvedBaroLocation = `${dictionary[region.name]}, ${dictionary[region.systemName]}`
+      }
 
-    const baroTask: ChecklistTask = {
-      ...baroTaskTemplate,
-      location: resolvedBaroLocation,
-      checkable: isBaroAvailable,
-    }
+      const baroTask: ChecklistTask = {
+        ...baroTaskTemplate,
+        location: resolvedBaroLocation,
+        checkable: isBaroAvailable,
+      }
 
-    if (isBaroAvailable) {
-      return baroTask ? [baroTask, ...base] : base
-    }
+      if (isBaroAvailable) {
+        return baroTask ? [baroTask, ...base] : base
+      }
 
-    return [baroTask, ...base]
-  })()
+      return [baroTask, ...base]
+    })()
+  )
 
   const otherSubtitle = t('checklist.other.description')
 
