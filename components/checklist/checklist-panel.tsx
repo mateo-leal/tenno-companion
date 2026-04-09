@@ -509,7 +509,18 @@ export function ChecklistPanel({
       let resolvedBaroLocation = t('checklist.other.relayLocationPending')
       if (baro?.Node && regions && dictionary) {
         const region = regions[baro.Node]
-        resolvedBaroLocation = `${dictionary[region.name]}, ${dictionary[region.systemName]}`
+
+        if (region) {
+          const regionName = dictionary[region.name]
+          const systemName = dictionary[region.systemName]
+
+          resolvedBaroLocation =
+            regionName && systemName
+              ? `${regionName}, ${systemName}`
+              : baro.Node
+        } else {
+          resolvedBaroLocation = baro.Node
+        }
       }
 
       const baroTask: ChecklistTask = {
