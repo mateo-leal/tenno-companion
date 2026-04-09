@@ -61,9 +61,7 @@ export async function getDictionary(
         url = getDictionarySource(language)
     }
 
-    const response = await fetch(url, {
-      cache: 'force-cache',
-    })
+    const response = await fetch(url)
 
     if (!response.ok) {
       throw new Error(`Failed to fetch ${url}: ${response.status}`)

@@ -7,7 +7,7 @@ import {
   type MasteryCategory,
   type MasteryData,
 } from '@/lib/mastery'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { ListIcon, CaretDownIcon } from '@phosphor-icons/react'
 import { isDevelopment } from '@/lib/utils'
@@ -71,11 +71,16 @@ export function MasteryPanel({
     Set<MasteryCategory>
   >(new Set(['itemCompletion']))
   const [query, setQuery] = useState('')
-  const [progress, setProgress] = useState<MasteryProgress>(() =>
-    loadProgress()
-  )
+
+  const [progress, setProgress] = useState<MasteryProgress>({})
   const [error] = useState<string | null>(initialError)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  useEffect(() => {
+    const savedProgress = loadProgress()
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setProgress(savedProgress)
+  }, [])
 
   const resolveSubcategoryLabel = (
     category: MasteryCategory,

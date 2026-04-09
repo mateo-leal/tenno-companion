@@ -77,7 +77,7 @@ export function ChecklistPanel({
     null
   )
   const [externalLabels] = useState<ExternalLabelMap>(initialExternalLabels)
-  const [defaultDictionary, setDefaultDictionary] = useState<Dictionary>()
+  const [dictionary, setDictionary] = useState<Dictionary>()
   const [regions, setRegions] = useState<PublicExportMap<Region>>()
   const skipFirstPersistRef = useRef(true)
 
@@ -341,21 +341,21 @@ export function ChecklistPanel({
         const worldState = await fetchOracleWorldState()
         const missionTypes = await fetchPublicExportMissionTypes()
         const regions = await fetchPublicExportRegions()
-        const dictionary = await getDictionary(locale)
+        const dict = await getDictionary(locale)
 
         if (!isCancelled) {
           setBaro(getVoidTrader(worldState))
           setArchonRewardLabel(
-            getArchonRewardLabel(worldState, missionTypes, dictionary)
+            getArchonRewardLabel(worldState, missionTypes, dict)
           )
-          setDefaultDictionary(dictionary)
+          setDictionary(dict)
           setRegions(regions)
         }
       } catch {
         if (!isCancelled) {
           setBaro(null)
           setArchonRewardLabel(null)
-          setDefaultDictionary(undefined)
+          setDictionary(undefined)
           setRegions(undefined)
         }
       }
@@ -504,9 +504,8 @@ export function ChecklistPanel({
       ) as ChecklistTask
 
       let resolvedBaroLocation = t('checklist.other.relayLocationPending')
-      if (baro?.Node && regions) {
+      if (baro?.Node && regions && dictionary) {
         const region = regions[baro.Node]
-        const dictionary = defaultDictionary ?? {}
         resolvedBaroLocation = `${dictionary[region.name]}, ${dictionary[region.systemName]}`
       }
 
