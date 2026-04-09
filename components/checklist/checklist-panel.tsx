@@ -211,10 +211,13 @@ export function ChecklistPanel({
       const bossName = toTitleCase(sortie.Boss.substring(12)) // remove "SORTIE_BOSS_"
 
       const missions = sortie.Missions.map((mission) => {
-        const missionTypeName = missionTypes[mission.missionType].name
+        const missionType = missionTypes[mission.missionType]
+        const missionTypeName = missionType?.name
+        const localizedMissionType =
+          missionTypeName != null ? dictionary[missionTypeName] : undefined
 
-        if (missionTypeName) {
-          return toTitleCase(dictionary[missionTypeName])
+        if (typeof localizedMissionType === 'string' && localizedMissionType) {
+          return toTitleCase(localizedMissionType)
         }
 
         return mission.missionType
