@@ -38,8 +38,6 @@ export function TaskRow({
 }: TaskRowProps) {
   const t = useTranslations()
   const counter = getChecklistTaskCounter(task, now, baroApi)
-  const titleLabel =
-    typeof task.title === 'string' ? task.title : task.title.key
   // Logic for showing details: always show if not checkable, or show if not checked
   const showDetails = !checkable || !checked
 
@@ -66,7 +64,8 @@ export function TaskRow({
               : 'text-foreground'
           )}
         >
-          {titleLabel}
+          {task.title as string}{' '}
+          {task.steelPath && <span>({t('common.steelPath')})</span>}
         </p>
         {showDetails && (
           <>
@@ -159,13 +158,14 @@ function TaskMeta({
     {
       condition: !!task.terminal,
       icon: AppWindowIcon,
-      label: task.terminal && t(task.terminal),
+      label:
+        typeof task.terminal === 'string' ? task.terminal : task.terminal?.key,
       alt: t('terminal.title'),
     },
     {
       condition: !!task.npc,
       icon: UserIcon,
-      label: task.npc && t(task.npc),
+      label: typeof task.npc === 'string' ? task.npc : task.npc?.key,
       alt: t('npcs.title'),
     },
     {
@@ -175,6 +175,17 @@ function TaskMeta({
         typeof task.prerequisite === 'string'
           ? task.prerequisite
           : task.prerequisite?.key,
+      alt: t('checklist.prerequisite'),
+    },
+    {
+      condition: !!task.syndicateRank,
+      icon: CheckCircleIcon,
+      label: task.syndicateRank
+        ? t('prerequisites.syndicateRank', {
+            syndicate: task.syndicateRank.syndicate as string,
+            rank: task.syndicateRank.rank,
+          })
+        : undefined,
       alt: t('checklist.prerequisite'),
     },
   ]

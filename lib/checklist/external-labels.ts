@@ -33,9 +33,24 @@ function collectExternalLabels(
         labels.set(getExternalLabelId(task.prerequisite), task.prerequisite)
       }
 
+      if (task.npc && typeof task.npc !== 'string') {
+        labels.set(getExternalLabelId(task.npc), task.npc)
+      }
+
+      if (task.terminal && typeof task.terminal !== 'string') {
+        labels.set(getExternalLabelId(task.terminal), task.terminal)
+      }
+
       if (Array.isArray(task.location)) {
         for (const locationLabel of task.location) {
           labels.set(getExternalLabelId(locationLabel), locationLabel)
+        }
+      }
+
+      if (task.syndicateRank) {
+        const syndicateLabel = task.syndicateRank.syndicate
+        if (typeof syndicateLabel !== 'string') {
+          labels.set(getExternalLabelId(syndicateLabel), syndicateLabel)
         }
       }
 

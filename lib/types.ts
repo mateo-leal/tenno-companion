@@ -78,11 +78,13 @@ export type ChecklistTask = {
   id: string
   title: LabelExternal | string
   location?: LabelExternal[] | string
-  terminal?: string
+  terminal?: LabelExternal | string
   info?: string
   dynamicInfo?: string
+  steelPath?: boolean
   prerequisite?: LabelExternal | string
-  npc?: string
+  syndicateRank?: { syndicate: LabelExternal | string; rank: number }
+  npc?: LabelExternal | string
   checkable?: boolean
   resets?: 'daily' | 'weekly' | 'baro' | 'eightHours'
   subitems?: ChecklistTask[]

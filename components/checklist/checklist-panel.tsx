@@ -86,6 +86,9 @@ export function ChecklistPanel({
       let title = task.title
       let prerequisite = task.prerequisite
       let location = task.location
+      let terminal = task.terminal
+      let npc = task.npc
+      let syndicateRank = task.syndicateRank
 
       if (typeof task.title !== 'string') {
         let resolvedTitle =
@@ -93,7 +96,7 @@ export function ChecklistPanel({
         if (resolvedTitle === task.title.key) {
           resolvedTitle = t('ui.loading')
         }
-        title = toTitleCase(resolvedTitle)
+        title = resolvedTitle
       } else {
         title = t(task.title)
       }
@@ -128,6 +131,53 @@ export function ChecklistPanel({
         }
       }
 
+      if (task.terminal) {
+        if (typeof task.terminal === 'string') {
+          terminal = t(task.terminal)
+        } else {
+          let resolvedTerminal =
+            externalLabels[getExternalLabelId(task.terminal)] ??
+            task.terminal.key
+          if (resolvedTerminal === task.terminal.key) {
+            resolvedTerminal = t('ui.loading')
+          }
+          terminal = resolvedTerminal
+        }
+      }
+
+      if (task.npc) {
+        if (typeof task.npc === 'string') {
+          npc = t(task.npc)
+        } else {
+          let resolvedNpc =
+            externalLabels[getExternalLabelId(task.npc)] ?? task.npc.key
+          if (resolvedNpc === task.npc.key) {
+            resolvedNpc = t('ui.loading')
+          }
+          npc = resolvedNpc
+        }
+      }
+
+      if (task.syndicateRank) {
+        if (typeof task.syndicateRank.syndicate === 'string') {
+          syndicateRank = {
+            ...task.syndicateRank,
+            syndicate: t(task.syndicateRank.syndicate),
+          }
+        } else {
+          let resolvedSyndicate =
+            externalLabels[getExternalLabelId(task.syndicateRank.syndicate)] ??
+            task.syndicateRank.syndicate.key
+          if (resolvedSyndicate === task.syndicateRank.syndicate.key) {
+            resolvedSyndicate = t('ui.loading')
+          }
+          syndicateRank = {
+            ...task.syndicateRank,
+            syndicate: resolvedSyndicate,
+          }
+        }
+      }
+
       const subitems = task.subitems
         ? applyDictionaryTitles(task.subitems)
         : undefined
@@ -137,6 +187,9 @@ export function ChecklistPanel({
         title,
         prerequisite,
         location,
+        terminal,
+        npc,
+        syndicateRank,
         subitems,
       }
     })
