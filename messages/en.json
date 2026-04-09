@@ -14,16 +14,6 @@
     "title": "Location",
     "baseOfOperations": "Base of Operations",
     "anyRelay": "Any Relay",
-    "cetus": "Cetus, Earth",
-    "fortuna": "Fortuna, Venus",
-    "necralisk": "Necralisk, Deimos",
-    "chrysalith": "Chrysalith, Zariman",
-    "sanctumAnatomica": "Sanctum Anatomica, Deimos",
-    "hollvaniaCentralMall": "Höllvania Central Mall",
-    "laCathedrale": "La Cathédrale, Sanctum Anatomica, Deimos",
-    "dormizone": "Dormizone, Zariman",
-    "marooBazaar": "Maroo's Bazaar, Mars",
-    "darkRefactory": "Dark Refactory, Base of Operations",
     "ironWake": "Iron Wake, Earth"
   },
   "terminal": {

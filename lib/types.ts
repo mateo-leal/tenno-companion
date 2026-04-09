@@ -77,7 +77,7 @@ export type LabelExternal = {
 export type ChecklistTask = {
   id: string
   title: LabelExternal | string
-  location?: string
+  location?: LabelExternal[] | string
   terminal?: string
   info?: string
   dynamicInfo?: string

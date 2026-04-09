@@ -38,6 +38,8 @@ export function TaskRow({
 }: TaskRowProps) {
   const t = useTranslations()
   const counter = getChecklistTaskCounter(task, now, baroApi)
+  const titleLabel =
+    typeof task.title === 'string' ? task.title : task.title.key
   // Logic for showing details: always show if not checkable, or show if not checked
   const showDetails = !checkable || !checked
 
@@ -64,7 +66,7 @@ export function TaskRow({
               : 'text-foreground'
           )}
         >
-          {task.title as string}
+          {titleLabel}
         </p>
         {showDetails && (
           <>
@@ -149,9 +151,9 @@ function TaskMeta({
       icon: MapPinIcon,
       label:
         task.location &&
-        (task.location.startsWith('locations.')
-          ? t(task.location)
-          : task.location),
+        (typeof task.location === 'string'
+          ? task.location
+          : task.location.map((label) => label.key).join(', ')),
       alt: t('locations.title'),
     },
     {
@@ -169,7 +171,10 @@ function TaskMeta({
     {
       condition: !!task.prerequisite,
       icon: CheckCircleIcon,
-      label: task.prerequisite && t(task.prerequisite as string),
+      label:
+        typeof task.prerequisite === 'string'
+          ? task.prerequisite
+          : task.prerequisite?.key,
       alt: t('checklist.prerequisite'),
     },
   ]

@@ -14,16 +14,6 @@
     "title": "Ubicación",
     "baseOfOperations": "Base de Operaciones",
     "anyRelay": "Cualquier Repetidor",
-    "cetus": "Cetus, Tierra",
-    "fortuna": "Fortuna, Venus",
-    "necralisk": "Necralisk, Deimos",
-    "chrysalith": "Chrysalith, Zariman",
-    "sanctumAnatomica": "Sanctum Anatomica, Deimos",
-    "hollvaniaCentralMall": "Centro Comercial de Höllvania",
-    "laCathedrale": "La Cathédrale, Sanctum Anatomica, Deimos",
-    "dormizone": "Dormizona, Zariman",
-    "marooBazaar": "Bazar de Maroo, Marte",
-    "darkRefactory": "Oscuridad Refractaria, Base de Operaciones",
     "ironWake": "Estela de Hierro, Tierra"
   },
   "terminal": {

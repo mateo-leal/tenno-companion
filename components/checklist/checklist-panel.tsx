@@ -29,13 +29,15 @@ import {
   fetchPublicExportMissionTypes,
   fetchPublicExportRegions,
 } from '@/lib/public-export/fetch-public-export'
-import { Dictionary, getDictionary, resolveDictionary } from '@/lib/language'
+import { Dictionary, getDictionary } from '@/lib/language'
 import { PublicExportMap, MissionType, Region } from '@/lib/public-export/types'
 import { toTitleCase } from '@/lib/utils'
+import {
+  type ExternalLabelMap,
+  getExternalLabelId,
+} from '@/lib/checklist/external-labels'
 
 type ChecklistSection = 'daily' | 'weekly' | 'other'
-type DictionarySource = 'oracle' | 'default'
-type DictionaryBySource = Partial<Record<DictionarySource, Dictionary>>
 
 function loadChecklistState(now: Date): ChecklistState {
   try {
@@ -58,7 +60,11 @@ function saveChecklistPanelState(checklistState: ChecklistState): void {
   }
 }
 
-export function ChecklistPanel() {
+export function ChecklistPanel({
+  initialExternalLabels,
+}: {
+  initialExternalLabels: ExternalLabelMap
+}) {
   const locale = useLocale()
   const t = useTranslations()
 
@@ -70,8 +76,8 @@ export function ChecklistPanel() {
   const [archonRewardLabel, setArchonRewardLabel] = useState<string | null>(
     null
   )
-  const [dictionariesBySource, setDictionariesBySource] =
-    useState<DictionaryBySource>({})
+  const [externalLabels] = useState<ExternalLabelMap>(initialExternalLabels)
+  const [defaultDictionary, setDefaultDictionary] = useState<Dictionary>()
   const [regions, setRegions] = useState<PublicExportMap<Region>>()
   const skipFirstPersistRef = useRef(true)
 
@@ -79,11 +85,11 @@ export function ChecklistPanel() {
     return tasks.map((task) => {
       let title = task.title
       let prerequisite = task.prerequisite
+      let location = task.location
 
       if (typeof task.title !== 'string') {
-        const source = task.title.source ?? 'default'
-        const dictionary = dictionariesBySource[source] ?? {}
-        let resolvedTitle = resolveDictionary(dictionary, task.title.key)
+        let resolvedTitle =
+          externalLabels[getExternalLabelId(task.title)] ?? task.title.key
         if (resolvedTitle === task.title.key) {
           resolvedTitle = t('ui.loading')
         }
@@ -96,17 +102,29 @@ export function ChecklistPanel() {
         if (typeof task.prerequisite === 'string') {
           prerequisite = t(task.prerequisite)
         } else {
-          const source = task.prerequisite.source ?? 'default'
-          const dictionary = dictionariesBySource[source] ?? {}
-          let resolvedPrerequisite = resolveDictionary(
-            dictionary,
-            task.prerequisite.key,
+          let resolvedPrerequisite =
+            externalLabels[getExternalLabelId(task.prerequisite)] ??
             task.prerequisite.key
-          )
           if (resolvedPrerequisite === task.prerequisite.key) {
             resolvedPrerequisite = t('ui.loading')
           }
           prerequisite = resolvedPrerequisite
+        }
+      }
+
+      if (task.location) {
+        if (Array.isArray(task.location)) {
+          const resolvedLocationParts = task.location.map((label) => {
+            let resolvedPart =
+              externalLabels[getExternalLabelId(label)] ?? label.key
+            if (resolvedPart === label.key) {
+              resolvedPart = t('ui.loading')
+            }
+            return resolvedPart
+          })
+          location = resolvedLocationParts.join(', ')
+        } else if (task.location.startsWith('locations.')) {
+          location = t(task.location)
         }
       }
 
@@ -118,6 +136,7 @@ export function ChecklistPanel() {
         ...task,
         title,
         prerequisite,
+        location,
         subitems,
       }
     })
@@ -269,24 +288,21 @@ export function ChecklistPanel() {
         const worldState = await fetchOracleWorldState()
         const missionTypes = await fetchPublicExportMissionTypes()
         const regions = await fetchPublicExportRegions()
-        const dictionaries = {
-          default: await getDictionary(locale),
-          oracle: await getDictionary(locale, 'oracle'),
-        }
+        const dictionary = await getDictionary(locale)
 
         if (!isCancelled) {
           setBaro(getVoidTrader(worldState))
           setArchonRewardLabel(
-            getArchonRewardLabel(worldState, missionTypes, dictionaries.default)
+            getArchonRewardLabel(worldState, missionTypes, dictionary)
           )
-          setDictionariesBySource(dictionaries)
+          setDefaultDictionary(dictionary)
           setRegions(regions)
         }
       } catch {
         if (!isCancelled) {
           setBaro(null)
           setArchonRewardLabel(null)
-          setDictionariesBySource({})
+          setDefaultDictionary(undefined)
           setRegions(undefined)
         }
       }
@@ -437,7 +453,7 @@ export function ChecklistPanel() {
       let resolvedBaroLocation = t('checklist.other.relayLocationPending')
       if (baro?.Node && regions) {
         const region = regions[baro.Node]
-        const dictionary = dictionariesBySource.default ?? {}
+        const dictionary = defaultDictionary ?? {}
         resolvedBaroLocation = `${dictionary[region.name]}, ${dictionary[region.systemName]}`
       }
 

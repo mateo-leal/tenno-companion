@@ -30,7 +30,9 @@ export const DAILY_TASKS: ChecklistTask[] = [
     },
     location: 'locations.baseOfOperations',
     terminal: 'terminal.navigation',
-    prerequisite: 'prerequisites.erisJunction',
+    prerequisite: {
+      key: '/Lotus/Language/Locations/ErisJunction',
+    },
   },
   {
     id: 'daily-nightwave',
@@ -52,7 +54,10 @@ export const DAILY_TASKS: ChecklistTask[] = [
       {
         id: 'daily-world-ostron',
         title: 'checklist.daily.tasks.ostron',
-        location: 'locations.cetus',
+        location: [
+          { key: '/Lotus/Language/Locations/CetusHub' },
+          { key: '/Lotus/Language/Locations/Earth' },
+        ],
         prerequisite: {
           key: '/Lotus/Language/GlassQuest/GlassQuestTitle',
         },
@@ -60,7 +65,10 @@ export const DAILY_TASKS: ChecklistTask[] = [
       {
         id: 'daily-world-quills',
         title: 'checklist.daily.tasks.theQuills',
-        location: 'locations.cetus',
+        location: [
+          { key: '/Lotus/Language/Locations/CetusHub' },
+          { key: '/Lotus/Language/Locations/Earth' },
+        ],
         prerequisite: {
           key: '/Lotus/Language/G1Quests/WarWithinQuestName',
         },
@@ -68,7 +76,10 @@ export const DAILY_TASKS: ChecklistTask[] = [
       {
         id: 'daily-world-solaris-united',
         title: 'checklist.daily.tasks.solarisUnited',
-        location: 'locations.fortuna',
+        location: [
+          { key: '/Lotus/Language/Locations/SolarisUnitedHub' },
+          { key: '/Lotus/Language/Locations/Venus' },
+        ],
         prerequisite: {
           key: '/Lotus/Language/SolarisQuest/VoxSolarisKeyChainName',
         },
@@ -76,7 +87,10 @@ export const DAILY_TASKS: ChecklistTask[] = [
       {
         id: 'daily-world-vox-solaris',
         title: 'checklist.daily.tasks.voxSolaris',
-        location: 'locations.fortuna',
+        location: [
+          { key: '/Lotus/Language/Locations/SolarisUnitedHub' },
+          { key: '/Lotus/Language/Locations/Venus' },
+        ],
         prerequisite: {
           key: '/Lotus/Language/G1Quests/WarWithinQuestName',
         },
@@ -84,7 +98,10 @@ export const DAILY_TASKS: ChecklistTask[] = [
       {
         id: 'daily-world-ventkids',
         title: 'checklist.daily.tasks.ventkids',
-        location: 'locations.fortuna',
+        location: [
+          { key: '/Lotus/Language/Locations/SolarisUnitedHub' },
+          { key: '/Lotus/Language/Locations/Venus' },
+        ],
         prerequisite: {
           key: '/Lotus/Language/SolarisQuest/VoxSolarisKeyChainName',
         },
@@ -92,7 +109,10 @@ export const DAILY_TASKS: ChecklistTask[] = [
       {
         id: 'daily-world-entrati',
         title: 'checklist.daily.tasks.entrati',
-        location: 'locations.necralisk',
+        location: [
+          { key: '/Lotus/Language/InfestedMicroplanet/SolarMapDeimosHubName' },
+          { key: '/Lotus/Language/InfestedMicroplanet/SolarMapDeimosName' },
+        ],
         prerequisite: {
           key: '/Lotus/Language/InfestedMicroplanetQuest/QuestName',
         },
@@ -100,7 +120,10 @@ export const DAILY_TASKS: ChecklistTask[] = [
       {
         id: 'daily-world-necraloid',
         title: 'checklist.daily.tasks.necraloid',
-        location: 'locations.necralisk',
+        location: [
+          { key: '/Lotus/Language/InfestedMicroplanet/SolarMapDeimosHubName' },
+          { key: '/Lotus/Language/InfestedMicroplanet/SolarMapDeimosName' },
+        ],
         prerequisite: {
           key: '/Lotus/Language/G1Quests/WarWithinQuestName',
         },
@@ -108,7 +131,10 @@ export const DAILY_TASKS: ChecklistTask[] = [
       {
         id: 'daily-world-holdfasts',
         title: 'checklist.daily.tasks.theHoldfasts',
-        location: 'locations.chrysalith',
+        location: [
+          { key: '/Lotus/Language/Zariman/ZarimanHubName' },
+          { key: '/Lotus/Language/Zariman/ZarimanRegionName' },
+        ],
         prerequisite: {
           key: '/Lotus/Language/ZarimanQuest/ZQName',
         },
@@ -116,7 +142,10 @@ export const DAILY_TASKS: ChecklistTask[] = [
       {
         id: 'daily-world-cavia',
         title: 'checklist.daily.tasks.cavia',
-        location: 'locations.sanctumAnatomica',
+        location: [
+          { key: '/Lotus/Language/Entrati/SolarMapEntratiLabsShortcut' },
+          { key: '/Lotus/Language/InfestedMicroplanet/SolarMapDeimosName' },
+        ],
         prerequisite: {
           key: '/Lotus/Language/EntratiLab/EntratiQuest/EntratiQuestTitle',
         },
@@ -124,7 +153,7 @@ export const DAILY_TASKS: ChecklistTask[] = [
       {
         id: 'daily-world-hex',
         title: 'checklist.daily.tasks.theHex',
-        location: 'locations.hollvaniaCentralMall',
+        location: [{ key: '/Lotus/Language/1999/1999HubName' }],
         prerequisite: {
           key: '/Lotus/Language/1999Quest/QuestTitle',
         },
@@ -158,16 +187,22 @@ export const DAILY_TASKS: ChecklistTask[] = [
     subitems: [
       {
         id: 'daily-vendor-acrithis',
-        title: 'npcs.acrithis',
+        title: { key: '/Lotus/Language/Duviri/Acrithis' },
         info: 'checklist.daily.tasks.acrithisInfo',
-        location: 'locations.dormizone',
+        location: [
+          { key: '/Lotus/Language/Zariman/ZarimanApartment' },
+          { key: '/Lotus/Language/Zariman/ZarimanRegionName' },
+        ],
         npc: 'npcs.acrithis',
       },
       {
         id: 'daily-vendor-ticker',
         title: 'npcs.ticker',
         info: 'checklist.daily.tasks.tickerInfo',
-        location: 'locations.fortuna',
+        location: [
+          { key: '/Lotus/Language/Locations/SolarisUnitedHub' },
+          { key: '/Lotus/Language/Locations/Venus' },
+        ],
         npc: 'npcs.ticker',
         prerequisite: {
           key: '/Lotus/Language/G1Quests/RailjackBuildQuestName',
@@ -177,7 +212,10 @@ export const DAILY_TASKS: ChecklistTask[] = [
         id: 'daily-vendor-marie',
         title: 'npcs.marie',
         info: 'checklist.daily.tasks.marieInfo',
-        location: 'locations.laCathedrale',
+        location: [
+          { key: '/Lotus/Language/Entrati/SolarMapEntratiLabsShortcut' },
+          { key: '/Lotus/Language/InfestedMicroplanet/SolarMapDeimosName' },
+        ],
         npc: 'npcs.marie',
         prerequisite: {
           key: '/Lotus/Language/TauPrequel/TauPrequelFinal/TauPrequelQuestName',
@@ -199,7 +237,10 @@ export const WEEKLY_TASKS: ChecklistTask[] = [
     id: 'weekly-maroo',
     title: 'checklist.weekly.tasks.ayatanTreasureHunt',
     info: 'checklist.weekly.tasks.ayatanTreasureHuntInfo',
-    location: 'locations.marooBazaar',
+    location: [
+      { key: '/Lotus/Language/Locations/RelayStationTrade' },
+      { key: '/Lotus/Language/Locations/Mars' },
+    ],
     npc: 'npcs.maroo',
   },
   {
@@ -253,7 +294,10 @@ export const WEEKLY_TASKS: ChecklistTask[] = [
         id: 'weekly-search-pulses-netracells',
         title: 'checklist.weekly.tasks.netracells',
         info: 'checklist.weekly.tasks.netracellsInfo',
-        location: 'locations.sanctumAnatomica',
+        location: [
+          { key: '/Lotus/Language/Entrati/SolarMapEntratiLabsShortcut' },
+          { key: '/Lotus/Language/InfestedMicroplanet/SolarMapDeimosName' },
+        ],
         npc: 'npcs.tagfer',
         prerequisite: {
           key: '/Lotus/Language/EntratiLab/EntratiQuest/EntratiQuestTitle',
@@ -266,7 +310,10 @@ export const WEEKLY_TASKS: ChecklistTask[] = [
           source: 'oracle',
         },
         info: 'checklist.weekly.tasks.eliteDeepArchimedeaInfo',
-        location: 'locations.sanctumAnatomica',
+        location: [
+          { key: '/Lotus/Language/Entrati/SolarMapEntratiLabsShortcut' },
+          { key: '/Lotus/Language/InfestedMicroplanet/SolarMapDeimosName' },
+        ],
         npc: 'npcs.necraloid',
         prerequisite: 'prerequisites.rank5Cavia',
       },
@@ -277,7 +324,7 @@ export const WEEKLY_TASKS: ChecklistTask[] = [
           source: 'oracle',
         },
         info: 'checklist.weekly.tasks.eliteTemporalArchimedeaInfo',
-        location: 'locations.hollvaniaCentralMall',
+        location: [{ key: '/Lotus/Language/1999/1999HubName' }],
         npc: 'npcs.kaya',
         prerequisite: 'prerequisites.rank5Hex',
       },
@@ -305,7 +352,7 @@ export const WEEKLY_TASKS: ChecklistTask[] = [
     id: 'weekly-descendia',
     title: 'checklist.weekly.tasks.descendia',
     info: 'checklist.weekly.tasks.descendiaInfo',
-    location: 'locations.darkRefactory',
+    location: [{ key: '/Lotus/Language/TauPrequel/TauPrequelFinal/TauRegion' }],
     terminal: 'terminal.navigation',
     prerequisite: {
       key: '/Lotus/Language/TauPrequel/TauPrequelFinal/TauPrequelQuestName',
@@ -315,7 +362,7 @@ export const WEEKLY_TASKS: ChecklistTask[] = [
     id: 'weekly-descendia-steel-path',
     title: 'checklist.weekly.tasks.descendiaSteelPath',
     info: 'checklist.weekly.tasks.descendiaInfo',
-    location: 'locations.darkRefactory',
+    location: [{ key: '/Lotus/Language/TauPrequel/TauPrequelFinal/TauRegion' }],
     terminal: 'terminal.navigation',
     prerequisite: {
       key: '/Lotus/Language/TauPrequel/TauPrequelFinal/TauPrequelQuestName',
@@ -339,7 +386,10 @@ export const WEEKLY_TASKS: ChecklistTask[] = [
         id: 'weekly-vendor-yonta',
         title: 'npcs.yonta',
         info: 'checklist.weekly.tasks.yontaInfo',
-        location: 'locations.chrysalith',
+        location: [
+          { key: '/Lotus/Language/Zariman/ZarimanHubName' },
+          { key: '/Lotus/Language/Zariman/ZarimanRegionName' },
+        ],
         npc: 'npcs.yonta',
         prerequisite: {
           key: '/Lotus/Language/ZarimanQuest/ZQName',
@@ -347,9 +397,12 @@ export const WEEKLY_TASKS: ChecklistTask[] = [
       },
       {
         id: 'weekly-vendor-acrithis',
-        title: 'npcs.acrithis',
+        title: { key: '/Lotus/Language/Duviri/Acrithis' },
         info: 'checklist.weekly.tasks.acrithisInfo',
-        location: 'locations.dormizone',
+        location: [
+          { key: '/Lotus/Language/Zariman/ZarimanApartment' },
+          { key: '/Lotus/Language/Zariman/ZarimanRegionName' },
+        ],
         npc: 'npcs.acrithis',
         prerequisite: {
           key: '/Lotus/Language/Duviri/MapNodeQuest',
@@ -367,7 +420,10 @@ export const WEEKLY_TASKS: ChecklistTask[] = [
         id: 'weekly-vendor-bird3',
         title: 'npcs.bird3',
         info: 'checklist.weekly.tasks.bird3Info',
-        location: 'locations.sanctumAnatomica',
+        location: [
+          { key: '/Lotus/Language/Entrati/SolarMapEntratiLabsShortcut' },
+          { key: '/Lotus/Language/InfestedMicroplanet/SolarMapDeimosName' },
+        ],
         npc: 'npcs.bird3',
         prerequisite: 'prerequisites.rank5Cavia',
       },
@@ -375,7 +431,10 @@ export const WEEKLY_TASKS: ChecklistTask[] = [
         id: 'weekly-vendor-nightcap',
         title: 'npcs.nightcap',
         info: 'checklist.weekly.tasks.nightcapInfo',
-        location: 'locations.fortuna',
+        location: [
+          { key: '/Lotus/Language/Locations/SolarisUnitedHub' },
+          { key: '/Lotus/Language/Locations/Venus' },
+        ],
         npc: 'npcs.nightcap',
         prerequisite: {
           key: '/Lotus/Language/NewWar/NewWarQuestName',
@@ -397,7 +456,10 @@ export const OTHER_TASKS: ChecklistTask[] = [
     id: 'other-entrati-tokens',
     title: 'checklist.other.tasks.entratiTokens',
     info: 'checklist.other.tasks.entratiTokensInfo',
-    location: 'locations.necralisk',
+    location: [
+      { key: '/Lotus/Language/InfestedMicroplanet/SolarMapDeimosHubName' },
+      { key: '/Lotus/Language/InfestedMicroplanet/SolarMapDeimosName' },
+    ],
     npc: 'npcs.grandmother',
     prerequisite: {
       key: '/Lotus/Language/InfestedMicroplanetQuest/QuestName',
@@ -407,7 +469,10 @@ export const OTHER_TASKS: ChecklistTask[] = [
   {
     id: 'other-voidplume-trade',
     title: 'checklist.other.tasks.voidplumeTrade',
-    location: 'locations.chrysalith',
+    location: [
+      { key: '/Lotus/Language/Zariman/ZarimanHubName' },
+      { key: '/Lotus/Language/Zariman/ZarimanRegionName' },
+    ],
     npc: 'npcs.yonta',
     prerequisite: {
       key: '/Lotus/Language/ZarimanQuest/ZQName',
@@ -417,7 +482,10 @@ export const OTHER_TASKS: ChecklistTask[] = [
   {
     id: 'other-voca-trade',
     title: 'checklist.other.tasks.vocaTrade',
-    location: 'locations.sanctumAnatomica',
+    location: [
+      { key: '/Lotus/Language/Entrati/SolarMapEntratiLabsShortcut' },
+      { key: '/Lotus/Language/InfestedMicroplanet/SolarMapDeimosName' },
+    ],
     npc: 'npcs.loid',
     prerequisite: {
       key: '/Lotus/Language/EntratiLab/EntratiQuest/EntratiQuestTitle',
