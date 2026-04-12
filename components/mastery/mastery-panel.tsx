@@ -374,6 +374,7 @@ export function MasteryPanel({ masteryData }: { masteryData: MasteryData }) {
                         height={36}
                         className="size-9 shrink-0 border border-muted-primary/60 bg-background/70 object-contain p-0.5"
                         loading={index < 12 ? 'eager' : 'lazy'}
+                        preload={index < 12 && activeSubcategory === 'warframe'}
                         unoptimized
                       />
                     ) : null}
