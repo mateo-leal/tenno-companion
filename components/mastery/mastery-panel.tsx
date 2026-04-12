@@ -346,7 +346,7 @@ export function MasteryPanel({ masteryData }: { masteryData: MasteryData }) {
             <p className="text-sm text-muted-foreground">{t('emptyState')}</p>
           ) : (
             <div className="space-y-1.5">
-              {filteredItems.map((item) => {
+              {filteredItems.map((item, index) => {
                 const checked = Boolean(progress[item.id])
                 return (
                   <button
@@ -373,7 +373,7 @@ export function MasteryPanel({ masteryData }: { masteryData: MasteryData }) {
                         width={36}
                         height={36}
                         className="size-9 shrink-0 border border-muted-primary/60 bg-background/70 object-contain p-0.5"
-                        loading="lazy"
+                        loading={index < 12 ? 'eager' : 'lazy'}
                         unoptimized
                       />
                     ) : null}
