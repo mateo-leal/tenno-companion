@@ -1,6 +1,6 @@
 import { ChecklistCounter, ChecklistTask } from '@/lib/types'
 import { Button } from '../ui/button'
-import { BaroApiData, getChecklistTaskCounter } from '@/lib/checklist'
+import { getChecklistTaskCounter } from '@/lib/checklist'
 import {
   AppWindowIcon,
   CheckCircleIcon,
@@ -13,7 +13,8 @@ import {
   XIcon,
 } from '@phosphor-icons/react'
 import { useTranslations } from 'next-intl'
-import { cn } from '@/lib/utils' // Standard utility for tailwind classes
+import { cn } from '@/lib/utils'
+import { useGameData } from '../providers/game-data'
 
 interface TaskRowProps {
   task: ChecklistTask
@@ -21,7 +22,6 @@ interface TaskRowProps {
   checked: boolean
   checkable?: boolean
   isHidden?: boolean
-  baroApi?: BaroApiData
   onToggle: () => void
   onToggleHidden: () => void
 }
@@ -32,12 +32,12 @@ export function TaskRow({
   checked,
   checkable = true,
   isHidden = false,
-  baroApi,
   onToggle,
   onToggleHidden,
 }: TaskRowProps) {
   const t = useTranslations()
-  const counter = getChecklistTaskCounter(task, now, baroApi)
+  const { worldState } = useGameData()
+  const counter = getChecklistTaskCounter(task, now, worldState)
   // Logic for showing details: always show if not checkable, or show if not checked
   const showDetails = !checkable || !checked
 

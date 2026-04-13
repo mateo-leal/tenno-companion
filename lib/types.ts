@@ -1,3 +1,5 @@
+import { ReactNode } from 'react'
+
 export interface DialogueNode {
   type: Type
   Id: number
@@ -72,6 +74,7 @@ export type ChecklistCategory = 'daily' | 'weekly' | 'other'
 export type LabelExternal = {
   key: string
   source?: 'oracle' | 'default'
+  format?: 'titleCase'
 }
 
 export type ChecklistTask = {
@@ -80,13 +83,13 @@ export type ChecklistTask = {
   location?: LabelExternal[] | string
   terminal?: LabelExternal | string
   info?: string
-  dynamicInfo?: string
+  dynamicInfo?: ReactNode
   steelPath?: boolean
   prerequisite?: LabelExternal | string
   syndicateRank?: { syndicate: LabelExternal | string; rank: number }
   npc?: LabelExternal | string
   checkable?: boolean
-  resets?: 'daily' | 'weekly' | 'baro' | 'eightHours'
+  resets?: 'daily' | 'weekly' | 'baro' | 'eightHours' | 'sortie'
   subitems?: ChecklistTask[]
 }
 
@@ -103,6 +106,7 @@ export type ChecklistState = {
   other: Omit<ChecklistGroup, 'periodKey'> & {
     eightHoursPeriodKey: string
     baroPeriodKey: string
+    sortiePeriodKey: string
   }
 }
 

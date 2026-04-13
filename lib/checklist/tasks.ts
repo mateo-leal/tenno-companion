@@ -32,6 +32,7 @@ export const DAILY_TASKS: ChecklistTask[] = [
     terminal: 'terminal.navigation',
     prerequisite: {
       key: '/Lotus/Language/Locations/ErisJunction',
+      format: 'titleCase',
     },
   },
   {
@@ -167,19 +168,6 @@ export const DAILY_TASKS: ChecklistTask[] = [
     ],
   },
   {
-    id: 'daily-sortie',
-    title: {
-      key: '/Lotus/Language/Menu/SortieMissionName',
-      source: 'oracle',
-    },
-    info: 'checklist.daily.tasks.sortieInfo',
-    location: 'locations.baseOfOperations',
-    terminal: 'terminal.navigation',
-    prerequisite: {
-      key: '/Lotus/Language/G1Quests/WarWithinQuestName',
-    },
-  },
-  {
     id: 'daily-focus',
     title: 'checklist.daily.tasks.focus',
     info: 'checklist.daily.tasks.focusInfo',
@@ -193,13 +181,13 @@ export const DAILY_TASKS: ChecklistTask[] = [
     subitems: [
       {
         id: 'daily-vendor-acrithis',
-        title: { key: '/Lotus/Language/Duviri/Acrithis' },
+        title: { key: '/Lotus/Language/Duviri/Acrithis', format: 'titleCase' },
         info: 'checklist.daily.tasks.acrithisInfo',
         location: [
           { key: '/Lotus/Language/Zariman/ZarimanApartment' },
           { key: '/Lotus/Language/Zariman/ZarimanRegionName' },
         ],
-        npc: { key: '/Lotus/Language/Duviri/Acrithis' },
+        npc: { key: '/Lotus/Language/Duviri/Acrithis', format: 'titleCase' },
       },
       {
         id: 'daily-vendor-ticker',
@@ -422,13 +410,13 @@ export const WEEKLY_TASKS: ChecklistTask[] = [
       },
       {
         id: 'weekly-vendor-acrithis',
-        title: { key: '/Lotus/Language/Duviri/Acrithis' },
+        title: { key: '/Lotus/Language/Duviri/Acrithis', format: 'titleCase' },
         info: 'checklist.weekly.tasks.acrithisInfo',
         location: [
           { key: '/Lotus/Language/Zariman/ZarimanApartment' },
           { key: '/Lotus/Language/Zariman/ZarimanRegionName' },
         ],
-        npc: { key: '/Lotus/Language/Duviri/Acrithis' },
+        npc: { key: '/Lotus/Language/Duviri/Acrithis', format: 'titleCase' },
         prerequisite: {
           key: '/Lotus/Language/Duviri/MapNodeQuest',
         },
@@ -481,6 +469,21 @@ export const OTHER_TASKS: ChecklistTask[] = [
     info: 'checklist.other.tasks.baroInfo',
     npc: { key: '/Lotus/Language/G1Quests/VoidTraderName' },
     resets: 'baro',
+  },
+  {
+    id: 'other-sortie',
+    title: {
+      key: '/Lotus/Language/Menu/SortieMissionName',
+      source: 'oracle',
+      format: 'titleCase',
+    },
+    info: 'checklist.daily.tasks.sortieInfo',
+    location: 'locations.baseOfOperations',
+    terminal: 'terminal.navigation',
+    prerequisite: {
+      key: '/Lotus/Language/G1Quests/WarWithinQuestName',
+    },
+    resets: 'sortie',
   },
   {
     id: 'other-entrati-tokens',

@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Button } from '../ui/button'
 import { ChecklistTask } from '@/lib/types'
-import { BaroApiData } from '@/lib/checklist'
 import { TaskRow } from './task-row'
 import {
   BroomIcon,
@@ -57,7 +56,6 @@ export function ChecklistSectionCard({
   now,
   completed,
   hidden,
-  baroApi,
   onToggle,
   onToggleHidden,
   onClear,
@@ -70,7 +68,6 @@ export function ChecklistSectionCard({
   now: Date
   completed: Record<string, boolean>
   hidden: Record<string, boolean>
-  baroApi?: BaroApiData
   onToggle: (taskId: string) => void
   onToggleHidden: (taskId: string) => void
   onClear: () => void
@@ -196,7 +193,6 @@ export function ChecklistSectionCard({
                 checked={Boolean(completed[task.id])}
                 checkable={task.checkable}
                 isHidden={Boolean(hidden[task.id])}
-                baroApi={baroApi}
                 onToggle={() => onToggle(task.id)}
                 onToggleHidden={() => onToggleHidden(task.id)}
               />
@@ -279,7 +275,6 @@ export function ChecklistSectionCard({
                       checked={Boolean(completed[subitem.id])}
                       checkable={subitem.checkable}
                       isHidden={Boolean(hidden[subitem.id])}
-                      baroApi={baroApi}
                       onToggle={() => onToggle(subitem.id)}
                       onToggleHidden={() => onToggleHidden(subitem.id)}
                     />

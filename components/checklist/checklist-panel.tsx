@@ -7,21 +7,25 @@ import {
   clearExpiredOtherCompletions,
   createEmptyChecklistState,
   formatRemainingTime,
-  getBaroPeriodKey,
   getDailyResetKey,
   getEightHoursPeriodKey,
+  getSortiePeriodKey,
   getTimeUntilNextUtcDay,
   getTimeUntilNextUtcWeek,
   getWeeklyResetKey,
-  isBaroKiteerAvailable,
   normalizeChecklistState,
-  BaroApiData,
 } from '@/lib/checklist'
 import { CHECKLIST_STORAGE_KEY } from '@/lib/constants'
 import { ChecklistState, ChecklistTask, LabelExternal } from '@/lib/types'
 import { ChecklistSectionCard } from './checklist-section-card'
 import { toTitleCase } from '@/lib/utils'
 import { useGameData } from '../providers/game-data'
+import {
+  getBaro,
+  getBaroPeriodKey,
+  isBaroKiteerAvailable,
+} from '@/lib/world-state/baro'
+import { getSortieBossName } from '@/lib/utils/sortie-bosses'
 
 type ChecklistSection = 'daily' | 'weekly' | 'other'
 
@@ -68,6 +72,7 @@ export function ChecklistPanel() {
         const nextDaily = getDailyResetKey(current)
         const nextWeekly = getWeeklyResetKey(current)
         const nextEightHours = getEightHoursPeriodKey(current)
+        const nextSortie = getSortiePeriodKey(current)
         const nextBaro = getBaroPeriodKey(current)
 
         const next = { ...prev }
@@ -80,14 +85,17 @@ export function ChecklistPanel() {
 
         const eExpired = next.other.eightHoursPeriodKey !== nextEightHours
         const bExpired = next.other.baroPeriodKey !== nextBaro
-        if (eExpired || bExpired) {
+        const sExpired = next.other.sortiePeriodKey !== nextSortie
+        if (eExpired || bExpired || sExpired) {
           next.other = {
             ...next.other,
             eightHoursPeriodKey: nextEightHours,
             baroPeriodKey: nextBaro,
+            sortiePeriodKey: nextSortie,
             completed: clearExpiredOtherCompletions(next.other.completed, {
               eightHours: eExpired,
               baro: bExpired,
+              sortie: sExpired,
             }),
           }
         }
@@ -105,17 +113,17 @@ export function ChecklistPanel() {
 
   const applyDictionaryTitles = useCallback(
     function resolver(tasks: ChecklistTask[]): ChecklistTask[] {
-      const dict = dictionaries['default'] || {}
-      const dictOracle = dictionaries['oracle'] || {}
-
       return tasks.map((task) => {
         const resolve = (
           obj: string | LabelExternal | undefined
         ): string | undefined => {
           if (!obj) return undefined
           if (typeof obj === 'string') return t(obj)
-          const label =
-            obj.source === 'oracle' ? dictOracle[obj.key] : dict[obj.key]
+          const dict = dictionaries[obj.source || 'default'] || {}
+          let label = dict[obj.key]
+          if (obj.format === 'titleCase' && label) {
+            label = toTitleCase(label)
+          }
           return label ?? t('ui.loading')
         }
 
@@ -125,11 +133,14 @@ export function ChecklistPanel() {
           if (!loc) return undefined
           if (Array.isArray(loc)) {
             return loc
-              .map(
-                (l) =>
-                  (l.source === 'oracle' ? dictOracle[l.key] : dict[l.key]) ??
-                  t('ui.loading')
-              )
+              .map((l) => {
+                const dict = dictionaries[l.source || 'default'] || {}
+                let label = dict[l.key]
+                if (l.format === 'titleCase' && label) {
+                  label = toTitleCase(label)
+                }
+                return label ?? t('ui.loading')
+              })
               .join(', ')
           }
           return loc.startsWith('locations.') ? t(loc) : loc
@@ -170,6 +181,35 @@ export function ChecklistPanel() {
     return `${boss} (${missions})`
   }, [worldState, exportData.missionTypes, dictionaries])
 
+  const sortieRewardLabel = useMemo(() => {
+    const sortie = worldState?.Sorties?.[0]
+    const mTypes = exportData.missionTypes
+    const dict = dictionaries.default
+    if (!sortie || !mTypes || !dict) return null
+
+    const boss = getSortieBossName(sortie.Boss, dict)
+    const missions = sortie.Variants.map((variant) => {
+      const key = mTypes[variant.missionType]?.name
+      const missionName =
+        key && dict[key] ? toTitleCase(dict[key]) : variant.missionType
+      const modifier = variant.modifierType
+        ? `${t(`sortieModifiers.${variant.modifierType}`)}`
+        : ''
+      return (
+        <li key={variant.missionType}>
+          {missionName} - {modifier}
+        </li>
+      )
+    })
+
+    return (
+      <>
+        <span>{boss}</span>
+        <ul className="list-disc list-inside">{missions}</ul>
+      </>
+    )
+  }, [worldState?.Sorties, exportData.missionTypes, dictionaries, t])
+
   const teshinRewardLabel = useMemo(() => {
     const EPOCH = 1736121600 * 1000
     const week = Math.trunc((now.getTime() - EPOCH) / 604800000)
@@ -186,14 +226,8 @@ export function ChecklistPanel() {
     return `${t('rewards')}: ${t(`teshinOffers.${rewards[week % 8]}`)}`
   }, [now, t])
 
-  const baro = worldState?.VoidTraders?.[0] || null
-  const baroApi: BaroApiData | undefined = baro
-    ? {
-        activationMs: Number(baro.Activation.$date.$numberLong),
-        expiryMs: Number(baro.Expiry.$date.$numberLong),
-      }
-    : undefined
-  const isBaroAvailable = isBaroKiteerAvailable(now, baroApi)
+  const baro = getBaro(worldState)
+  const isBaroAvailable = isBaroKiteerAvailable(now, worldState)
 
   const dailyTasks = useMemo(
     () => applyDictionaryTitles(CHECKLIST_TASKS.daily),
@@ -222,40 +256,48 @@ export function ChecklistPanel() {
     [applyDictionaryTitles, archonRewardLabel, teshinRewardLabel]
   )
 
-  const otherTasks = useMemo(() => {
-    const base = CHECKLIST_TASKS.other.filter((t) => t.id !== 'other-baro')
-    const template = CHECKLIST_TASKS.other.find(
-      (t) => t.id === 'other-baro'
-    ) as ChecklistTask
+  const otherTasks = useMemo(
+    () =>
+      applyDictionaryTitles(
+        CHECKLIST_TASKS.other.map((task) => {
+          if (task.id === 'other-baro') {
+            let baroLocation = t('checklist.other.relayLocationPending')
+            const region = baro?.Node ? exportData.regions?.[baro.Node] : null
+            const dict = dictionaries.default
 
-    let baroLocation = t('checklist.other.relayLocationPending')
-    const region = baro?.Node ? exportData.regions?.[baro.Node] : null
-    const dict = dictionaries.default
+            if (region && dict) {
+              const regionName = dict[region.name]
+              const systemName = dict[region.systemName]
+              baroLocation =
+                regionName && systemName
+                  ? `${regionName}, ${systemName}`
+                  : baro!.Node
+            } else if (baro?.Node) {
+              baroLocation = baro.Node
+            }
+            return {
+              ...task,
+              location: baroLocation,
+              checkable: isBaroAvailable,
+            }
+          }
 
-    if (region && dict) {
-      const regionName = dict[region.name]
-      const systemName = dict[region.systemName]
-      baroLocation =
-        regionName && systemName ? `${regionName}, ${systemName}` : baro!.Node
-    } else if (baro?.Node) {
-      baroLocation = baro.Node
-    }
-
-    const baroTask: ChecklistTask = {
-      ...template,
-      location: baroLocation,
-      checkable: isBaroAvailable,
-    }
-
-    return applyDictionaryTitles([baroTask, ...base])
-  }, [
-    baro,
-    exportData.regions,
-    dictionaries,
-    isBaroAvailable,
-    t,
-    applyDictionaryTitles,
-  ])
+          if (task.id === 'other-sortie') {
+            return { ...task, dynamicInfo: sortieRewardLabel ?? undefined }
+          }
+          return task
+        })
+      ),
+    [
+      applyDictionaryTitles,
+      baro,
+      dictionaries.default,
+      exportData.regions,
+      isBaroAvailable,
+      sortieRewardLabel,
+      t,
+    ]
+  )
 
   const toggleTask = (section: ChecklistSection, id: string) => {
     setState((current) => ({
@@ -329,7 +371,6 @@ export function ChecklistPanel() {
         now={now}
         completed={state.other.completed}
         hidden={state.other.hidden}
-        baroApi={baroApi}
         onToggle={(id) => toggleTask('other', id)}
         onToggleHidden={(id) => toggleHidden('other', id)}
         onClear={() =>

@@ -1,18 +1,16 @@
 import {
   createEmptyChecklistState,
   formatRemainingTime,
-  getBaroPeriodKey,
   getChecklistTaskCounter,
   getEightHoursPeriodKey,
-  getNextBaroAvailabilityStartUtc,
   getDailyResetKey,
   getTimeUntilNextEightHourReset,
   getTimeUntilNextUtcDay,
   getTimeUntilNextUtcWeek,
   getWeeklyResetKey,
-  isBaroKiteerAvailable,
   normalizeChecklistState,
 } from '../checklist'
+import { getBaroPeriodKey, isBaroKiteerAvailable } from '../world-state/baro'
 
 describe('checklist reset utilities', () => {
   it('computes daily reset key in UTC', () => {
@@ -290,19 +288,5 @@ describe('checklist reset utilities', () => {
     expect(isBaroKiteerAvailable(new Date('2026-04-03T13:00:00.000Z'))).toBe(
       true
     )
-  })
-
-  it('computes next Baro weekend start while unavailable', () => {
-    const next = getNextBaroAvailabilityStartUtc(
-      new Date('2026-03-25T12:00:00.000Z')
-    )
-    expect(next.toISOString()).toBe('2026-04-03T13:00:00.000Z')
-  })
-
-  it('computes next Baro weekend start before anchor date', () => {
-    const next = getNextBaroAvailabilityStartUtc(
-      new Date('2026-03-18T12:00:00.000Z')
-    )
-    expect(next.toISOString()).toBe('2026-03-20T13:00:00.000Z')
   })
 })
