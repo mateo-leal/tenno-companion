@@ -4,16 +4,21 @@ import type {
   ChecklistCounter,
   ChecklistState,
   ChecklistTask,
-} from './types'
+  Counter,
+} from '../types'
+import {
+  getBaroPeriodKey,
+  getTimeUntilNextBaroChange,
+  isBaroKiteerAvailable,
+} from '../world-state/baro'
+import { OracleWorldState } from '../world-state/types'
 
-// Known Baro weekend anchor in UTC. Availability repeats every 14 days.
-// Baro arrives Friday 13:00 UTC and leaves Sunday 13:00 UTC.
-// Used as fallback when API data is unavailable.
-const BARO_ANCHOR_START_UTC = Date.UTC(2026, 2, 20, 13, 0, 0)
-const BARO_PERIOD_MS = 14 * 24 * 60 * 60 * 1000
-const BARO_ACTIVE_WINDOW_MS = 48 * 60 * 60 * 1000
 const EIGHT_HOURS_ANCHOR_UTC = Date.UTC(1970, 0, 1, 8, 0, 0)
 const EIGHT_HOURS_PERIOD_MS = 8 * 60 * 60 * 1000
+const HOURLY_PERIOD_MS = 60 * 60 * 1000
+
+const SORTIE_RESET_HOUR_UTC = Date.UTC(1970, 0, 1, 16, 0, 0)
+const SORTIE_PERIOD_MS = 24 * 60 * 60 * 1000
 
 export type StoredChecklistState = Partial<{
   daily: Partial<ChecklistState['daily']>
@@ -94,15 +99,6 @@ const VALID_EXPANDED_GROUP_IDS = {
   ),
 }
 
-/**
- * Baro Ki'Teer availability data sourced from the Oracle world-state API.
- * When provided, these timestamps take priority over the anchor-based fallback.
- */
-export type BaroApiData = {
-  activationMs: number
-  expiryMs: number
-}
-
 function collectIdsByReset(
   tasks: ChecklistTask[],
   reset: ChecklistTask['resets']
@@ -132,17 +128,30 @@ function isObject(value: unknown): value is Record<string, unknown> {
 
 const OTHER_EIGHT_HOURS_IDS = collectIdsByReset(OTHER_TASKS, 'eightHours')
 const OTHER_BARO_IDS = collectIdsByReset(OTHER_TASKS, 'baro')
+const OTHER_HOURLY_IDS = collectIdsByReset(OTHER_TASKS, 'hourly')
+const OTHER_SORTIE_IDS = collectIdsByReset(OTHER_TASKS, 'sortie')
 
 export function clearExpiredOtherCompletions(
   completed: Record<string, boolean>,
-  expired: { eightHours?: boolean; baro?: boolean }
+  expired: {
+    hourly?: boolean
+    eightHours?: boolean
+    baro?: boolean
+    sortie?: boolean
+  }
 ): Record<string, boolean> {
   let result = completed
+  if (expired.hourly) {
+    result = clearCompletedByIds(result, OTHER_HOURLY_IDS)
+  }
   if (expired.eightHours) {
     result = clearCompletedByIds(result, OTHER_EIGHT_HOURS_IDS)
   }
   if (expired.baro) {
     result = clearCompletedByIds(result, OTHER_BARO_IDS)
+  }
+  if (expired.sortie) {
+    result = clearCompletedByIds(result, OTHER_SORTIE_IDS)
   }
   return result
 }
@@ -250,13 +259,18 @@ export function getEightHoursPeriodKey(now: Date): string {
   return String(now.getTime() - phaseMs)
 }
 
-export function getBaroPeriodKey(now: Date): string {
+export function getHourlyPeriodKey(now: Date): string {
   const nowMs = now.getTime()
-  if (nowMs < BARO_ANCHOR_START_UTC) {
-    return String(BARO_ANCHOR_START_UTC)
-  }
-  const phaseMs = (nowMs - BARO_ANCHOR_START_UTC) % BARO_PERIOD_MS
+  const phaseMs =
+    ((nowMs % HOURLY_PERIOD_MS) + HOURLY_PERIOD_MS) % HOURLY_PERIOD_MS
   return String(nowMs - phaseMs)
+}
+
+export function getTimeUntilNextHourlyReset(date: Date): number {
+  const nowMs = date.getTime()
+  const phaseMs =
+    ((nowMs % HOURLY_PERIOD_MS) + HOURLY_PERIOD_MS) % HOURLY_PERIOD_MS
+  return HOURLY_PERIOD_MS - phaseMs
 }
 
 export function getTimeUntilNextEightHourReset(date: Date): number {
@@ -268,88 +282,69 @@ export function getTimeUntilNextEightHourReset(date: Date): number {
   return EIGHT_HOURS_PERIOD_MS - phaseMs
 }
 
-export function formatRemainingTime(totalMs: number): string {
+export function getSortiePeriodKey(now: Date): string {
+  const elapsedMs = now.getTime() - SORTIE_RESET_HOUR_UTC
+  const phaseMs =
+    ((elapsedMs % SORTIE_PERIOD_MS) + SORTIE_PERIOD_MS) % SORTIE_PERIOD_MS
+  return String(now.getTime() - phaseMs)
+}
+
+function getTimeUntilNextSortieReset(
+  date: Date,
+  worldState?: OracleWorldState
+) {
+  const nowMs = date.getTime()
+  const sortie = worldState?.Sorties?.[0]
+
+  if (sortie) {
+    const sortieTimes = {
+      expiryMs: Number(sortie.Expiry.$date.$numberLong),
+      activationMs: Number(sortie.Activation.$date.$numberLong),
+    }
+    if (sortieTimes.expiryMs > nowMs) {
+      // API data is still relevant (Sortie is active or upcoming)
+      if (nowMs >= sortieTimes.activationMs) {
+        return sortieTimes.expiryMs - nowMs
+      }
+      return sortieTimes.activationMs - nowMs
+    }
+  }
+
+  // Fallback to 24h reset, starting at 4 PM UTC
+  const elapsedMs = nowMs - SORTIE_RESET_HOUR_UTC
+  const phaseMs =
+    ((elapsedMs % SORTIE_PERIOD_MS) + SORTIE_PERIOD_MS) % SORTIE_PERIOD_MS
+
+  return SORTIE_PERIOD_MS - phaseMs
+}
+
+export function formatRemainingTime(totalMs: number): Counter {
   const safeMs = Math.max(0, totalMs)
   const totalSeconds = Math.floor(safeMs / 1000)
   const days = Math.floor(totalSeconds / 86400)
   const hours = Math.floor((totalSeconds % 86400) / 3600)
   const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
 
-  if (days > 0) {
-    return `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m`
+  return {
+    days,
+    hours,
+    minutes,
+    seconds,
   }
-
-  return `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m`
-}
-
-export function isBaroKiteerAvailable(
-  now: Date,
-  baroApi?: BaroApiData
-): boolean {
-  const nowMs = now.getTime()
-
-  if (baroApi) {
-    return nowMs >= baroApi.activationMs && nowMs < baroApi.expiryMs
-  }
-
-  if (nowMs < BARO_ANCHOR_START_UTC) {
-    return false
-  }
-
-  const phaseMs = (nowMs - BARO_ANCHOR_START_UTC) % BARO_PERIOD_MS
-
-  return phaseMs >= 0 && phaseMs < BARO_ACTIVE_WINDOW_MS
-}
-
-export function getNextBaroAvailabilityStartUtc(now: Date): Date {
-  const nowMs = now.getTime()
-  if (nowMs < BARO_ANCHOR_START_UTC) {
-    return new Date(BARO_ANCHOR_START_UTC)
-  }
-
-  const phaseMs = (nowMs - BARO_ANCHOR_START_UTC) % BARO_PERIOD_MS
-  const currentCycleStartMs = nowMs - phaseMs
-
-  if (phaseMs < BARO_ACTIVE_WINDOW_MS) {
-    return new Date(currentCycleStartMs)
-  }
-
-  return new Date(currentCycleStartMs + BARO_PERIOD_MS)
-}
-
-export function getTimeUntilNextBaroChange(
-  now: Date,
-  baroApi?: BaroApiData
-): number {
-  const nowMs = now.getTime()
-
-  if (baroApi && baroApi.expiryMs > nowMs) {
-    // API data is still relevant (Baro is active or upcoming)
-    if (nowMs >= baroApi.activationMs) {
-      return baroApi.expiryMs - nowMs
-    }
-    return baroApi.activationMs - nowMs
-  }
-
-  if (nowMs < BARO_ANCHOR_START_UTC) {
-    return BARO_ANCHOR_START_UTC - nowMs
-  }
-
-  const phaseMs = (nowMs - BARO_ANCHOR_START_UTC) % BARO_PERIOD_MS
-
-  if (phaseMs < BARO_ACTIVE_WINDOW_MS) {
-    return BARO_ACTIVE_WINDOW_MS - phaseMs
-  }
-
-  return BARO_PERIOD_MS - phaseMs
 }
 
 export function getChecklistTaskCounter(
   task: Pick<ChecklistTask, 'resets'>,
   now: Date,
-  baroApi?: BaroApiData
+  worldState?: OracleWorldState
 ): ChecklistCounter | undefined {
   switch (task.resets) {
+    case 'hourly':
+      return {
+        label: 'resetsIn',
+        time: formatRemainingTime(getTimeUntilNextHourlyReset(now)),
+      }
     case 'daily':
       return {
         label: 'resetsIn',
@@ -367,8 +362,16 @@ export function getChecklistTaskCounter(
       }
     case 'baro': {
       return {
-        label: isBaroKiteerAvailable(now, baroApi) ? 'leavesIn' : 'arrivesIn',
-        time: formatRemainingTime(getTimeUntilNextBaroChange(now, baroApi)),
+        label: isBaroKiteerAvailable(now, worldState)
+          ? 'leavesIn'
+          : 'arrivesIn',
+        time: formatRemainingTime(getTimeUntilNextBaroChange(now, worldState)),
+      }
+    }
+    case 'sortie': {
+      return {
+        label: 'resetsIn',
+        time: formatRemainingTime(getTimeUntilNextSortieReset(now, worldState)),
       }
     }
     default:
@@ -391,8 +394,10 @@ export function createEmptyChecklistState(now: Date): ChecklistState {
       expandedGroups: createDefaultExpandedGroups('weekly'),
     },
     other: {
+      hourlyPeriodKey: getHourlyPeriodKey(now),
       eightHoursPeriodKey: getEightHoursPeriodKey(now),
       baroPeriodKey: getBaroPeriodKey(now),
+      sortiePeriodKey: getSortiePeriodKey(now),
       completed: {},
       hidden: {},
       expandedGroups: createDefaultExpandedGroups('other'),
@@ -445,11 +450,17 @@ export function normalizeChecklistState(
 
   const currentEightHoursPeriodKey = getEightHoursPeriodKey(now)
   const currentBaroPeriodKey = getBaroPeriodKey(now)
+  const currentSortiePeriodKey = getSortiePeriodKey(now)
+  const currentHourlyPeriodKey = getHourlyPeriodKey(now)
 
   let otherCompleted = sanitizeCompleted(
     parsed.other?.completed,
     VALID_COMPLETED_IDS.other
   )
+
+  if (parsed.other?.hourlyPeriodKey !== currentHourlyPeriodKey) {
+    otherCompleted = clearCompletedByIds(otherCompleted, OTHER_HOURLY_IDS)
+  }
 
   if (parsed.other?.eightHoursPeriodKey !== currentEightHoursPeriodKey) {
     otherCompleted = clearCompletedByIds(otherCompleted, OTHER_EIGHT_HOURS_IDS)
@@ -457,6 +468,10 @@ export function normalizeChecklistState(
 
   if (parsed.other?.baroPeriodKey !== currentBaroPeriodKey) {
     otherCompleted = clearCompletedByIds(otherCompleted, OTHER_BARO_IDS)
+  }
+
+  if (parsed.other?.sortiePeriodKey !== currentSortiePeriodKey) {
+    otherCompleted = clearCompletedByIds(otherCompleted, OTHER_SORTIE_IDS)
   }
 
   const otherHidden = sanitizeHidden(
@@ -483,8 +498,10 @@ export function normalizeChecklistState(
       expandedGroups: weeklyExpandedGroups,
     },
     other: {
+      hourlyPeriodKey: currentHourlyPeriodKey,
       eightHoursPeriodKey: currentEightHoursPeriodKey,
       baroPeriodKey: currentBaroPeriodKey,
+      sortiePeriodKey: currentSortiePeriodKey,
       completed: otherCompleted,
       hidden: otherHidden,
       expandedGroups: otherExpandedGroups,

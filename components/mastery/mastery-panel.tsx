@@ -1,74 +1,37 @@
 'use client'
 
 import Image from 'next/image'
-import { MASTERY_CHECKLIST_STORAGE_KEY } from '@/lib/constants'
-import {
-  buildMasteryData,
-  CATEGORY_ORDER,
-  type MasteryCategory,
-  type MasteryData,
-} from '@/lib/mastery'
+import { useTranslations } from 'next-intl'
 import { useEffect, useMemo, useState } from 'react'
-import { useLocale, useTranslations } from 'next-intl'
 import { ListIcon, CaretDownIcon } from '@phosphor-icons/react'
-import { isDevelopment } from '@/lib/utils'
-import { getDictionary } from '@/lib/language'
+
+import type {
+  MasteryCategory,
+  MasteryData,
+  MasteryItem,
+} from '@/lib/mastery/types'
 import {
-  fetchPublicExportIntrinsics,
-  fetchPublicExportSentinels,
-  fetchPublicExportWarframes,
-  fetchPublicExportWeapons,
-} from '@/lib/public-export/fetch-public-export'
+  loadProgress,
+  MasteryProgress,
+  saveProgress,
+} from '@/lib/mastery/client'
+import { resolveDictionary } from '@/lib/language'
+import { isDevelopment, toTitleCase } from '@/lib/utils'
+import { useGameData } from '../providers/game-data'
 
-type MasteryProgress = Record<string, boolean>
+const CATEGORY_ORDER: MasteryCategory[] = [
+  'itemCompletion',
+  'railjackIntrinsic',
+  // 'drifterIntrinsic',
+  // 'starchartCompletion',
+]
 
-function normalizeProgress(value: unknown): MasteryProgress {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) {
-    return {}
-  }
+const RAILJACK_INTRINSIC_MASTERY_POINTS = 1500
 
-  return Object.fromEntries(
-    Object.entries(value as Record<string, unknown>)
-      .filter(([key]) => key.trim().length > 0)
-      .map(([key, checked]) => [key, Boolean(checked)])
-  )
-}
-
-function loadProgress(): MasteryProgress {
-  if (typeof window === 'undefined') {
-    return {}
-  }
-
-  try {
-    const raw = localStorage.getItem(MASTERY_CHECKLIST_STORAGE_KEY)
-    if (!raw) {
-      return {}
-    }
-
-    return normalizeProgress(JSON.parse(raw))
-  } catch {
-    return {}
-  }
-}
-
-function saveProgress(progress: MasteryProgress): void {
-  try {
-    localStorage.setItem(
-      MASTERY_CHECKLIST_STORAGE_KEY,
-      JSON.stringify(progress)
-    )
-  } catch {
-    // ignore storage errors
-  }
-}
-
-export function MasteryPanel() {
-  const locale = useLocale()
+export function MasteryPanel({ masteryData }: { masteryData: MasteryData }) {
   const t = useTranslations('masteryChecklist')
-
-  const [masteryData, setMasteryData] = useState<MasteryData | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const { dictionaries, exportData, fetchDictionary, fetchExportData } =
+    useGameData()
 
   const [activeCategory, setActiveCategory] =
     useState<MasteryCategory>('itemCompletion')
@@ -77,223 +40,169 @@ export function MasteryPanel() {
     Set<MasteryCategory>
   >(new Set(['itemCompletion']))
   const [query, setQuery] = useState('')
-
   const [progress, setProgress] = useState<MasteryProgress>({})
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
-    let isCancelled = false
-
-    async function loadMasteryData() {
-      setIsLoading(true)
-
-      try {
-        const [dict, weaponsMap, warframesMap, sentinelsMap, intrinsicsMap] =
-          await Promise.all([
-            getDictionary(locale),
-            fetchPublicExportWeapons(),
-            fetchPublicExportWarframes(),
-            fetchPublicExportSentinels(),
-            fetchPublicExportIntrinsics(),
-          ])
-
-        if (!isCancelled) {
-          setMasteryData(
-            buildMasteryData(
-              dict,
-              weaponsMap,
-              warframesMap,
-              sentinelsMap,
-              intrinsicsMap
-            )
-          )
-          setError(null)
-          setIsLoading(false)
-        }
-      } catch {
-        if (!isCancelled) {
-          setMasteryData(null)
-          setError(t('loadFailed'))
-          setIsLoading(false)
-        }
-      }
-    }
-
-    void loadMasteryData()
-
-    return () => {
-      isCancelled = true
-    }
-  }, [locale, t])
-
-  useEffect(() => {
-    const savedProgress = loadProgress()
+    void fetchDictionary('default')
+    void fetchExportData('railjackIntrinsics')
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setProgress(savedProgress)
-  }, [])
+    setProgress(loadProgress())
+  }, [fetchDictionary, fetchExportData])
 
-  const resolveSubcategoryLabel = (
-    category: MasteryCategory,
-    subcategory: string
-  ) => {
-    const serverLabel =
-      masteryData?.subcategoryLabels?.[category]?.[subcategory]
-    if (serverLabel) {
-      return serverLabel
+  const intrinsicCalculations = useMemo(() => {
+    const intrinsicsMap = exportData.railjackIntrinsics
+    const dict = dictionaries['default']
+    if (!intrinsicsMap || !dict) return null
+
+    const labels: Record<string, string> = {}
+    const masteryItems: Record<string, MasteryItem[]> = {}
+
+    Object.entries(intrinsicsMap).forEach(([key, intrinsic]) => {
+      const schoolFallback = key.replace('LPS_', '').toLowerCase()
+      const schoolName = resolveDictionary(dict, intrinsic.name, schoolFallback)
+      labels[key] = toTitleCase(schoolName)
+
+      const ranks = intrinsic.ranks ?? []
+      masteryItems[key] =
+        ranks.length > 0
+          ? ranks.map((rank, index) => {
+              const rankNumber = index + 1
+              const rankName = resolveDictionary(
+                dict,
+                rank.name,
+                `${schoolName} ${rankNumber}`
+              )
+              return {
+                id: `intrinsic:${key}:${rankNumber}`,
+                name: rankName,
+                iconUrl: `https://browse.wf${intrinsic.icon}`,
+                rankNumber,
+                masteryPoints: RAILJACK_INTRINSIC_MASTERY_POINTS,
+              }
+            })
+          : [
+              {
+                id: `intrinsic:${key}`,
+                name: schoolName,
+                iconUrl: `https://browse.wf${intrinsic.icon}`,
+                masteryPoints: RAILJACK_INTRINSIC_MASTERY_POINTS,
+              },
+            ]
+    })
+
+    return { masteryItems, labels }
+  }, [exportData.railjackIntrinsics, dictionaries])
+
+  const mergedMasteryData = useMemo(() => {
+    if (!intrinsicCalculations) return masteryData
+    return {
+      ...masteryData,
+      railjackIntrinsic: intrinsicCalculations.masteryItems,
+      subcategoryLabels: {
+        ...masteryData.subcategoryLabels,
+        railjackIntrinsic: intrinsicCalculations.labels,
+      },
     }
+  }, [masteryData, intrinsicCalculations])
 
-    const key = `subcategories.${subcategory}`
-    return t.has(key) ? t(key) : subcategory
+  const resolveSubcategoryLabel = (cat: MasteryCategory, sub: string) => {
+    const serverLabel = mergedMasteryData?.subcategoryLabels?.[cat]?.[sub]
+    if (serverLabel) return serverLabel
+    const key = `subcategories.${sub}`
+    return t.has(key) ? t(key) : sub
   }
 
   const resolveItemLabel = (item: { name: string; rankNumber?: number }) => {
-    if (typeof item.rankNumber === 'number') {
-      return t('rankPrefix', { rank: item.rankNumber, item: item.name })
-    }
-
-    return item.name
+    return typeof item.rankNumber === 'number'
+      ? t('rankPrefix', { rank: item.rankNumber, item: item.name })
+      : item.name
   }
 
   const categorySubcategories = useMemo(() => {
-    if (!masteryData) {
-      return CATEGORY_ORDER.reduce(
-        (accumulator, category) => {
-          accumulator[category] = []
-          return accumulator
-        },
-        {
-          itemCompletion: [],
-          railjackIntrinsic: [],
-          drifterIntrinsic: [],
-          starchartCompletion: [],
-        } as Record<MasteryCategory, string[]>
-      )
-    }
-
     return CATEGORY_ORDER.reduce(
-      (accumulator, category) => {
-        accumulator[category] = Object.keys(masteryData[category] ?? {})
-        return accumulator
+      (acc, cat) => {
+        acc[cat] = Object.keys(mergedMasteryData[cat] ?? {})
+        return acc
       },
-      {
-        itemCompletion: [],
-        railjackIntrinsic: [],
-        drifterIntrinsic: [],
-        starchartCompletion: [],
-      } as Record<MasteryCategory, string[]>
+      {} as Record<MasteryCategory, string[]>
     )
-  }, [masteryData])
+  }, [mergedMasteryData])
 
   const resolvedActiveSubcategory = useMemo(() => {
-    const subcategories = categorySubcategories[activeCategory] ?? []
-    if (subcategories.includes(activeSubcategory)) {
-      return activeSubcategory
-    }
-
-    return subcategories[0] ?? null
+    const subcats = categorySubcategories[activeCategory] ?? []
+    return subcats.includes(activeSubcategory)
+      ? activeSubcategory
+      : (subcats[0] ?? null)
   }, [activeCategory, activeSubcategory, categorySubcategories])
 
-  const toggleCategoryExpanded = (category: MasteryCategory) => {
-    const newExpanded = new Set(expandedCategories)
-    if (newExpanded.has(category)) {
-      newExpanded.delete(category)
-    } else {
-      newExpanded.add(category)
-    }
-    setExpandedCategories(newExpanded)
-  }
-
   const filteredItems = useMemo(() => {
-    if (!resolvedActiveSubcategory) {
-      return []
-    }
-
-    const categoryItems =
-      masteryData?.[activeCategory]?.[resolvedActiveSubcategory] ?? []
-    const normalizedQuery = query.trim().toLowerCase()
-    if (!normalizedQuery) {
-      return categoryItems
-    }
-
-    return categoryItems.filter((item) =>
-      item.name.toLowerCase().includes(normalizedQuery)
-    )
-  }, [activeCategory, masteryData, query, resolvedActiveSubcategory])
-
-  type SubcategoryStats = {
-    done: number
-    total: number
-    masteryPointsGained: number
-    masteryPointsTotal: number
-  }
+    if (!resolvedActiveSubcategory) return []
+    const items =
+      mergedMasteryData?.[activeCategory]?.[resolvedActiveSubcategory] ?? []
+    const q = query.trim().toLowerCase()
+    return q ? items.filter((i) => i.name.toLowerCase().includes(q)) : items
+  }, [activeCategory, mergedMasteryData, query, resolvedActiveSubcategory])
 
   const categoryStats = useMemo(() => {
-    if (!masteryData) {
-      return {} as Record<string, SubcategoryStats>
-    }
-
     return Object.fromEntries(
-      CATEGORY_ORDER.flatMap((category) =>
-        (categorySubcategories[category] ?? []).map((subcategory) => {
-          const items = masteryData[category]?.[subcategory] ?? []
-          const done = items.reduce(
-            (count, item) => count + (progress[item.id] ? 1 : 0),
-            0
-          )
-          const masteryPointsGained = items.reduce(
-            (sum, item) =>
-              sum + (progress[item.id] ? (item.masteryPoints ?? 0) : 0),
-            0
-          )
-          const masteryPointsTotal = items.reduce(
-            (sum, item) => sum + (item.masteryPoints ?? 0),
-            0
-          )
-
+      CATEGORY_ORDER.flatMap((cat) =>
+        (categorySubcategories[cat] ?? []).map((sub) => {
+          const items = mergedMasteryData[cat]?.[sub] ?? []
           return [
-            `${category}:${subcategory}`,
-            {
-              done,
-              total: items.length,
-              masteryPointsGained,
-              masteryPointsTotal,
-            },
+            `${cat}:${sub}`,
+            items.reduce(
+              (acc, item) => {
+                const isDone = !!progress[item.id]
+                acc.done += isDone ? 1 : 0
+                acc.masteryPointsGained += isDone
+                  ? (item.masteryPoints ?? 0)
+                  : 0
+                acc.masteryPointsTotal += item.masteryPoints ?? 0
+                return acc
+              },
+              {
+                done: 0,
+                total: items.length,
+                masteryPointsGained: 0,
+                masteryPointsTotal: 0,
+              }
+            ),
           ]
         })
       )
-    ) as Record<string, SubcategoryStats>
-  }, [categorySubcategories, masteryData, progress])
+    )
+  }, [categorySubcategories, mergedMasteryData, progress])
 
   function toggleItem(itemId: string) {
-    setProgress((previous) => {
-      const next = {
-        ...previous,
-        [itemId]: !previous[itemId],
-      }
-
+    setProgress((prev) => {
+      const next = { ...prev, [itemId]: !prev[itemId] }
       saveProgress(next)
       return next
     })
   }
 
   function clearCategory() {
-    if (!masteryData || !resolvedActiveSubcategory) {
-      return
-    }
-
+    if (!resolvedActiveSubcategory) return
     const ids = (
-      masteryData[activeCategory]?.[resolvedActiveSubcategory] ?? []
-    ).map((item) => item.id)
-
-    setProgress((previous) => {
-      const next = { ...previous }
-      for (const id of ids) {
-        delete next[id]
-      }
-
+      mergedMasteryData[activeCategory]?.[resolvedActiveSubcategory] ?? []
+    ).map((i) => i.id)
+    setProgress((prev) => {
+      const next = { ...prev }
+      ids.forEach((id) => delete next[id])
       saveProgress(next)
       return next
     })
+  }
+
+  function toggleGroup(isExpanded: boolean, category: MasteryCategory) {
+    const next = new Set(expandedCategories)
+    if (isExpanded) {
+      next.delete(category)
+    } else {
+      next.add(category)
+    }
+    setExpandedCategories(next)
   }
 
   return (
@@ -312,7 +221,7 @@ export function MasteryPanel() {
               <div key={category}>
                 <button
                   type="button"
-                  onClick={() => toggleCategoryExpanded(category)}
+                  onClick={() => toggleGroup(isExpanded, category)}
                   className="w-full flex items-center justify-between gap-2 px-2 py-2 text-left transition hover:bg-muted-primary/15"
                 >
                   <p className="text-sm leading-tight font-semibold">
@@ -330,58 +239,54 @@ export function MasteryPanel() {
 
                 {isExpanded && (
                   <div className="flex flex-col divide-y divide-muted-primary/20">
-                    {(categorySubcategories[category] ?? []).map(
-                      (subcategory) => {
-                        const statKey = `${category}:${subcategory}`
-                        const stats = (
-                          categoryStats as Record<string, SubcategoryStats>
-                        )[statKey] ?? {
-                          done: 0,
-                          total: 0,
-                          masteryPointsGained: 0,
-                          masteryPointsTotal: 0,
-                        }
-                        const isActive =
-                          activeCategory === category &&
-                          activeSubcategory === subcategory
+                    {categorySubcategories[category]?.map((subcategory) => {
+                      const statKey = `${category}:${subcategory}`
+                      const stats = categoryStats[statKey] ?? {
+                        done: 0,
+                        total: 0,
+                        masteryPointsGained: 0,
+                        masteryPointsTotal: 0,
+                      }
+                      const isActive =
+                        activeCategory === category &&
+                        activeSubcategory === subcategory
 
-                        return (
-                          <button
-                            key={subcategory}
-                            type="button"
-                            onClick={() => {
-                              setActiveCategory(category)
-                              setActiveSubcategory(subcategory)
-                              setSidebarOpen(false)
-                            }}
-                            className={[
-                              'w-full px-4 py-2 text-left transition',
-                              isActive
-                                ? 'bg-success-bg text-success'
-                                : 'text-foreground hover:bg-muted-primary/10',
-                            ].join(' ')}
-                          >
-                            <p className="text-sm leading-tight">
-                              {resolveSubcategoryLabel(category, subcategory)}
-                            </p>
+                      return (
+                        <button
+                          key={subcategory}
+                          type="button"
+                          onClick={() => {
+                            setActiveCategory(category)
+                            setActiveSubcategory(subcategory)
+                            setSidebarOpen(false)
+                          }}
+                          className={[
+                            'w-full px-4 py-2 text-left transition',
+                            isActive
+                              ? 'bg-success-bg text-success'
+                              : 'text-foreground hover:bg-muted-primary/10',
+                          ].join(' ')}
+                        >
+                          <p className="text-sm leading-tight">
+                            {resolveSubcategoryLabel(category, subcategory)}
+                          </p>
+                          <p className="text-xs opacity-60">
+                            {t('doneCount', {
+                              count: stats.done,
+                              total: stats.total,
+                            })}
+                          </p>
+                          {stats.masteryPointsTotal > 0 && (
                             <p className="text-xs opacity-60">
-                              {t('doneCount', {
-                                count: stats.done,
-                                total: stats.total,
+                              {t('masteryPointsProgress', {
+                                gained: stats.masteryPointsGained,
+                                total: stats.masteryPointsTotal,
                               })}
                             </p>
-                            {stats.masteryPointsTotal > 0 && (
-                              <p className="text-xs opacity-60">
-                                {t('masteryPointsProgress', {
-                                  gained: stats.masteryPointsGained,
-                                  total: stats.masteryPointsTotal,
-                                })}
-                              </p>
-                            )}
-                          </button>
-                        )
-                      }
-                    )}
+                          )}
+                        </button>
+                      )
+                    })}
                   </div>
                 )}
               </div>
@@ -437,15 +342,11 @@ export function MasteryPanel() {
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto border border-muted-primary bg-background/35 p-2">
-          {isLoading ? (
-            <p className="text-sm text-muted-foreground">{t('loading')}</p>
-          ) : error ? (
-            <p className="text-sm text-error">{error}</p>
-          ) : filteredItems.length === 0 ? (
+          {filteredItems.length === 0 ? (
             <p className="text-sm text-muted-foreground">{t('emptyState')}</p>
           ) : (
             <div className="space-y-1.5">
-              {filteredItems.map((item) => {
+              {filteredItems.map((item, index) => {
                 const checked = Boolean(progress[item.id])
                 return (
                   <button
@@ -472,7 +373,8 @@ export function MasteryPanel() {
                         width={36}
                         height={36}
                         className="size-9 shrink-0 border border-muted-primary/60 bg-background/70 object-contain p-0.5"
-                        loading="lazy"
+                        loading={index < 12 ? 'eager' : 'lazy'}
+                        preload={index < 12 && activeSubcategory === 'warframe'}
                         unoptimized
                       />
                     ) : null}
