@@ -96,7 +96,12 @@ describe('checklist reset utilities', () => {
 
     expect(counter).toEqual({
       label: 'resetsIn',
-      time: '50m 00s',
+      time: {
+        days: 0,
+        hours: 0,
+        minutes: 50,
+        seconds: 0,
+      },
     })
   })
 
@@ -118,7 +123,12 @@ describe('checklist reset utilities', () => {
 
     expect(counter).toEqual({
       label: 'resetsIn',
-      time: '45m 00s',
+      time: {
+        days: 0,
+        hours: 0,
+        minutes: 45,
+        seconds: 0,
+      },
     })
   })
 
@@ -142,7 +152,12 @@ describe('checklist reset utilities', () => {
 
     expect(counter).toEqual({
       label: 'resetsIn',
-      time: '30m 00s',
+      time: {
+        days: 0,
+        hours: 0,
+        minutes: 30,
+        seconds: 0,
+      },
     })
   })
 
@@ -160,7 +175,12 @@ describe('checklist reset utilities', () => {
 
     expect(counter).toEqual({
       label: 'resetsIn',
-      time: '01h 45m',
+      time: {
+        days: 0,
+        hours: 1,
+        minutes: 45,
+        seconds: 0,
+      },
     })
   })
 
@@ -178,7 +198,12 @@ describe('checklist reset utilities', () => {
 
     expect(counter).toEqual({
       label: 'resetsIn',
-      time: '01h 30m',
+      time: {
+        days: 0,
+        hours: 1,
+        minutes: 30,
+        seconds: 0,
+      },
     })
   })
 
@@ -410,8 +435,15 @@ describe('checklist reset utilities', () => {
   })
 
   it('formats remaining time with day values', () => {
-    const text = formatRemainingTime(2 * 24 * 60 * 60 * 1000 + 75 * 60 * 1000)
-    expect(text).toBe('2d 01h 15m')
+    const counter = formatRemainingTime(
+      2 * 24 * 60 * 60 * 1000 + 75 * 60 * 1000
+    )
+    expect(counter).toEqual({
+      days: 2,
+      hours: 1,
+      minutes: 15,
+      seconds: 0,
+    })
   })
 
   it('shows Baro on anchor weekend Friday through Sunday', () => {
