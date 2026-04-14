@@ -38,6 +38,7 @@ body:
         - API
         - Performance
         - Accessibility
+        # - Builds / Loadouts
         - Other
     validations:
       required: true
