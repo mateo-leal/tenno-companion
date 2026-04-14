@@ -254,7 +254,7 @@
       "vehicle": "Vehículos",
       "archgun": "Archcañón",
       "archmelee": "Archmelé",
-      "amp": "Amp",
+      "amp": "Amps",
       "railjack": "Railjack"
     },
     "doneCount": "{count}/{total} hecho",
