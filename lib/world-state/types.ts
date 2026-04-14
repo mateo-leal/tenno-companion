@@ -1,7 +1,7 @@
 export type OracleWorldState = {
   Events: OracleWorldEvent[]
-  Sorties: Sorty[]
-  LiteSorties: LiteSorty[]
+  Sorties: Sortie[]
+  LiteSorties: LiteSortie[]
   VoidTraders: Array<VoidTrader>
 }
 
@@ -14,7 +14,7 @@ export type OracleWorldEvent = {
   Links?: Link[]
 }
 
-type Sorty = {
+type Sortie = {
   _id: Id
   Activation: OracleWorldStateDate
   Expiry: OracleWorldStateDate
@@ -26,7 +26,7 @@ type Sorty = {
   Twitter: boolean
 }
 
-type LiteSorty = {
+type LiteSortie = {
   _id: Id
   Activation: OracleWorldStateDate
   Expiry: OracleWorldStateDate
