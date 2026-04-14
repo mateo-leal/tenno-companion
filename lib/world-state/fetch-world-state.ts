@@ -14,6 +14,6 @@ export async function fetchOracleWorldState(): Promise<OracleWorldState> {
 
     return (await response.json()) as OracleWorldState
   } catch (error) {
-    throw new Error(`Failed to fetch world state: ${error}`)
+    throw new Error('Failed to fetch world state', { cause: error })
   }
 }
