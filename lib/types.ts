@@ -138,6 +138,11 @@ export type BountyCycles = {
   >
 }
 
+export type ArbitrationCycle = {
+  timestamp: number
+  node: string
+}
+
 export type WorldCycle = {
   expiry: number
   state: string

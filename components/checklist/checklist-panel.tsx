@@ -45,6 +45,7 @@ export function ChecklistPanel() {
   const t = useTranslations()
   const {
     worldState,
+    arbitrations,
     dictionaries,
     exportData,
     fetchDictionary,
@@ -306,6 +307,36 @@ export function ChecklistPanel() {
             }
           }
 
+          if (task.id === 'other-arbitration') {
+            if (
+              arbitrations &&
+              exportData.regions &&
+              exportData.missionTypes &&
+              dictionaries.default
+            ) {
+              const currentHour = Math.trunc(now.getTime() / 3600000) * 3600
+              const epochHour = arbitrations[0].timestamp
+              const currentHourIndex = (currentHour - epochHour) / 3600
+              const currentArbitration = arbitrations[currentHourIndex]
+
+              const region = exportData.regions[currentArbitration.node]
+              const mission = exportData.missionTypes[region.missionType]
+
+              const dict = dictionaries.default
+              const regionName = dict[region.name] || currentArbitration.node
+              const systemName = dict[region.systemName] || region.systemName
+              const missionName = mission.name
+                ? dict[mission.name] || region.missionType
+                : region.missionType
+
+              return {
+                ...task,
+                dynamicInfo: toTitleCase(missionName),
+                location: `${regionName}, ${systemName}`,
+              }
+            }
+          }
+
           if (task.id === 'other-sortie') {
             return { ...task, dynamicInfo: sortieRewardLabel ?? undefined }
           }
@@ -314,10 +345,13 @@ export function ChecklistPanel() {
       ),
     [
       applyDictionaryTitles,
+      arbitrations,
       baro,
       dictionaries.default,
+      exportData.missionTypes,
       exportData.regions,
       isBaroAvailable,
+      now,
       sortieRewardLabel,
       t,
     ]

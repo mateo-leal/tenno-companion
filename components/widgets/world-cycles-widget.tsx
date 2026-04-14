@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { cn } from '@/lib/utils'
-import { WorldCycle } from '@/lib/types'
+import { cn, counterToString } from '@/lib/utils'
+import { Counter, WorldCycle } from '@/lib/types'
 import { useGameData } from '../providers/game-data'
 
 const CYCLE_ACCENT_CLASSES: Record<string, string> = {
@@ -35,18 +35,19 @@ function CycleCard({
   isLoading,
   mounted,
 }: Props) {
-  const t = useTranslations('worldCycles')
+  const t = useTranslations()
 
   const formatCountdown = (expiryTime: number): string => {
     if (!mounted) return '--h --m'
     const totalSeconds = Math.max(0, Math.floor((expiryTime - now) / 1000))
-    const hours = Math.floor(totalSeconds / 3600)
-    const minutes = Math.floor((totalSeconds % 3600) / 60)
-    const seconds = totalSeconds % 60
+    const countdown: Counter = {
+      days: Math.floor(totalSeconds / 86400),
+      hours: Math.floor((totalSeconds % 86400) / 3600),
+      minutes: Math.floor((totalSeconds % 3600) / 60),
+      seconds: totalSeconds % 60,
+    }
 
-    return hours > 0
-      ? `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m`
-      : `${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`
+    return counterToString(countdown, t, { alwaysShowMinutes: true })
   }
 
   return (
@@ -73,7 +74,7 @@ function CycleCard({
             </p>
           ) : isUnavailable ? (
             <p className="border border-error-border/70 bg-error-bg/50 px-1.5 py-0.5 text-xs font-semibold uppercase leading-none text-error">
-              {t('status.unavailable')}
+              {t('worldCycles.status.unavailable')}
             </p>
           ) : (
             <div className="h-5 w-20 animate-pulse rounded bg-foreground/10" />
@@ -162,7 +163,7 @@ export function WorldCyclesWidget() {
     return results
   }, [now, bountyCycle, mounted, dictionaries])
 
-  const dictDefault = dictionaries['default'] || {}
+  const dictDefault = dictionaries.default || {}
 
   return (
     <div className="flex flex-col gap-2">

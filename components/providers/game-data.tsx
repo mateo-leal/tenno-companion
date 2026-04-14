@@ -10,7 +10,7 @@ import {
   useRef,
 } from 'react'
 
-import { BountyCycles } from '@/lib/types'
+import { ArbitrationCycle, BountyCycles } from '@/lib/types'
 import { OracleWorldState } from '@/lib/world-state/types'
 import { Dictionary, DictionarySource, getDictionary } from '@/lib/language'
 import { fetchOracleWorldState } from '@/lib/world-state/fetch-world-state'
@@ -32,6 +32,7 @@ type GameDataContextValue = {
   worldState?: OracleWorldState
   dictionaries: Partial<Record<DictionarySource, Dictionary>>
   bountyCycle?: BountyCycles
+  arbitrations?: ArbitrationCycle[]
   exportData: Partial<{
     missionTypes: PublicExportMap<MissionType>
     regions: PublicExportMap<Region>
@@ -50,9 +51,11 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
   const locale = useLocale()
 
   const fetchingRefs = useRef<Set<string>>(new Set())
+  const bountyCycleRef = useRef<BountyCycles | undefined>(undefined)
 
   const [worldState, setWorldState] = useState<OracleWorldState>()
   const [bountyCycle, setBountyCycle] = useState<BountyCycles>()
+  const [arbitrations, setArbitrations] = useState<ArbitrationCycle[]>()
   const [dictionaries, setDictionaries] = useState<
     Partial<Record<DictionarySource, Dictionary>>
   >({})
@@ -60,6 +63,10 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
     GameDataContextValue['exportData']
   >({})
   const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    bountyCycleRef.current = bountyCycle
+  }, [bountyCycle])
 
   // World State (Refetch every 5 minutes)
   const loadWorldState = useCallback(async () => {
@@ -90,6 +97,32 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
       }
     } finally {
       fetchingRefs.current.delete('bounty-cycle')
+    }
+  }, [])
+
+  // Arbitrations
+  const loadArbitrations = useCallback(async () => {
+    if (fetchingRefs.current.has('arbitrations')) return
+    fetchingRefs.current.add('arbitrations')
+
+    try {
+      const res = await fetch('https://browse.wf/arbys.txt', {
+        cache: 'default',
+      })
+      if (res.ok) {
+        const fetched = await res.text()
+        const parsed = fetched
+          .split('\n')
+          .map((line) => line.split(','))
+          .filter((parts) => parts.length === 2)
+          .map(([timestamp, node]) => ({
+            timestamp: Number(timestamp),
+            node: node.trim(),
+          }))
+        setArbitrations(parsed)
+      }
+    } finally {
+      fetchingRefs.current.delete('arbitrations')
     }
   }, [])
 
@@ -137,7 +170,11 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
     let isMounted = true
 
     const init = async () => {
-      await Promise.allSettled([loadWorldState(), loadBountyCycles()])
+      await Promise.allSettled([
+        loadWorldState(),
+        loadBountyCycles(),
+        loadArbitrations(),
+      ])
       if (isMounted) setIsLoading(false)
     }
 
@@ -145,9 +182,11 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
 
     const wsInterval = setInterval(loadWorldState, 5 * 60 * 1000)
     const bountyCheckInterval = setInterval(() => {
+      const currentBountyCycle = bountyCycleRef.current
+
       if (
-        bountyCycle?.expiry &&
-        Date.now() >= new Date(bountyCycle.expiry).getTime()
+        currentBountyCycle?.expiry &&
+        Date.now() >= currentBountyCycle.expiry
       ) {
         loadBountyCycles()
       }
@@ -158,8 +197,7 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
       clearInterval(wsInterval)
       clearInterval(bountyCheckInterval)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadWorldState, loadBountyCycles])
+  }, [loadWorldState, loadBountyCycles, loadArbitrations])
 
   return (
     <GameDataContext.Provider
@@ -167,6 +205,7 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
         worldState,
         dictionaries,
         bountyCycle,
+        arbitrations,
         exportData,
         isLoading,
         fetchDictionary,
