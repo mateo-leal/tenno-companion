@@ -1,6 +1,7 @@
 export type OracleWorldState = {
   Events: OracleWorldEvent[]
-  LiteSorties: LiteSorty[]
+  Sorties: Sortie[]
+  LiteSorties: LiteSortie[]
   VoidTraders: Array<VoidTrader>
 }
 
@@ -13,7 +14,19 @@ export type OracleWorldEvent = {
   Links?: Link[]
 }
 
-type LiteSorty = {
+type Sortie = {
+  _id: Id
+  Activation: OracleWorldStateDate
+  Expiry: OracleWorldStateDate
+  Reward: string
+  Seed: number
+  Boss: string
+  ExtraDrops: unknown[]
+  Variants: Mission[]
+  Twitter: boolean
+}
+
+type LiteSortie = {
   _id: Id
   Activation: OracleWorldStateDate
   Expiry: OracleWorldStateDate
@@ -53,5 +66,7 @@ type Link = {
 
 type Mission = {
   missionType: string
+  modifierType?: string
   node: string
+  tileset?: string
 }

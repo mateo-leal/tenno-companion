@@ -17,6 +17,12 @@ importers:
       '@vercel/analytics':
         specifier: ^2.0.1
         version: 2.0.1(next@16.2.3(@babel/core@7.29.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
+      '@vercel/speed-insights':
+        specifier: ^2.0.0
+        version: 2.0.0(next@16.2.3(@babel/core@7.29.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
+      '@wfcd/items':
+        specifier: ^1.1273.20
+        version: 1.1273.20(warframe-worldstate-data@3.13.1)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1534,6 +1540,37 @@ packages:
         optional: true
       vue-router:
         optional: true
+
+  '@vercel/speed-insights@2.0.0':
+    resolution: {integrity: sha512-jwkNcrTeafWxjmWq4AHBaptSqZiJkYU5adLC9QBSqeim0GcqDMgN5Ievh8OG1rJ6W3A4l1oiP7qr9CWxGuzu3w==}
+    peerDependencies:
+      '@sveltejs/kit': ^1 || ^2
+      next: '>= 13'
+      nuxt: '>= 3'
+      react: ^18 || ^19 || ^19.0.0-rc
+      svelte: '>= 4'
+      vue: ^3
+      vue-router: ^4
+    peerDependenciesMeta:
+      '@sveltejs/kit':
+        optional: true
+      next:
+        optional: true
+      nuxt:
+        optional: true
+      react:
+        optional: true
+      svelte:
+        optional: true
+      vue:
+        optional: true
+      vue-router:
+        optional: true
+
+  '@wfcd/items@1.1273.20':
+    resolution: {integrity: sha512-XNE1ALTEcIKOWB+aD6DQo0DUahuFRWPicZe3dyYQpbGTtdUZORn1lwuQh6/StP5z65ZK28aqb2I0zGaKTFEfsg==}
+    peerDependencies:
+      warframe-worldstate-data: ^3.0.0
 
   accepts@2.0.0:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
@@ -4141,6 +4178,10 @@ packages:
   walker@1.0.8:
     resolution: {integrity: sha512-ts/8E8l5b7kY0vlWLewOkDXMmPdLcVV4GmOQLyxuSswIJsweeFZtAsMF7k1Nszz+TYBQrlYRmzOnr398y1JemQ==}
 
+  warframe-worldstate-data@3.13.1:
+    resolution: {integrity: sha512-edadmsaFSywMMc9L2iOPcleOkUF0l0gsZYYjlu4QelCh30BVOuC62BHmdXBTNdDh/bRczB5pwwXvSmW+AgRZiw==}
+    engines: {node: '>=22'}
+
   web-streams-polyfill@3.3.3:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
     engines: {node: '>= 8'}
@@ -5710,6 +5751,15 @@ snapshots:
     optionalDependencies:
       next: 16.2.3(@babel/core@7.29.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react: 19.2.3
+
+  '@vercel/speed-insights@2.0.0(next@16.2.3(@babel/core@7.29.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)':
+    optionalDependencies:
+      next: 16.2.3(@babel/core@7.29.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      react: 19.2.3
+
+  '@wfcd/items@1.1273.20(warframe-worldstate-data@3.13.1)':
+    dependencies:
+      warframe-worldstate-data: 3.13.1
 
   accepts@2.0.0:
     dependencies:
@@ -8785,6 +8835,8 @@ snapshots:
   walker@1.0.8:
     dependencies:
       makeerror: 1.0.12
+
+  warframe-worldstate-data@3.13.1: {}
 
   web-streams-polyfill@3.3.3: {}
 

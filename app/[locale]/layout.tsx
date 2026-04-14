@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Cormorant_Garamond, Oxanium } from 'next/font/google'
 import { Taskbar } from '@/components/taskbar'
 import { MigrationBridge } from '@/components/migration-bridge'
@@ -9,6 +10,7 @@ import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { routing } from '@/i18n/routing'
 import { notFound } from 'next/navigation'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { GameDataProvider } from '@/components/providers/game-data'
 
 const oxanium = Oxanium({
   variable: '--font-ui-sans',
@@ -113,13 +115,13 @@ export default async function RootLayout({
         <div className="kim-background min-h-screen overflow-y-auto text-foreground md:h-screen md:overflow-hidden">
           <NextIntlClientProvider>
             <main className="mx-auto flex min-h-screen w-full max-w-325 flex-col overflow-y-auto p-2 sm:p-4 md:h-screen md:overflow-hidden">
-              {children}
-
+              <GameDataProvider>{children}</GameDataProvider>
               <Taskbar />
             </main>
           </NextIntlClientProvider>
         </div>
         <Analytics />
+        <SpeedInsights />
         <MigrationBridge />
       </body>
     </html>

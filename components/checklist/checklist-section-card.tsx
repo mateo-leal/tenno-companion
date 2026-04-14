@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Button } from '../ui/button'
 import { ChecklistTask } from '@/lib/types'
-import { BaroApiData } from '@/lib/checklist'
 import { TaskRow } from './task-row'
 import {
   BroomIcon,
@@ -54,10 +53,8 @@ export function ChecklistSectionCard({
   title,
   subtitle,
   tasks,
-  now,
   completed,
   hidden,
-  baroApi,
   onToggle,
   onToggleHidden,
   onClear,
@@ -67,10 +64,8 @@ export function ChecklistSectionCard({
   title: string
   subtitle: string
   tasks: ChecklistTask[]
-  now: Date
   completed: Record<string, boolean>
   hidden: Record<string, boolean>
-  baroApi?: BaroApiData
   onToggle: (taskId: string) => void
   onToggleHidden: (taskId: string) => void
   onClear: () => void
@@ -192,11 +187,9 @@ export function ChecklistSectionCard({
               <TaskRow
                 key={task.id}
                 task={task}
-                now={now}
                 checked={Boolean(completed[task.id])}
                 checkable={task.checkable}
                 isHidden={Boolean(hidden[task.id])}
-                baroApi={baroApi}
                 onToggle={() => onToggle(task.id)}
                 onToggleHidden={() => onToggleHidden(task.id)}
               />
@@ -275,11 +268,9 @@ export function ChecklistSectionCard({
                     <TaskRow
                       key={subitem.id}
                       task={subitem}
-                      now={now}
                       checked={Boolean(completed[subitem.id])}
                       checkable={subitem.checkable}
                       isHidden={Boolean(hidden[subitem.id])}
-                      baroApi={baroApi}
                       onToggle={() => onToggle(subitem.id)}
                       onToggleHidden={() => onToggleHidden(subitem.id)}
                     />

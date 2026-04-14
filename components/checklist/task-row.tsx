@@ -1,6 +1,7 @@
 import { ChecklistCounter, ChecklistTask } from '@/lib/types'
 import { Button } from '../ui/button'
-import { BaroApiData, getChecklistTaskCounter } from '@/lib/checklist'
+import { getChecklistTaskCounter } from '@/lib/checklist'
+import { useEffect, useState } from 'react'
 import {
   AppWindowIcon,
   CheckCircleIcon,
@@ -13,31 +14,27 @@ import {
   XIcon,
 } from '@phosphor-icons/react'
 import { useTranslations } from 'next-intl'
-import { cn } from '@/lib/utils' // Standard utility for tailwind classes
+import { cn, counterToString } from '@/lib/utils'
+import { useGameData } from '../providers/game-data'
 
 interface TaskRowProps {
   task: ChecklistTask
-  now: Date
   checked: boolean
   checkable?: boolean
   isHidden?: boolean
-  baroApi?: BaroApiData
   onToggle: () => void
   onToggleHidden: () => void
 }
 
 export function TaskRow({
   task,
-  now,
   checked,
   checkable = true,
   isHidden = false,
-  baroApi,
   onToggle,
   onToggleHidden,
 }: TaskRowProps) {
   const t = useTranslations()
-  const counter = getChecklistTaskCounter(task, now, baroApi)
   // Logic for showing details: always show if not checkable, or show if not checked
   const showDetails = !checkable || !checked
 
@@ -58,7 +55,7 @@ export function TaskRow({
       <div className="min-w-0">
         <p
           className={cn(
-            'text-sm leading-tight',
+            'text-sm leading-relaxed',
             checkable && checked
               ? 'text-muted-foreground line-through'
               : 'text-foreground'
@@ -74,7 +71,7 @@ export function TaskRow({
                 {t(task.info)}
               </p>
             )}
-            <TaskMeta task={task} counter={counter} />
+            <TaskMeta task={task} />
           </>
         )}
       </div>
@@ -121,13 +118,7 @@ export function TaskRow({
   )
 }
 
-function TaskMeta({
-  task,
-  counter,
-}: {
-  task: ChecklistTask
-  counter: ChecklistCounter | undefined
-}) {
+function TaskMeta({ task }: { task: ChecklistTask }) {
   const t = useTranslations()
 
   const items = [
@@ -138,11 +129,9 @@ function TaskMeta({
       className: 'text-primary',
     },
     {
-      condition: !!counter,
+      condition: !!task.resets,
       icon: ClockCountdownIcon,
-      label:
-        counter &&
-        t(`checklist.counters.${counter.label}`, { time: counter.time }),
+      label: task.resets && <Counter task={task} />,
       className: 'text-primary',
     },
     {
@@ -209,4 +198,43 @@ function TaskMeta({
       )}
     </ul>
   )
+}
+
+function Counter({ task }: { task: ChecklistTask }) {
+  const t = useTranslations()
+  const { worldState } = useGameData()
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsMounted(true)
+  }, [])
+
+  const [now, setNow] = useState(() => new Date())
+
+  useEffect(() => {
+    if (!task.resets) {
+      return
+    }
+
+    const interval = window.setInterval(() => {
+      setNow(new Date())
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [task.resets])
+
+  if (!isMounted || !task.resets) return null
+
+  const counter: ChecklistCounter | undefined = getChecklistTaskCounter(
+    task,
+    now,
+    worldState
+  )
+
+  if (!counter) return null
+
+  return t.rich(`checklist.counters.${counter.label}`, {
+    time: counterToString(counter.time, t),
+  })
 }

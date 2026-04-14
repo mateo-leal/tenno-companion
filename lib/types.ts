@@ -1,3 +1,5 @@
+import { ReactNode } from 'react'
+
 export interface DialogueNode {
   type: Type
   Id: number
@@ -72,6 +74,7 @@ export type ChecklistCategory = 'daily' | 'weekly' | 'other'
 export type LabelExternal = {
   key: string
   source?: 'oracle' | 'default'
+  format?: 'titleCase'
 }
 
 export type ChecklistTask = {
@@ -80,13 +83,13 @@ export type ChecklistTask = {
   location?: LabelExternal[] | string
   terminal?: LabelExternal | string
   info?: string
-  dynamicInfo?: string
+  dynamicInfo?: ReactNode
   steelPath?: boolean
   prerequisite?: LabelExternal | string
   syndicateRank?: { syndicate: LabelExternal | string; rank: number }
   npc?: LabelExternal | string
   checkable?: boolean
-  resets?: 'daily' | 'weekly' | 'baro' | 'eightHours'
+  resets?: 'daily' | 'weekly' | 'baro' | 'eightHours' | 'sortie' | 'hourly'
   subitems?: ChecklistTask[]
 }
 
@@ -101,14 +104,23 @@ export type ChecklistState = {
   daily: ChecklistGroup
   weekly: ChecklistGroup
   other: Omit<ChecklistGroup, 'periodKey'> & {
+    hourlyPeriodKey: string
     eightHoursPeriodKey: string
     baroPeriodKey: string
+    sortiePeriodKey: string
   }
 }
 
 export type ChecklistCounter = {
   label: 'resetsIn' | 'arrivesIn' | 'leavesIn'
-  time: string
+  time: Counter
+}
+
+export type Counter = {
+  days: number
+  hours: number
+  minutes: number
+  seconds: number
 }
 
 export type BountyCycles = {
@@ -124,6 +136,11 @@ export type BountyCycles = {
       ally?: string
     }[]
   >
+}
+
+export type ArbitrationCycle = {
+  timestamp: number
+  node: string
 }
 
 export type WorldCycle = {
