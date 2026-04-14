@@ -1,6 +1,7 @@
-[![Crowdin](https://badges.crowdin.net/tenno-companion/localized.svg)](https://crowdin.com/project/tenno-companion)
+# Tenno Companion
 
-# wf-kim-pathfinder
+[![Crowdin](https://badges.crowdin.net/tenno-companion/localized.svg)](https://crowdin.com/project/tenno-companion)
+[![build](https://github.com/mateo-leal/tenno-companion/actions/workflows/test.yml/badge.svg)](https://github.com/mateo-leal/tenno-companion/actions/workflows/test.yml)
 
 Warframe companion web app focused on KIM dialogue simulation plus practical daily tooling:
 
