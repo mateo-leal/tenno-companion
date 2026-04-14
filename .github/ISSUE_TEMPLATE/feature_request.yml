@@ -1,0 +1,76 @@
+name: Feature request
+description: Suggest an idea for this project
+labels: [feature]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion.
+        Please describe the problem and proposed solution as clearly as possible.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: Describe the pain point or limitation.
+      placeholder: I cannot quickly compare two simulation results side-by-side.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe the feature you would like to see.
+      placeholder: Add a compare mode that pins two simulated paths and highlights differences in chemistry and booleans.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe any workarounds or alternative approaches you have considered.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which area is this for?
+      options:
+        - KIM Pathfinder
+        - Checklist
+        - Mastery Checklist
+        - Widgets / Live Data
+        - Localization / Translations
+        - Settings / UI
+        - API
+        - Performance
+        - Accessibility
+        - Developer Experience
+        # - Builds / Loadouts
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - Nice to have
+        - Important
+        - Critical
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Expected impact
+      description: Who benefits and how?
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add mockups, screenshots, links, or related references.
