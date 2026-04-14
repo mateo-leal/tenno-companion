@@ -150,22 +150,26 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
       fetchingRefs.current.add(`export-${type}`)
       try {
         switch (type) {
-          case 'factions':
+          case 'factions': {
             const factions = await fetchPublicExportFactions()
             setExportData((prev) => ({ ...prev, factions }))
             break
-          case 'missionTypes':
+          }
+          case 'missionTypes': {
             const missionTypes = await fetchPublicExportMissionTypes()
             setExportData((prev) => ({ ...prev, missionTypes }))
             break
-          case 'railjackIntrinsics':
+          }
+          case 'railjackIntrinsics': {
             const railjackIntrinsics = await fetchPublicExportIntrinsics()
             setExportData((prev) => ({ ...prev, railjackIntrinsics }))
             break
-          case 'regions':
+          }
+          case 'regions': {
             const regions = await fetchPublicExportRegions()
             setExportData((prev) => ({ ...prev, regions }))
             break
+          }
         }
       } catch (error) {
         console.error(`Error fetching export data ${type}:`, error)
