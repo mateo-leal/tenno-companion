@@ -8,7 +8,13 @@
     "collapse": "Colapsar",
     "expand": "Expandir",
     "clear": "Limpiar",
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "counter": {
+      "days": "{days}d",
+      "hours": "{hours}h",
+      "minutes": "{minutes}m",
+      "seconds": "{seconds}s"
+    }
   },
   "common": {
     "steelPath": "Camino de Acero"
@@ -50,6 +56,38 @@
     "endo": "30.000 de Endo",
     "rifleRiven": "Mod agrietado de Rifle",
     "shotgunRiven": "Mod agrietado de Escopeta"
+  },
+  "sortieModifiers": {
+    "SORTIE_MODIFIER_LOW_ENERGY": "Energy Reduction",
+    "SORTIE_MODIFIER_IMPACT": "Enemy Physical Enhancement (Impact)",
+    "SORTIE_MODIFIER_SLASH": "Enemy Physical Enhancement (Slash)",
+    "SORTIE_MODIFIER_PUNCTURE": "Enemy Physical Enhancement (Puncture)",
+    "SORTIE_MODIFIER_EXIMUS": "Eximus Stronghold",
+    "SORTIE_MODIFIER_MAGNETIC": "Enemy Elemental Enhancement (Magnetic)",
+    "SORTIE_MODIFIER_CORROSIVE": "Enemy Elemental Enhancement (Corrosive)",
+    "SORTIE_MODIFIER_VIRAL": "Enemy Elemental Enhancement (Viral)",
+    "SORTIE_MODIFIER_ELECTRICITY": "Enemy Elemental Enhancement (Electricity)",
+    "SORTIE_MODIFIER_RADIATION": "Enemy Elemental Enhancement (Radiation)",
+    "SORTIE_MODIFIER_GAS": "Enemy Elemental Enhancement (Gas)",
+    "SORTIE_MODIFIER_FIRE": "Enemy Elemental Enhancement (Heat)",
+    "SORTIE_MODIFIER_EXPLOSION": "Enemy Elemental Enhancement (Blast)",
+    "SORTIE_MODIFIER_FREEZE": "Enemy Elemental Enhancement (Cold)",
+    "SORTIE_MODIFIER_TOXIN": "Enemy Elemental Enhancement (Toxin)",
+    "SORTIE_MODIFIER_POISON": "Enemy Elemental Enhancement (Toxin)",
+    "SORTIE_MODIFIER_HAZARD_RADIATION": "Radiation Hazard",
+    "SORTIE_MODIFIER_HAZARD_MAGNETIC": "Electromagnetic Anomalies",
+    "SORTIE_MODIFIER_HAZARD_FOG": "Dense Fog",
+    "SORTIE_MODIFIER_HAZARD_FIRE": "Fire Hazard",
+    "SORTIE_MODIFIER_HAZARD_ICE": "Cryogenic Leakage",
+    "SORTIE_MODIFIER_HAZARD_COLD": "Extreme Cold",
+    "SORTIE_MODIFIER_ARMOR": "Augmented Enemy Armor",
+    "SORTIE_MODIFIER_SHIELDS": "Enhanced Enemy Shields",
+    "SORTIE_MODIFIER_SECONDARY_ONLY": "Pistol Only",
+    "SORTIE_MODIFIER_SHOTGUN_ONLY": "Shotgun Only",
+    "SORTIE_MODIFIER_SNIPER_ONLY": "Sniper Only",
+    "SORTIE_MODIFIER_RIFLE_ONLY": "Assault Rifle Only",
+    "SORTIE_MODIFIER_MELEE_ONLY": "Melee Only",
+    "SORTIE_MODIFIER_BOW_ONLY": "Bow Only"
   },
   "checklist": {
     "title": "Checklist",
@@ -211,20 +249,13 @@
       "primary": "Primaria",
       "secondary": "Secundaria",
       "melee": "Cuerpo a cuerpo",
-      "kitgun": "Kitgun",
-      "zaw": "Zaw",
-      "amp": "Amp",
-      "sentinel": "Centinela",
-      "moa": "MOA",
-      "hound": "Sabueso",
-      "beast": "Bestia",
       "robotic": "Robótico",
-      "archwing": "Archwing",
+      "companion": "Companions",
+      "vehicle": "Vehicles",
       "archgun": "Archcañón",
       "archmelee": "Archmelé",
-      "necramech": "Necramech",
-      "railjack": "Railjack",
-      "kDrive": "K-Drive"
+      "amp": "Amp",
+      "railjack": "Railjack"
     },
     "doneCount": "{count}/{total} hecho",
     "masteryPointsProgress": "{gained, number}/{total, number} PM",
