@@ -25,6 +25,19 @@ body:
       required: true
 
   - type: dropdown
+    id: workspace
+    attributes:
+      label: Workspace
+      description: Which part of the monorepo does this affect?
+      options:
+        - Web (apps/web)
+        - Core Library (packages/core)
+        - Monorepo / Tooling
+        - Not sure
+    validations:
+      required: true
+
+  - type: dropdown
     id: area
     attributes:
       label: Which area does this affect?
@@ -36,9 +49,9 @@ body:
         - Localization / Translations
         - Settings / UI
         - API
+        - Data / Constants
         - Performance
         - Accessibility
-        # - Builds / Loadouts
         - Other
     validations:
       required: true
