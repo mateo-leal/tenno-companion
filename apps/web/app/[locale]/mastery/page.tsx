@@ -2,8 +2,6 @@ import { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { MasteryChecklistWindow } from '@/components/windows/mastery-checklist'
 
-export const revalidate = 3600 // Revalidate every hour
-
 export async function generateMetadata({
   params,
 }: PageProps<'/[locale]/mastery'>): Promise<Metadata> {
