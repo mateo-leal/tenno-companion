@@ -1,14 +1,18 @@
 {
-  "name": "tenno-labs",
+  "name": "tenno-companion",
   "version": "0.0.0",
   "private": true,
   "workspaces": [
+    "apps/*",
     "packages/*"
   ],
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
     "test": "turbo run test"
+  },
+  "dependencies": {
+    "@changesets/cli": "^2.30.0"
   },
   "devDependencies": {
     "turbo": "^2.9.6"

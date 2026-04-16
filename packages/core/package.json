@@ -1,20 +1,20 @@
 {
-  "name": "@tenno-labs/core",
-  "version": "0.0.1",
+  "name": "@tenno-companion/core",
+  "version": "0.1.0",
   "keywords": [
     "warframe"
   ],
-  "description": "Core utilities and components for Tenno Labs projects",
+  "description": "Core library for Tenno Companion, providing data models, constants, and utility functions related to Warframe.",
   "repository": {
     "url": "github:mateo-leal/tenno-companion",
     "directory": "packages/core"
   },
+  "bugs": "https://github.com/mateo-leal/tenno-companion/issues",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist",
-    "data"
+    "dist"
   ],
   "exports": {
     ".": {
@@ -35,10 +35,12 @@
     }
   },
   "author": "Mateo Leal <me@mateoleal.com>",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "scripts": {
     "build": "tsup src/index.ts src/lib/constants.ts src/lib/locales.ts src/types/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts src/lib/constants.ts src/lib/locales.ts src/types/index.ts --format cjs,esm --dts --clean --watch",
+    "prepublishOnly": "pnpm build --filter @tenno-companion/core",
+    "check-updates": "tsx scripts/check-updates.ts",
     "fetch-data": "tsx scripts/fetch-data.ts",
     "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest"
   },

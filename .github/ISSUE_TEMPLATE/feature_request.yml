@@ -33,6 +33,19 @@ body:
       description: Describe any workarounds or alternative approaches you have considered.
 
   - type: dropdown
+    id: workspace
+    attributes:
+      label: Workspace
+      description: Which part of the monorepo would this be for?
+      options:
+        - Web (apps/web)
+        - Core Library (packages/core)
+        - Monorepo / Tooling
+        - Not sure
+    validations:
+      required: true
+
+  - type: dropdown
     id: area
     attributes:
       label: Which area is this for?
@@ -44,10 +57,10 @@ body:
         - Localization / Translations
         - Settings / UI
         - API
+        - Data / Constants
         - Performance
         - Accessibility
         - Developer Experience
-        # - Builds / Loadouts
         - Other
     validations:
       required: true

@@ -42,3 +42,6 @@ next-env.d.ts
 
 # cache
 .turbo
+
+# NPM Registry config
+.npmrc

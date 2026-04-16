@@ -1,19 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { SUPPORTED_LANGUAGES } from '../src/lib/locales'
-
-const BASE_URL =
-  'https://raw.githubusercontent.com/calamity-inc/warframe-public-export-plus/refs/heads/senpai/'
-
-const SOURCES = {
-  factions: 'ExportFactions',
-  missionTypes: 'ExportMissionTypes',
-  railjackIntrinsics: 'ExportIntrinsics',
-  regions: 'ExportRegions',
-  sentinels: 'ExportSentinels',
-  warframes: 'ExportWarframes',
-  weapons: 'ExportWeapons',
-}
+import { BASE_URL, SOURCES } from './get-sources-url'
 
 function collectKeys(obj: any, keys: Set<string>) {
   if (!obj || typeof obj !== 'object') return

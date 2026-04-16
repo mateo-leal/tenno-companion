@@ -30,7 +30,7 @@ Warframe companion web app focused on KIM dialogue simulation plus practical dai
 
 ### Mastery Checklist
 
-- Builds category/subcategory mastery data from `@tenno-labs/core`.
+- Builds category/subcategory mastery data from `@tenno-companion/core`.
 - Includes mastery-point-aware item grouping.
 - Locale-aware item names when available.
 

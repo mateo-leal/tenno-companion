@@ -5,8 +5,8 @@ import {
   RailjackIntrinsicProvider,
   WarframeProvider,
   WeaponProvider,
-} from '@tenno-labs/core'
-import { sortByName } from '@tenno-labs/core/locales'
+} from '@tenno-companion/core'
+import { sortByName } from '@tenno-companion/core/locales'
 
 import {
   MasteryByCategory,
