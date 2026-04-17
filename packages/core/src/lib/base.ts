@@ -1,5 +1,9 @@
-import { BaseItem, Dictionary } from '../types'
-import { getStandardLocale, sortByName, SUPPORTED_LANGUAGES } from './locales'
+import {
+  type Dictionary,
+  SUPPORTED_LANGUAGES,
+} from '@tenno-companion/shared/locales'
+import { BaseItem } from '../types'
+import { sortByName } from './locales'
 
 export type Data<T> = {
   [key: string]: T

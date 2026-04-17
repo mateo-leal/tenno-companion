@@ -3,15 +3,23 @@
   "tasks": {
     "fetch-data": {
       "inputs": ["scripts/fetch-data.ts"],
-      "outputs": ["data/stats/**", "data/dicts/**"],
+      "outputs": ["data/chats/**", "data/stats/**", "data/dicts/**"],
       "cache": true
     },
     "build": {
       "dependsOn": ["^build", "fetch-data"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
+    "check-updates": {
+      "outputs": [
+        "data/chats/**",
+        "data/stats/**",
+        "data/dicts/**",
+        "data/commit-sha"
+      ]
+    },
     "check-types": {
-      "dependsOn": ["^check-types", "fetch-data"]
+      "dependsOn": ["^check-types"]
     },
     "dev": {
       "persistent": true,

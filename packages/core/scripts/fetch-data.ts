@@ -32,10 +32,7 @@ async function updateData() {
     // Collect all translation keys used in these items
     collectKeys(data, allKeys)
 
-    fs.writeFileSync(
-      path.join(statsDir, `${name}.json`),
-      JSON.stringify(data, null, 2)
-    )
+    fs.writeFileSync(path.join(statsDir, `${name}.json`), JSON.stringify(data))
     console.log(`✅ Saved stats for ${name}`)
   }
 
@@ -57,7 +54,7 @@ async function updateData() {
 
       fs.writeFileSync(
         path.join(dictsDir, `${locale}.json`),
-        JSON.stringify(filteredDict, null, 2)
+        JSON.stringify(filteredDict)
       )
       console.log(
         `✅ Minified dictionary for ${locale} (${Object.keys(filteredDict).length} strings)`

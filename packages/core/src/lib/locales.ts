@@ -1,26 +1,8 @@
+import {
+  type Dictionary,
+  SUPPORTED_LANGUAGES,
+} from '@tenno-companion/shared/locales'
 import { Data } from './base'
-
-/**
- * List of supported languages in Warframe. This is not an exhaustive list of all languages, but rather the ones that are currently supported by the game.
- * https://wiki.warframe.com/w/Languages
- */
-export const SUPPORTED_LANGUAGES = {
-  en: 'English',
-  de: 'Deutsch',
-  es: 'Español',
-  fr: 'Français',
-  it: 'Italiano',
-  ja: '日本語',
-  ko: '한국어',
-  pl: 'Polski',
-  pt: 'Português',
-  ru: 'Русский',
-  tr: 'Türkçe',
-  uk: 'Українська',
-  zh: '简体中文',
-  tc: '繁體中文',
-  th: 'แบบไทย',
-}
 
 /**
  * Converts a Warframe locale (e.g. "tc") to a standard locale format (e.g. "zh-TW").
@@ -50,7 +32,9 @@ export const getStandardLocale = (locale: string): string => {
  * @param locale - The locale to fetch the dictionary for (e.g. "en", "fr", "de", etc.).
  * @returns The dictionary for the given locale.
  */
-export async function getDictionaries(locale: string = 'en') {
+export async function getDictionaries(
+  locale: string = 'en'
+): Promise<Dictionary> {
   const validLocale = Object.keys(SUPPORTED_LANGUAGES).includes(locale)
     ? locale
     : 'en'

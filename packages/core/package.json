@@ -37,12 +37,15 @@
   "author": "Mateo Leal <me@mateoleal.com>",
   "license": "GPL-3.0-only",
   "scripts": {
-    "build": "tsup src/index.ts src/lib/constants.ts src/lib/locales.ts src/types/index.ts --format cjs,esm --dts --clean",
-    "dev": "tsup src/index.ts src/lib/constants.ts src/lib/locales.ts src/types/index.ts --format cjs,esm --dts --clean --watch",
-    "prepublishOnly": "pnpm build --filter @tenno-companion/core",
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "prepublishOnly": "pnpm --filter @tenno-companion/core build",
     "check-updates": "tsx scripts/check-updates.ts",
     "fetch-data": "tsx scripts/fetch-data.ts",
     "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest"
+  },
+  "dependencies": {
+    "@tenno-companion/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

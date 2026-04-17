@@ -8,7 +8,9 @@
   ],
   "scripts": {
     "build": "turbo run build",
+    "check-updates": "turbo run check-updates",
     "dev": "turbo run dev",
+    "fetch-data": "turbo run fetch-data",
     "test": "turbo run test"
   },
   "dependencies": {
