@@ -10,6 +10,7 @@
     "build": "turbo run build",
     "check-updates": "turbo run check-updates",
     "dev": "turbo run dev",
+    "start": "turbo run start",
     "fetch-data": "turbo run fetch-data",
     "test": "turbo run test"
   },
