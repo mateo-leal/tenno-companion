@@ -9,6 +9,7 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     permissions:
+      id-token: write
       contents: write
     steps:
       - uses: actions/checkout@v6
@@ -37,14 +38,10 @@ jobs:
         run: |
           git config --global user.name "tennocompanion-bot"
           git config --global user.email "bot@tennocompanion.com"
-          git add .
+          git add apps/* packages/*
           git commit -m "chore: sync warframe data [skip ci]"
           git push origin main
 
       - name: Build and Publish
         if: steps.update.outcome == 'failure'
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          pnpm --filter @tenno-companion/core publish --access public --no-git-checks
+        run: pnpm --filter @tenno-companion/core publish --access public --no-git-checks --provenance
