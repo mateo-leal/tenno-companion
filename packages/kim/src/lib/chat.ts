@@ -2,8 +2,9 @@ import {
   Dictionary,
   SUPPORTED_LANGUAGES,
 } from '@tenno-companion/shared/locales'
-import { Chatroom, Node, NodeType } from '../types'
+import { Chatroom, Node } from '../types'
 import { HydratedDataOptions } from '../types/internal'
+import { NodeType } from './constants'
 
 export class Chat {
   private constructor(readonly nodes: Node[]) {}
@@ -35,29 +36,29 @@ export class Chat {
     ])
 
     return rawStats.map((rawData) => {
-      return this.translateRecursive(rawData, dict) as Node
+      return this.translate(rawData, dict)
     })
   }
 
   /**
-   * Recursively scans an object/array and replaces the value of 'LocTag'.
+   *
    */
-  private static translateRecursive(data: unknown, dict: Dictionary): unknown {
-    if (Array.isArray(data)) {
-      return data.map((item) => this.translateRecursive(item, dict))
-    }
-
-    if (data !== null && typeof data === 'object') {
-      const result: Record<string, unknown> = {}
-
-      for (const [key, value] of Object.entries(data)) {
-        if (key === 'LocTag' && typeof value === 'string') {
-          result[key] = dict[value] ?? value
-        } else {
-          result[key] = this.translateRecursive(value, dict)
+  private static translate(data: Node, dict: Dictionary): Node {
+    if (
+      data !== null &&
+      (data.type === NodeType.Dialogue || data.type === NodeType.PlayerChoice)
+    ) {
+      if ('Speaker' in data && data.Speaker) {
+        return {
+          ...data,
+          LocTag: dict[data.LocTag] ?? data.LocTag,
+          Speaker: dict[data.Speaker] ?? data.Speaker,
         }
       }
-      return result
+      return {
+        ...data,
+        LocTag: dict[data.LocTag] ?? data.LocTag,
+      }
     }
 
     return data

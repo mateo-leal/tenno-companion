@@ -1,20 +1,4 @@
-import { CHATROOMS } from '../lib/constants'
-
-export enum NodeType {
-  CheckBoolean = '/EE/Types/Engine/CheckBooleanDialogueNode',
-  CheckBooleanScript = '/EE/Types/Engine/CheckBooleanScriptDialogueNode',
-  CheckCounter = '/EE/Types/Engine/CheckCounterDialogueNode',
-  CheckMultiBoolean = '/EE/Types/Engine/CheckMultiBooleanDialogueNode',
-  Chemistry = '/EE/Types/Engine/ChemistryDialogueNode',
-  Dialogue = '/EE/Types/Engine/DialogueNode',
-  End = '/EE/Types/Engine/EndDialogueNode',
-  IncCounter = '/EE/Types/Engine/IncCounterDialogueNode',
-  PlayerChoice = '/EE/Types/Engine/PlayerChoiceDialogueNode',
-  ResetBoolean = '/EE/Types/Engine/ResetBooleanDialogueNode',
-  SetBoolean = '/EE/Types/Engine/SetBooleanDialogueNode',
-  SpecialCompletion = '/EE/Types/Engine/SpecialCompletionDialogueNode',
-  Start = '/EE/Types/Engine/StartDialogueNode',
-}
+import { CHATROOMS, NodeType } from '../lib/constants'
 
 export type Node =
   | CheckBooleanDialogueNode
@@ -72,7 +56,7 @@ interface ChemistryDialogueNode extends BaseNode {
   ChemistryDelta: number
 }
 
-interface DialogueNode extends BaseNode {
+export interface DialogueNode extends BaseNode {
   type: NodeType.Dialogue
   Speaker?: string
   LocTag: TranslationKey
@@ -91,7 +75,7 @@ export interface IncCounterDialogueNode extends BaseNode {
   Persist?: number
 }
 
-interface PlayerChoiceDialogueNode extends BaseNode {
+export interface PlayerChoiceDialogueNode extends BaseNode {
   type: NodeType.PlayerChoice
   LocTag: TranslationKey
 }
@@ -151,4 +135,69 @@ type OtherDialogueInfo = {
 type DialogueId = number
 type TranslationKey = string
 
+export type DialogueContentNode = DialogueNode | PlayerChoiceDialogueNode
+
 export type Chatroom = (typeof CHATROOMS)[number]
+
+export type FirstContentNode = {
+  id: number
+  convoName: string
+  dialogueNodes: DialogueContentNode[]
+}
+
+/** User-defined state of the simulation */
+export type SimulationState = {
+  /** A record of boolean values */
+  booleans: Record<string, boolean>
+  /** A record of counter values */
+  counters: Record<string, number>
+}
+
+export type OptimizedResults = {
+  bestGeneral: DialoguePath[] // Highest count of non-romance, non-avoidable booleans
+  bestChemistry: DialoguePath[] // Highest positive Chemistry gain
+  bestCounterGains: DialoguePath[] // Highest total sum of counter increments
+  bestPositiveRomance: DialoguePath[]
+  bestNegativeRomance: DialoguePath[]
+}
+
+/**
+ * A single path through the dialogue graph,
+ * including the final state and tracking information about interactions.
+ */
+export type DialoguePath = {
+  /** The nodes in the path */
+  nodes: Node[]
+  /** The final state of the simulation */
+  finalState: SimulationState
+  /**
+   * Whether the path is uncertain.
+   * A path is considered uncertain if it includes any CheckBooleanScript nodes,
+   * since we don't evaluate their conditions in this simulation.
+   * This means that for uncertain paths,
+   * we can't be sure which branches were actually taken at those nodes,
+   * so the path represents one of multiple possible outcomes.
+   * */
+  isUncertain: boolean
+  /** Tracking information for checks */
+  checks: {
+    /** Names of booleans checked */
+    booleans: string[]
+    /** Names of counters checked */
+    counters: string[]
+  }
+  /** Tracking information for mutations */
+  mutations: {
+    /** Cumulative chemistry */
+    chemistry: number
+    /** Names of booleans set to true */
+    set: string[]
+    /** Names of booleans set to false */
+    reset: string[]
+    /**
+     * Amounts each counter was incremented by.
+     * The amount can be negative if the counter was decremented.
+     */
+    increments: Record<string, number>
+  }
+}

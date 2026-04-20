@@ -1,16 +1,16 @@
 import { Chat } from './chat'
 import {
+  DialogueContentNode,
+  DialoguePath,
+  FirstContentNode,
   IncCounterDialogueNode,
-  NodeType,
   Output,
+  SimulationState,
   type Node,
   type StartDialogueNode,
 } from '../types'
-import type {
-  DialoguePath,
-  SimulationState,
-  TraversalOptions,
-} from '../types/internal'
+import type { SimulationTracking, TraversalOptions } from '../types/internal'
+import { NodeType } from './constants'
 
 /**
  * Simulation class to traverse dialogue paths in a Chat instance,
@@ -24,7 +24,7 @@ export class Simulation {
    */
   constructor(
     private readonly chat: Chat,
-    private readonly options: TraversalOptions
+    private readonly options?: TraversalOptions
   ) {}
 
   /**
@@ -34,28 +34,62 @@ export class Simulation {
    * @returns An array of DialoguePath objects representing all possible paths from the start node
    * @throws An error if the start node is not found or is not a StartDialogueNode
    */
-  getPaths(startNode: StartDialogueNode | number) {
-    let node: StartDialogueNode | undefined
-    if (typeof startNode === 'number') {
-      const foundNode = this.chat.getById(startNode)
-      if (foundNode?.type !== NodeType.Start) {
-        throw new Error(`Node with id ${startNode} is not a start node.`)
-      }
-      node = foundNode
-    } else if (!this.chat.getById(startNode.Id)) {
-      throw new Error(`Node with id ${startNode.Id} not found.`)
-    } else {
-      node = startNode
-    }
+  getPaths(
+    startNode: StartDialogueNode | number,
+    customState?: SimulationState
+  ) {
+    const node = this.getStartNodeOrThrow(startNode)
     const paths: DialoguePath[] = []
-    this.traverse(
-      node,
-      this.options.initialState ?? { booleans: {}, counters: {} },
-      [],
-      paths,
-      new Set()
-    )
+    const state: SimulationState = {
+      booleans: {
+        ...this.options?.initialState?.booleans,
+        ...customState?.booleans,
+      },
+      counters: {
+        ...this.options?.initialState?.counters,
+        ...customState?.counters,
+      },
+    }
+    this.traverse(node, state, [], paths, new Set())
     return paths
+  }
+
+  findAllFirstContentNodes() {
+    return this.chat.startNodes.map(this.findFirstContentNodes.bind(this))
+  }
+
+  findFirstContentNodes(
+    startNode: StartDialogueNode | number
+  ): FirstContentNode {
+    const node = this.getStartNodeOrThrow(startNode)
+
+    const results: DialogueContentNode[] = []
+    const visited = new Set<number>()
+    const queue: number[] = [node.Id]
+
+    while (queue.length > 0) {
+      const currentId = queue.shift()!
+      if (visited.has(currentId)) continue
+      visited.add(currentId)
+
+      const currentNode = this.chat.getById(currentId)
+      if (!currentNode) continue
+
+      // Stop if we hit a content node
+      if (
+        currentNode.type === NodeType.Dialogue ||
+        currentNode.type === NodeType.PlayerChoice
+      ) {
+        results.push(currentNode)
+        continue
+      }
+
+      // Otherwise evaluate logic and keep searching
+      const nextIds = this.getImmediateNextIds(currentNode)
+      queue.push(...nextIds)
+    }
+
+    return { id: node.Id, convoName: node.Content, dialogueNodes: results }
   }
 
   /**
@@ -77,15 +111,20 @@ export class Simulation {
     results: DialoguePath[],
     visited: Set<number>,
     isUncertain = false,
-    tracking = {
+    tracking: SimulationTracking = {
       checks: { booleans: new Set<string>(), counters: new Set<string>() },
       mutations: {
+        chemistry: 0,
         set: new Set<string>(),
         reset: new Set<string>(),
         increments: {} as Record<string, number>,
       },
     }
   ) {
+    const initialState = this.options?.initialState ?? {
+      booleans: {},
+      counters: {},
+    }
     const newPath = [...currentPath, node]
     let pathUncertain = isUncertain || node.type === NodeType.CheckBooleanScript
 
@@ -102,12 +141,13 @@ export class Simulation {
       booleans: { ...currentState.booleans },
       counters: { ...currentState.counters },
     }
-    let nextTracking = {
+    let nextTracking: SimulationTracking = {
       checks: {
         booleans: new Set(tracking.checks.booleans),
         counters: new Set(tracking.checks.counters),
       },
       mutations: {
+        chemistry: tracking.mutations.chemistry,
         set: new Set(tracking.mutations.set),
         reset: new Set(tracking.mutations.reset),
         increments: { ...tracking.mutations.increments },
@@ -115,14 +155,22 @@ export class Simulation {
     }
 
     switch (node.type) {
+      case NodeType.Chemistry:
+        nextTracking.mutations.chemistry =
+          (nextTracking.mutations.chemistry ?? 0) + (node.ChemistryDelta ?? 0)
+        break
       case NodeType.SetBoolean:
-        nextState.booleans[node.Content] = true
-        nextTracking.mutations.set.add(node.Content)
+        if (!initialState.booleans[node.Content]) {
+          nextState.booleans[node.Content] = true
+          nextTracking.mutations.set.add(node.Content)
+        }
         nextTracking.mutations.reset.delete(node.Content)
         break
       case NodeType.ResetBoolean:
-        nextState.booleans[node.Content] = false
-        nextTracking.mutations.reset.add(node.Content)
+        if (initialState.booleans[node.Content] !== false) {
+          nextState.booleans[node.Content] = false
+          nextTracking.mutations.reset.add(node.Content)
+        }
         nextTracking.mutations.set.delete(node.Content)
         break
       case NodeType.IncCounter: {
@@ -140,8 +188,7 @@ export class Simulation {
     switch (node.type) {
       case NodeType.CheckBoolean: {
         nextTracking.checks.booleans.add(node.Content)
-        const counterName = node.Content
-        const condition = !!nextState.booleans[counterName]
+        const condition = !!nextState.booleans[node.Content]
         nextIds = condition ? node.TrueNodes : node.FalseNodes
         break
       }
@@ -186,14 +233,12 @@ export class Simulation {
 
         // Evaluate only conditional nodes first
         for (const output of node.Outputs) {
-          if (
-            output.Expression !== 'false' &&
-            output.CompareOperators.length > 0
-          ) {
-            const resultIds = this.evaluateBooleanOutput(
-              output,
-              nextState.booleans
-            )
+          if (output.Expression !== 'false') {
+            const { outgoing: resultIds, booleans } =
+              this.evaluateBooleanOutput(output, nextState.booleans)
+            if (booleans) {
+              booleans.forEach((bool) => nextTracking.checks.booleans.add(bool))
+            }
             if (resultIds.length > 0) {
               metAny = true
               resultIds.forEach((id) => matchingIds.add(id))
@@ -329,14 +374,18 @@ export class Simulation {
     booleans: Record<string, boolean>
   ) {
     if (output.Expression === 'false') {
-      return output.Outgoing
+      return { outgoing: output.Outgoing, booleans: null }
     }
 
-    if (booleans[output.Expression]) {
-      return output.Outgoing
+    const booleansFromExpression = output.Expression.split(',').map((bool) =>
+      bool.trim()
+    )
+
+    if (booleansFromExpression.every((bool) => booleans[bool])) {
+      return { outgoing: output.Outgoing, booleans: booleansFromExpression }
     }
 
-    return []
+    return { outgoing: [], booleans: booleansFromExpression }
   }
 
   /**
@@ -346,7 +395,7 @@ export class Simulation {
     nodes: Node[],
     state: SimulationState,
     uncertain: boolean,
-    tracking: any
+    tracking: SimulationTracking
   ): DialoguePath {
     return {
       nodes,
@@ -357,10 +406,94 @@ export class Simulation {
         counters: Array.from(tracking.checks.counters),
       },
       mutations: {
+        chemistry: tracking.mutations.chemistry || 0,
         set: Array.from(tracking.mutations.set),
         reset: Array.from(tracking.mutations.reset),
         increments: tracking.mutations.increments,
       },
+    }
+  }
+
+  private getStartNodeOrThrow(startNode: StartDialogueNode | number) {
+    if (typeof startNode === 'number') {
+      const foundNode = this.chat.getById(startNode)
+      if (foundNode?.type !== NodeType.Start) {
+        throw new Error(`Node with id ${startNode} is not a start node.`)
+      }
+      return foundNode
+    } else if (!this.chat.getById(startNode.Id)) {
+      throw new Error(`Node with id ${startNode.Id} not found.`)
+    } else {
+      return startNode
+    }
+  }
+
+  /**
+   * Evaluates logic nodes based on current state to find which paths are open.
+   */
+  private getImmediateNextIds(node: Node): number[] {
+    const state = this.options?.initialState ?? { booleans: {}, counters: {} }
+    switch (node.type) {
+      case NodeType.CheckBoolean:
+        if (!this.options?.initialState) {
+          return [...node.TrueNodes, ...node.FalseNodes]
+        }
+        return state.booleans[node.Content] ? node.TrueNodes : node.FalseNodes
+
+      case NodeType.CheckCounter: {
+        const matchingIds = new Set<number>()
+        let metAny = false
+
+        for (const out of node.Outputs) {
+          const ids = this.evaluateCounterOutput(
+            out,
+            state.counters[node.CounterName]
+          )
+          if (ids.length > 0) {
+            metAny = true
+            ids.forEach((id) => matchingIds.add(id))
+          }
+        }
+
+        if (!metAny) {
+          const fallback = node.Outputs.find((o) => o.Expression === 'false')
+          if (fallback) fallback.Outgoing.forEach((id) => matchingIds.add(id))
+        }
+        return Array.from(matchingIds)
+      }
+
+      case NodeType.CheckMultiBoolean: {
+        const matchingIds = new Set<number>()
+        let metAny = false
+
+        for (const out of node.Outputs) {
+          const { outgoing: ids } = this.evaluateBooleanOutput(
+            out,
+            state.booleans
+          )
+          if (ids.length > 0) {
+            metAny = true
+            ids.forEach((id) => matchingIds.add(id))
+          }
+        }
+
+        if (!metAny) {
+          const fallback = node.Outputs.find((o) => o.Expression === 'false')
+          if (fallback) fallback.Outgoing.forEach((id) => matchingIds.add(id))
+        }
+        return Array.from(matchingIds)
+      }
+
+      case NodeType.CheckBooleanScript:
+        // Explore all possible logic branches due to unknown script result
+        return [...new Set([...node.TrueNodes, ...node.FalseNodes])]
+
+      case NodeType.End:
+        return []
+
+      default:
+        // For Chemistry | IncCounter | ResetBoolean | SetBoolean | SpecialCompletion | Start.
+        return 'Outgoing' in node ? node.Outgoing : []
     }
   }
 }
