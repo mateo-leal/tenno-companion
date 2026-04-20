@@ -4,10 +4,7 @@ import {
 } from '@tenno-companion/shared/locales'
 import { BaseItem } from '../types'
 import { sortByName } from './locales'
-
-export type Data<T> = {
-  [key: string]: T
-}
+import { Data } from '../types/internal'
 
 type HydratedDataOptions = {
   locale?: string

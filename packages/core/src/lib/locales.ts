@@ -3,7 +3,7 @@ import {
   getStandardLocale,
   SUPPORTED_LANGUAGES,
 } from '@tenno-companion/shared/locales'
-import { Data } from './base'
+import { Data } from '../types/internal'
 
 export { getStandardLocale } from '@tenno-companion/shared/locales'
 
