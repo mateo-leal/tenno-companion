@@ -1,31 +1,11 @@
 import {
   type Dictionary,
+  getStandardLocale,
   SUPPORTED_LANGUAGES,
 } from '@tenno-companion/shared/locales'
 import { Data } from './base'
 
-/**
- * Converts a Warframe locale (e.g. "tc") to a standard locale format (e.g. "zh-TW").
- * https://wiki.warframe.com/w/Languages
- * https://gist.github.com/typpo/b2b828a35e683b9bf8db91b5404f1bd1
- * @param locale - Warframe locale.
- * @returns The standard locale format.
- */
-export const getStandardLocale = (locale: string): string => {
-  const map: Record<string, string> = {
-    fr: 'fr-FR',
-    it: 'it-IT',
-    ja: 'ja-JP',
-    ko: 'ko-KR',
-    pl: 'pl-PL',
-    ru: 'ru-RU',
-    tr: 'tr-TR',
-    zh: 'zh-CN',
-    tc: 'zh-TW',
-    th: 'th-TH',
-  }
-  return map[locale] ?? locale
-}
+export { getStandardLocale } from '@tenno-companion/shared/locales'
 
 /**
  * Fetches the appropriate dictionary for the given locale. If the locale is not supported, it falls back to English.

@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
-import { SUPPORTED_LANGUAGES } from '../src/lib/locales'
 import { BASE_URL, SOURCES } from './get-sources-url'
+import { SUPPORTED_LANGUAGES } from '@tenno-companion/shared/locales'
 
 function collectKeys(obj: any, keys: Set<string>) {
   if (!obj || typeof obj !== 'object') return
