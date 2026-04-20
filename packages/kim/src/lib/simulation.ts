@@ -381,7 +381,7 @@ export class Simulation {
       bool.trim()
     )
 
-    if (booleansFromExpression.every((bool) => booleans[bool])) {
+    if (booleansFromExpression.every((bool) => booleans?.[bool] ?? false)) {
       return { outgoing: output.Outgoing, booleans: booleansFromExpression }
     }
 
@@ -432,13 +432,14 @@ export class Simulation {
    * Evaluates logic nodes based on current state to find which paths are open.
    */
   private getImmediateNextIds(node: Node): number[] {
+    const isInitialStateSet = !!this.options?.initialState
     const state = this.options?.initialState ?? { booleans: {}, counters: {} }
     switch (node.type) {
       case NodeType.CheckBoolean:
-        if (!this.options?.initialState) {
+        if (!isInitialStateSet) {
           return [...node.TrueNodes, ...node.FalseNodes]
         }
-        return state.booleans[node.Content] ? node.TrueNodes : node.FalseNodes
+        return state.booleans?.[node.Content] ? node.TrueNodes : node.FalseNodes
 
       case NodeType.CheckCounter: {
         const matchingIds = new Set<number>()

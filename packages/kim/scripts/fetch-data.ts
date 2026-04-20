@@ -33,7 +33,7 @@ async function updateData() {
     collectKeys(data, allKeys)
 
     fs.writeFileSync(path.join(chatsDir, `${name}.json`), JSON.stringify(data))
-    console.log(`✅ Saved stats for ${name}`)
+    console.log(`✅ Saved chats for ${name}`)
   }
 
   console.log('\n--- Fetching & Filtering Dictionaries ---')
