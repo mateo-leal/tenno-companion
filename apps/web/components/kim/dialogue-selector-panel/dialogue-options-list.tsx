@@ -1,10 +1,17 @@
 import { useMemo, useState } from 'react'
-import { type DialogueOption } from './types'
 import { CheckIcon } from '@phosphor-icons/react'
 import { useLocale, useTranslations } from 'next-intl'
 import { FirstContentNode } from '@tenno-companion/kim/types'
 import { getStandardLocale } from '@tenno-companion/core/locales'
+
 import { useKIMChat } from '@/components/providers/kim-chat'
+
+type DialogueOption = {
+  option: number
+  id: number
+  label: string
+  codename: string
+}
 
 type Props = {
   firstNodes: FirstContentNode[]
