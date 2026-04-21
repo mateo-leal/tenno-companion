@@ -64,7 +64,7 @@ export interface DialogueNode extends BaseNode {
   Transmission?: string
 }
 
-interface EndDialogueNode extends Omit<BaseNode, 'Outgoing'> {
+export interface EndDialogueNode extends Omit<BaseNode, 'Outgoing'> {
   type: NodeType.End
   Content?: string
 }
