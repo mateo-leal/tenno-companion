@@ -1,4 +1,4 @@
-name: Automated Data Sync
+name: Automated Data Sync KIM
 
 on:
   schedule:
@@ -31,7 +31,7 @@ jobs:
       - name: Run Update Check
         id: update
         continue-on-error: true
-        run: pnpm --filter @tenno-companion/core run check-updates
+        run: pnpm --filter @tenno-companion/kim run check-updates
 
       - name: Commit and Push to Main
         if: steps.update.outcome == 'failure' # Exit 1 from script
@@ -44,4 +44,4 @@ jobs:
 
       - name: Build and Publish
         if: steps.update.outcome == 'failure'
-        run: pnpm --filter @tenno-companion/core publish --access public --no-git-checks --provenance
+        run: pnpm --filter @tenno-companion/kim publish --access public --no-git-checks --provenance
