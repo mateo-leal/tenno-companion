@@ -1,21 +1,22 @@
 'use client'
 
-import { useEffect, useState, useTransition } from 'react'
 import type {
   DialoguePath,
   FirstContentNode,
   OptimizedResults,
   SimulationState,
 } from '@tenno-companion/kim/types'
+import { useLocale, useTranslations } from 'next-intl'
+import { CaretLeftIcon } from '@phosphor-icons/react'
+import { useEffect, useState, useTransition } from 'react'
+
+import { Button } from '@/components/ui/button'
 
 import { useKIMChat } from '../../providers/kim-chat'
 import { SimulationChecks } from './simulation-checks'
+import { SimulationLoadingState } from './loading-state'
 import { PreferredPathPanel } from './preferred-path-panel'
 import { DialogueViewerPanel } from './dialogue-viewer-panel'
-import { Button } from '@/components/ui/button'
-import { CaretLeftIcon } from '@phosphor-icons/react'
-import { useLocale } from 'next-intl'
-import { SimulationLoadingState } from './loading-state'
 
 type Props = {
   option: FirstContentNode
@@ -23,6 +24,7 @@ type Props = {
 
 export function DialogueContentPanel({ option }: Props) {
   const locale = useLocale()
+  const t = useTranslations('kim.chatroom')
   const { chatroom, gameState } = useKIMChat()
 
   const [isPending, startTransition] = useTransition()
@@ -116,7 +118,7 @@ export function DialogueContentPanel({ option }: Props) {
           ) : (
             !isPending && (
               <div className="text-center py-10 text-destructive">
-                Failed to load simulation results.
+                {t('simulationFailed')}
               </div>
             )
           )}

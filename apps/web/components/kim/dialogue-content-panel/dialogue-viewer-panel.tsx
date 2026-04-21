@@ -1,13 +1,13 @@
 import { useTranslations } from 'next-intl'
+import { useState, useTransition } from 'react'
 import { DialoguePath, Node } from '@tenno-companion/kim/types'
 import { NodeType } from '@tenno-companion/kim/constants'
 
 import { Button } from '@/components/ui/button'
+import { useKIMChat } from '@/components/providers/kim-chat'
 
 import { ChatLine } from './chat-line'
 import { SystemChatLine } from './system-chat-line'
-import { useState, useTransition } from 'react'
-import { useKIMChat } from '@/components/providers/kim-chat'
 
 function isDialogueNode(node: Node) {
   return node.type === NodeType.Dialogue || node.type === NodeType.PlayerChoice
