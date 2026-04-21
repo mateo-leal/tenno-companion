@@ -35,7 +35,7 @@
   },
   "prerequisites": {
     "steelPath": "Camino de acero desbloqueado",
-    "syndicateRank": "Rango {rank} {syndicate}"
+    "syndicateRank": "{syndicate} rango {rank}"
   },
   "npcs": {
     "title": "PNJ",
@@ -130,7 +130,7 @@
       "tasks": {
         "nightwaveInfo": "Completa las misiones semanales de Onda Nocturna.",
         "ayatanTreasureHuntInfo": "Completa la cacería semanal de tesoros Ayatan.",
-        "helpClemInfo": "Completa la misión semanal de Clem.",
+        "helpClemInfo": "Complete Clem's weekly bounty.",
         "archonHuntInfo": "Completa la misión de Cacería de Arcontes para obtener un fragmento de arconte.",
         "circuitInfo": "Completa el circuito de Duviri en dificultad normal.",
         "circuitSPInfo": "Completa el circuito de Duviri en dificultad Camino de Acero.",
@@ -172,7 +172,7 @@
       "title": "KIM Pathfinder",
       "description": "Explora las salas de chat de KIM en Warframe y elige una conversación para simular los resultados de diálogo preferidos.",
       "chatroom": {
-        "title": "{chatroomName} Diálogo KIM",
+        "title": "Diálogo KIM con {chatroomName}",
         "description": "Simula y analiza los caminos de diálogo de {chatroomName} KIM con química, contadores y cálculo de estados booleanos.",
         "notFound": "Sala de chat no encontrada."
       }
@@ -230,7 +230,7 @@
       "description": "Realiza un seguimiento de tu progreso en el Rango de Maestría de Warframe registrando armas, warframes, compañeros e intrínsecos para que siempre sepas qué dominar después."
     },
     "categories": {
-      "itemCompletion": "Completación de ítems",
+      "itemCompletion": "Maestría de ítems",
       "railjackIntrinsic": "Intrínsecos del Railjack",
       "drifterIntrinsic": "Intrínsecos del viajero",
       "starchartCompletion": "Completación del Mapa Estelar"
