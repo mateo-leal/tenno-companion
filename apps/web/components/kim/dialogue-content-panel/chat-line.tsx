@@ -25,7 +25,10 @@ export function ChatLine({ node }: { node: DialogueContentNode }) {
     if (node.type === NodeType.Dialogue) {
       return (
         SPEAKERS.find((speaker) =>
-          speaker.alias.some((alias) => alias === (node.Speaker ?? chatroom))
+          speaker.alias.some(
+            (alias) =>
+              alias.toLowerCase() === (node.Speaker ?? chatroom).toLowerCase()
+          )
         )?.icon ?? DEFAULT_ICON
       )
     }
