@@ -1,3 +1,4 @@
+import { Data } from '../types/internal'
 import { KubrowPet, Sentinel, SpecialItem } from '../types/sentinels'
 import { Archwing, Necramech, Warframe } from '../types/warframes'
 import {
@@ -12,7 +13,7 @@ import {
   Zaw,
 } from '../types/weapons'
 import { Faction, Intrinsic, MissionType, Region } from '../types/world'
-import { BaseProvider, Data } from './base'
+import { BaseProvider } from './base'
 import {
   AMP_PART_TYPES,
   HOUND_PART_TYPES,

@@ -1,4 +1,5 @@
-import { getStandardLocale, sortByName, SUPPORTED_LANGUAGES } from '../locales'
+import { SUPPORTED_LANGUAGES } from '@tenno-companion/shared/locales'
+import { getStandardLocale, sortByName } from '../locales'
 
 describe('locales', () => {
   describe('SUPPORTED_LANGUAGES', () => {

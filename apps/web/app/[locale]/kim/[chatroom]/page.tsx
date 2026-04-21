@@ -3,7 +3,10 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import { ChatWindow } from '@/components/windows/chat'
 import { capitalizeFirstLetter } from '@/lib/utils'
-import { CHATROOM_SOURCE_BY_ID } from '@/lib/kim/chatrooms'
+import { CHATROOMS } from '@tenno-companion/kim/constants'
+import { Chat } from '@tenno-companion/kim/server'
+import { notFound } from 'next/navigation'
+import { Chatroom } from '@tenno-companion/kim/types'
 
 export async function generateMetadata({
   params,
@@ -14,9 +17,7 @@ export async function generateMetadata({
     namespace: 'kim.metadata.chatroom',
   })
 
-  const source = CHATROOM_SOURCE_BY_ID[chatroom]
-
-  if (!source) {
+  if (!(CHATROOMS as readonly string[]).includes(chatroom)) {
     return {
       title: t('notFound'),
       robots: {
@@ -41,7 +42,7 @@ export async function generateMetadata({
 
 export async function generateStaticParams() {
   const locales = routing.locales.map((locale) => ({ locale }))
-  const chatrooms = Object.keys(CHATROOM_SOURCE_BY_ID).map((id) => ({
+  const chatrooms = CHATROOMS.map((id) => ({
     chatroom: id,
   }))
   return locales.flatMap((locale) =>
@@ -57,5 +58,11 @@ export default async function Page({
   // Enable static rendering
   setRequestLocale(locale)
 
-  return <ChatWindow chatroom={chatroom} />
+  if (!(CHATROOMS as readonly string[]).includes(chatroom)) {
+    notFound()
+  }
+
+  const chat = await Chat.create(chatroom as Chatroom, { locale })
+
+  return <ChatWindow chat={chat} />
 }

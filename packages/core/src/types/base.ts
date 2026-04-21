@@ -7,7 +7,6 @@ export type VariantType = (typeof VARIANT_TYPES)[number]
 // MARK: Utility types
 export type UniqueName = string
 export type TranslationKey = string
-export type Dictionary = Record<string, string>
 
 // MARK: Shared types
 export interface BaseItem {
