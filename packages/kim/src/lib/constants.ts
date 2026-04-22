@@ -21,6 +21,7 @@ export const AVOIDABLE_BOOLEAN_NAMES = [
   'LyonSuspicious',
   'DrifterLiar',
   'RoatheInsulted',
+  'MarieWarning',
 ]
 
 // Exact names for flirting-related booleans that do not follow keyword patterns.
