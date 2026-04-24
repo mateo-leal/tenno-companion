@@ -252,7 +252,8 @@
       "itemCompletion": "Maestría de ítems",
       "railjackIntrinsic": "Intrínsecos del Railjack",
       "drifterIntrinsic": "Intrínsecos del viajero",
-      "starchartCompletion": "Completación del Mapa Estelar"
+      "starchartCompletion": "Completación del Mapa Estelar",
+      "starchartCompletionSP": "Steel Path Starchart Completion"
     },
     "subcategories": {
       "warframe": "Warframe",
