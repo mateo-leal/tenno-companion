@@ -26,6 +26,11 @@
       "types": "./dist/lib/constants.d.ts",
       "import": "./dist/lib/constants.js"
     },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.mjs",
+      "require": "./dist/server.js"
+    },
     "./locales": {
       "types": "./dist/lib/locales.d.ts",
       "import": "./dist/lib/locales.js"
