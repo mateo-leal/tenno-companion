@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { MissionType, Region } from '@tenno-companion/core/types'
+import { Faction, MissionType, Region } from '@tenno-companion/core/types'
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
 
 import {
@@ -46,19 +46,15 @@ function loadChecklistState(now: Date): ChecklistState {
 }
 
 type Props = {
+  factions: Faction[]
   missionTypes: MissionType[]
   regions: Region[]
 }
 
-export function ChecklistPanel({ missionTypes, regions }: Props) {
+export function ChecklistPanel({ factions, missionTypes, regions }: Props) {
   const t = useTranslations()
-  const {
-    worldState,
-    // exportData,
-    arbitrations,
-    dictionaries,
-    fetchDictionary,
-  } = useGameData()
+  const { worldState, arbitrations, dictionaries, fetchDictionary } =
+    useGameData()
 
   const [state, setState] = useState<ChecklistState>(() =>
     createEmptyChecklistState(new Date())
@@ -244,6 +240,33 @@ export function ChecklistPanel({ missionTypes, regions }: Props) {
     }).join(' - ')
   }, [dictionaries.default, worldState?.EndlessXpChoices])
 
+  const arbitrationLabels = useMemo(() => {
+    if (arbitrations) {
+      const currentHour = Math.trunc(now.getTime() / 3600000) * 3600
+      const epochHour = arbitrations[0].timestamp
+      const currentHourIndex = (currentHour - epochHour) / 3600
+      const currentArbitration = arbitrations[currentHourIndex]
+
+      const region = regions.find(
+        (r) => r.uniqueName === currentArbitration.node
+      )
+
+      if (region) {
+        let rewardLabel = toTitleCase(region.missionName)
+        if (region.faction) {
+          const faction = factions.find((f) => f.uniqueName === region.faction)
+          if (faction && faction.name) {
+            rewardLabel = `${toTitleCase(region.missionName)} (${faction.name})`
+          }
+        }
+        return {
+          dynamicInfo: rewardLabel,
+          location: `${region.name}, ${region.systemName}`,
+        }
+      }
+    }
+  }, [arbitrations, factions, now, regions])
+
   const sortieRewardLabel = useMemo(() => {
     const sortie = worldState?.Sorties?.[0]
     const dict = dictionaries.default
@@ -361,26 +384,7 @@ export function ChecklistPanel({ missionTypes, regions }: Props) {
           }
 
           if (task.id === 'other-arbitration') {
-            if (arbitrations) {
-              const currentHour = Math.trunc(now.getTime() / 3600000) * 3600
-              const epochHour = arbitrations[0].timestamp
-              const currentHourIndex = (currentHour - epochHour) / 3600
-              const currentArbitration = arbitrations[currentHourIndex]
-
-              const region = regions.find(
-                (r) => r.uniqueName === currentArbitration.node
-              )
-
-              if (region) {
-                return {
-                  ...task,
-                  dynamicInfo: region.factionName
-                    ? `${toTitleCase(region.missionName)} (${region.factionName})`
-                    : toTitleCase(region.missionName),
-                  location: `${region.name}, ${region.systemName}`,
-                }
-              }
-            }
+            return { ...task, ...arbitrationLabels }
           }
 
           if (task.id === 'other-sortie') {
@@ -391,10 +395,9 @@ export function ChecklistPanel({ missionTypes, regions }: Props) {
       ),
     [
       applyDictionaryTitles,
-      arbitrations,
+      arbitrationLabels,
       baro,
       isBaroAvailable,
-      now,
       regions,
       sortieRewardLabel,
       t,

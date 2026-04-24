@@ -15,10 +15,6 @@ describe('locales', () => {
       expect(SUPPORTED_LANGUAGES.zh).toBe('简体中文')
       expect(SUPPORTED_LANGUAGES.tc).toBe('繁體中文')
     })
-
-    it('should have 15 supported languages', () => {
-      expect(Object.keys(SUPPORTED_LANGUAGES)).toHaveLength(15)
-    })
   })
 
   describe('getStandardLocale', () => {

@@ -1,4 +1,5 @@
 import {
+  FactionProvider,
   MissionTypeProvider,
   RegionProvider,
 } from '@tenno-companion/core/server'
@@ -13,6 +14,7 @@ import { ChecklistPanel } from '../checklist/checklist-panel'
 export async function ChecklistWindow() {
   const locale = await getLocale()
   const t = await getTranslations('checklist')
+  const factions = await FactionProvider.create({ locale })
   const missionTypes = await MissionTypeProvider.create({ locale })
   const regions = await RegionProvider.create({ locale })
 
@@ -24,6 +26,7 @@ export async function ChecklistWindow() {
       </WindowTitlebar>
       <WindowContent className="min-h-0 p-2">
         <ChecklistPanel
+          factions={factions.getAll()}
           missionTypes={missionTypes.getAll()}
           regions={regions.getAll()}
         />

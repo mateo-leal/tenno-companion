@@ -24,17 +24,12 @@ export type Region = BaseItem & {
 
   // Mission Data
   missionType: MissionTypeId
-  missionIndex: number
   missionName: TranslationKey
   tileset?: string
 
   // Faction Data
   faction?: FactionId
-  factionIndex?: number
-  factionName?: TranslationKey
   secondaryFaction?: FactionId
-  secondaryFactionIndex?: number
-  secondaryFactionName?: TranslationKey
 
   // Leveling & Mastery
   minEnemyLevel: number
@@ -85,6 +80,8 @@ type MissionReward = {
   credits?: number
   items?: string[]
   countedItems?: CountedItem[]
+  countedStoreItems?: CountedStoreItem[]
+  droptable?: string
 }
 
 type CountedItem = {
@@ -92,10 +89,15 @@ type CountedItem = {
   ItemCount: number
 }
 
+type CountedStoreItem = {
+  StoreItem: string
+  ItemCount: number
+}
+
 type DarkSectorData = {
   resourceBonus: number
   xpBonus: number
-  weaponXpBonusFor: string
+  weaponXpBonusFor: 'Rifles' | 'Melee' | 'Shotguns' | 'Pistols'
   weaponXpBonusVal: number
 }
 
