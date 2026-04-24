@@ -32,7 +32,7 @@ export function SettingsPortal({ isOpen, onCloseAction }: SettingsPortalProps) {
     <section className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-3">
       <Window className="pointer-events-auto w-full max-w-sm">
         <WindowTitlebar>
-          <p>{t('title')}</p>
+          <h1>{t('title')}</h1>
           <CloseButton onClick={onCloseAction} />
         </WindowTitlebar>
         <WindowContent>
