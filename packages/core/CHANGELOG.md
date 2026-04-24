@@ -8,6 +8,12 @@
   Data fetching and final class separated to reduce client size bundle
   update core usage in web
 
+## 0.1.5
+
+### Patch Changes
+
+- Automated data sync with warframe-public-export-plus (264d8f4)
+
 ## 0.1.4
 
 ### Patch Changes
