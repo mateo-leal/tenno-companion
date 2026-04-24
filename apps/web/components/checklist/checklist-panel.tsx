@@ -30,6 +30,7 @@ import { ChecklistState, ChecklistTask, LabelExternal } from '@/lib/types'
 
 import { useGameData } from '../providers/game-data'
 import { ChecklistSectionCard } from './checklist-section-card'
+import { DUVIRI_FRAMES, DUVIRI_WEAPONS } from './duviri-choices'
 
 type ChecklistSection = 'daily' | 'weekly' | 'other'
 
@@ -211,6 +212,38 @@ export function ChecklistPanel({ missionTypes, regions }: Props) {
     return `${boss} (${missions})`
   }, [worldState?.LiteSorties, missionTypes])
 
+  const duviriRewardLabel = useMemo(() => {
+    const endlessXpChoice = worldState?.EndlessXpChoices.find(
+      (exc) => exc.Category === 'EXC_NORMAL'
+    )
+
+    if (!endlessXpChoice) return null
+
+    return endlessXpChoice.Choices.map((choice) => {
+      const key = DUVIRI_FRAMES[choice.toLowerCase()]
+      if (key) {
+        return dictionaries.default?.[key] ?? choice
+      }
+      return choice
+    }).join(' - ')
+  }, [dictionaries.default, worldState?.EndlessXpChoices])
+
+  const duviriSteelPathRewardLabel = useMemo(() => {
+    const endlessXpChoice = worldState?.EndlessXpChoices.find(
+      (exc) => exc.Category === 'EXC_HARD'
+    )
+
+    if (!endlessXpChoice) return null
+
+    return endlessXpChoice.Choices.map((choice) => {
+      const key = DUVIRI_WEAPONS[choice.toLowerCase()]
+      if (key) {
+        return dictionaries.default?.[key] ?? choice
+      }
+      return choice
+    }).join(' - ')
+  }, [dictionaries.default, worldState?.EndlessXpChoices])
+
   const sortieRewardLabel = useMemo(() => {
     const sortie = worldState?.Sorties?.[0]
     const dict = dictionaries.default
@@ -218,7 +251,7 @@ export function ChecklistPanel({ missionTypes, regions }: Props) {
 
     // TODO: Migrate this to core
     const boss = getSortieBossName(sortie.Boss, dict)
-    const missions = sortie.Variants.map((variant) => {
+    const missions = sortie.Variants.map((variant, index) => {
       let missionName = missionTypes.find(
         (mt) => mt.uniqueName === variant.missionType
       )?.name
@@ -227,7 +260,7 @@ export function ChecklistPanel({ missionTypes, regions }: Props) {
         ? `${t(`sortieModifiers.${variant.modifierType}`)}`
         : ''
       return (
-        <li key={variant.missionType}>
+        <li key={`${index}-${variant.missionType}`}>
           {missionName} - {modifier}
         </li>
       )
@@ -271,6 +304,15 @@ export function ChecklistPanel({ missionTypes, regions }: Props) {
         CHECKLIST_TASKS.weekly.map((task) => {
           if (task.id === 'weekly-archon-hunt')
             return { ...task, dynamicInfo: archonRewardLabel ?? undefined }
+          if (task.id === 'weekly-circuit-normal') {
+            return { ...task, dynamicInfo: duviriRewardLabel ?? undefined }
+          }
+          if (task.id === 'weekly-circuit-sp') {
+            return {
+              ...task,
+              dynamicInfo: duviriSteelPathRewardLabel ?? undefined,
+            }
+          }
           if (task.id === 'weekly-vendors' && task.subitems) {
             return {
               ...task,
@@ -284,7 +326,13 @@ export function ChecklistPanel({ missionTypes, regions }: Props) {
           return task
         })
       ),
-    [applyDictionaryTitles, archonRewardLabel, teshinRewardLabel]
+    [
+      applyDictionaryTitles,
+      archonRewardLabel,
+      duviriRewardLabel,
+      duviriSteelPathRewardLabel,
+      teshinRewardLabel,
+    ]
   )
 
   const otherTasks = useMemo(

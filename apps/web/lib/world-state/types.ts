@@ -3,6 +3,7 @@ export type OracleWorldState = {
   Sorties: Sortie[]
   LiteSorties: LiteSortie[]
   VoidTraders: Array<VoidTrader>
+  EndlessXpChoices: EndlessXpChoice[]
 }
 
 export type OracleWorldEvent = {
@@ -69,4 +70,9 @@ type Mission = {
   modifierType?: string
   node: string
   tileset?: string
+}
+
+type EndlessXpChoice = {
+  Category: 'EXC_NORMAL' | 'EXC_HARD'
+  Choices: string[]
 }
