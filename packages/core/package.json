@@ -1,6 +1,6 @@
 {
   "name": "@tenno-companion/core",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "keywords": [
     "warframe"
   ],
@@ -45,6 +45,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "prepublishOnly": "pnpm build",
+    "check-types": "tsc --noEmit",
     "check-updates": "tsx scripts/check-updates.ts",
     "fetch-data": "tsx scripts/fetch-data.ts",
     "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest"

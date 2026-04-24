@@ -21,6 +21,7 @@
   },
   "author": "Mateo Leal <me@mateoleal.com>",
   "scripts": {
+    "check-types": "tsc --noEmit",
     "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest"
   },
   "devDependencies": {

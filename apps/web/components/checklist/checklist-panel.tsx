@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { MissionType, Region } from '@tenno-companion/core/types'
+import { Faction, MissionType, Region } from '@tenno-companion/core/types'
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
 
 import {
@@ -23,13 +23,14 @@ import {
   getBaroPeriodKey,
   isBaroKiteerAvailable,
 } from '@/lib/world-state/baro'
-import { CHECKLIST_STORAGE_KEY } from '@/lib/constants'
+import { CHECKLIST_STORAGE_KEY } from '@/lib/storage-keys'
 import { counterToString, toTitleCase } from '@/lib/utils'
 import { getSortieBossName } from '@/lib/utils/sortie-bosses'
 import { ChecklistState, ChecklistTask, LabelExternal } from '@/lib/types'
 
 import { useGameData } from '../providers/game-data'
 import { ChecklistSectionCard } from './checklist-section-card'
+import { DUVIRI_FRAMES, DUVIRI_WEAPONS } from './duviri-choices'
 
 type ChecklistSection = 'daily' | 'weekly' | 'other'
 
@@ -45,19 +46,15 @@ function loadChecklistState(now: Date): ChecklistState {
 }
 
 type Props = {
+  factions: Faction[]
   missionTypes: MissionType[]
   regions: Region[]
 }
 
-export function ChecklistPanel({ missionTypes, regions }: Props) {
+export function ChecklistPanel({ factions, missionTypes, regions }: Props) {
   const t = useTranslations()
-  const {
-    worldState,
-    // exportData,
-    arbitrations,
-    dictionaries,
-    fetchDictionary,
-  } = useGameData()
+  const { worldState, arbitrations, dictionaries, fetchDictionary } =
+    useGameData()
 
   const [state, setState] = useState<ChecklistState>(() =>
     createEmptyChecklistState(new Date())
@@ -211,6 +208,65 @@ export function ChecklistPanel({ missionTypes, regions }: Props) {
     return `${boss} (${missions})`
   }, [worldState?.LiteSorties, missionTypes])
 
+  const duviriRewardLabel = useMemo(() => {
+    const endlessXpChoice = worldState?.EndlessXpChoices.find(
+      (exc) => exc.Category === 'EXC_NORMAL'
+    )
+
+    if (!endlessXpChoice) return null
+
+    return endlessXpChoice.Choices.map((choice) => {
+      const key = DUVIRI_FRAMES[choice.toLowerCase()]
+      if (key) {
+        return dictionaries.default?.[key] ?? choice
+      }
+      return choice
+    }).join(' - ')
+  }, [dictionaries.default, worldState?.EndlessXpChoices])
+
+  const duviriSteelPathRewardLabel = useMemo(() => {
+    const endlessXpChoice = worldState?.EndlessXpChoices.find(
+      (exc) => exc.Category === 'EXC_HARD'
+    )
+
+    if (!endlessXpChoice) return null
+
+    return endlessXpChoice.Choices.map((choice) => {
+      const key = DUVIRI_WEAPONS[choice.toLowerCase()]
+      if (key) {
+        return dictionaries.default?.[key] ?? choice
+      }
+      return choice
+    }).join(' - ')
+  }, [dictionaries.default, worldState?.EndlessXpChoices])
+
+  const arbitrationLabels = useMemo(() => {
+    if (arbitrations) {
+      const currentHour = Math.trunc(now.getTime() / 3600000) * 3600
+      const epochHour = arbitrations[0].timestamp
+      const currentHourIndex = (currentHour - epochHour) / 3600
+      const currentArbitration = arbitrations[currentHourIndex]
+
+      const region = regions.find(
+        (r) => r.uniqueName === currentArbitration.node
+      )
+
+      if (region) {
+        let rewardLabel = toTitleCase(region.missionName)
+        if (region.faction) {
+          const faction = factions.find((f) => f.uniqueName === region.faction)
+          if (faction && faction.name) {
+            rewardLabel = `${toTitleCase(region.missionName)} (${faction.name})`
+          }
+        }
+        return {
+          dynamicInfo: rewardLabel,
+          location: `${region.name}, ${region.systemName}`,
+        }
+      }
+    }
+  }, [arbitrations, factions, now, regions])
+
   const sortieRewardLabel = useMemo(() => {
     const sortie = worldState?.Sorties?.[0]
     const dict = dictionaries.default
@@ -218,7 +274,7 @@ export function ChecklistPanel({ missionTypes, regions }: Props) {
 
     // TODO: Migrate this to core
     const boss = getSortieBossName(sortie.Boss, dict)
-    const missions = sortie.Variants.map((variant) => {
+    const missions = sortie.Variants.map((variant, index) => {
       let missionName = missionTypes.find(
         (mt) => mt.uniqueName === variant.missionType
       )?.name
@@ -227,7 +283,7 @@ export function ChecklistPanel({ missionTypes, regions }: Props) {
         ? `${t(`sortieModifiers.${variant.modifierType}`)}`
         : ''
       return (
-        <li key={variant.missionType}>
+        <li key={`${index}-${variant.missionType}`}>
           {missionName} - {modifier}
         </li>
       )
@@ -271,6 +327,15 @@ export function ChecklistPanel({ missionTypes, regions }: Props) {
         CHECKLIST_TASKS.weekly.map((task) => {
           if (task.id === 'weekly-archon-hunt')
             return { ...task, dynamicInfo: archonRewardLabel ?? undefined }
+          if (task.id === 'weekly-circuit-normal') {
+            return { ...task, dynamicInfo: duviriRewardLabel ?? undefined }
+          }
+          if (task.id === 'weekly-circuit-sp') {
+            return {
+              ...task,
+              dynamicInfo: duviriSteelPathRewardLabel ?? undefined,
+            }
+          }
           if (task.id === 'weekly-vendors' && task.subitems) {
             return {
               ...task,
@@ -284,7 +349,13 @@ export function ChecklistPanel({ missionTypes, regions }: Props) {
           return task
         })
       ),
-    [applyDictionaryTitles, archonRewardLabel, teshinRewardLabel]
+    [
+      applyDictionaryTitles,
+      archonRewardLabel,
+      duviriRewardLabel,
+      duviriSteelPathRewardLabel,
+      teshinRewardLabel,
+    ]
   )
 
   const otherTasks = useMemo(
@@ -313,26 +384,7 @@ export function ChecklistPanel({ missionTypes, regions }: Props) {
           }
 
           if (task.id === 'other-arbitration') {
-            if (arbitrations) {
-              const currentHour = Math.trunc(now.getTime() / 3600000) * 3600
-              const epochHour = arbitrations[0].timestamp
-              const currentHourIndex = (currentHour - epochHour) / 3600
-              const currentArbitration = arbitrations[currentHourIndex]
-
-              const region = regions.find(
-                (r) => r.uniqueName === currentArbitration.node
-              )
-
-              if (region) {
-                return {
-                  ...task,
-                  dynamicInfo: region.factionName
-                    ? `${toTitleCase(region.missionName)} (${region.factionName})`
-                    : toTitleCase(region.missionName),
-                  location: `${region.name}, ${region.systemName}`,
-                }
-              }
-            }
+            return { ...task, ...arbitrationLabels }
           }
 
           if (task.id === 'other-sortie') {
@@ -343,10 +395,9 @@ export function ChecklistPanel({ missionTypes, regions }: Props) {
       ),
     [
       applyDictionaryTitles,
-      arbitrations,
+      arbitrationLabels,
       baro,
       isBaroAvailable,
-      now,
       regions,
       sortieRewardLabel,
       t,

@@ -41,6 +41,7 @@ function createSortieWorldState(
         Twitter: false,
       },
     ],
+    EndlessXpChoices: [],
   }
 }
 

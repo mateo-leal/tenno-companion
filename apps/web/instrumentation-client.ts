@@ -2,10 +2,10 @@
 // The added config here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import * as Sentry from "@sentry/nextjs";
+import * as Sentry from '@sentry/nextjs'
 
 Sentry.init({
-  dsn: "https://96d68988e9c777b85d268bdd02a02eef@o4511262408900608.ingest.us.sentry.io/4511262410801152",
+  dsn: 'https://96d68988e9c777b85d268bdd02a02eef@o4511262408900608.ingest.us.sentry.io/4511262410801152',
 
   // Add optional integrations for additional features
   integrations: [Sentry.replayIntegration()],
@@ -14,6 +14,8 @@ Sentry.init({
   tracesSampleRate: 1,
   // Enable logs to be sent to Sentry
   enableLogs: true,
+
+  release: 'web@' + process.env.version,
 
   // Define how likely Replay events are sampled.
   // This sets the sample rate to be 10%. You may want this to be 100% while
@@ -26,6 +28,10 @@ Sentry.init({
   // Enable sending user PII (Personally Identifiable Information)
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
   sendDefaultPii: true,
-});
+})
 
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+// Use metrics in both server and client code
+Sentry.metrics.count('user_action', 1)
+Sentry.metrics.distribution('api_response_time', 150)
+
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart
