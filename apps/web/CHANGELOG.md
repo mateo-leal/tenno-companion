@@ -1,5 +1,11 @@
 # tenno-companion
 
+## 0.3.3
+
+### Patch Changes
+
+- checklist section now collapsable on mobile
+
 ## 0.3.2
 
 ### Patch Changes

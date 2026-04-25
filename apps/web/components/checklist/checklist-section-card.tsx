@@ -1,15 +1,17 @@
-import { useMemo, useState } from 'react'
-import { Button } from '../ui/button'
-import { ChecklistTask } from '@/lib/types'
-import { TaskRow } from './task-row'
 import {
   BroomIcon,
   CaretDownIcon,
-  CaretRightIcon,
   EyeIcon,
   EyeSlashIcon,
 } from '@phosphor-icons/react'
+import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
+
+import { cn } from '@/lib/utils'
+import { ChecklistTask } from '@/lib/types'
+
+import { TaskRow } from './task-row'
+import { Button } from '../ui/button'
 
 function collectVisibleCheckableTasks(
   tasks: ChecklistTask[],
@@ -73,6 +75,7 @@ export function ChecklistSectionCard({
   onExpandedGroupsChange: (next: Record<string, boolean>) => void
 }) {
   const t = useTranslations()
+  const [isCollapsed, setCollapsed] = useState(false)
   const [showHiddenItems, setShowHiddenItems] = useState(false)
 
   const visibleTasks = useMemo(
@@ -123,11 +126,31 @@ export function ChecklistSectionCard({
     <section className="flex min-h-0 flex-col border border-muted-primary bg-background/70">
       <header className="border-b border-muted-primary bg-cathedrale/70 px-3 py-2">
         <div className="flex items-start justify-between gap-3">
-          <div>
-            <h2 className="font-title text-lg uppercase tracking-wide text-primary">
-              {title}
-            </h2>
-            <p className="text-xs text-muted-foreground">{subtitle}</p>
+          <div className="flex items-center gap-2">
+            <div className="md:hidden">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setCollapsed((prev) => !prev)}
+                aria-label={isCollapsed ? t('ui.expand') : t('ui.collapse')}
+                title={isCollapsed ? t('ui.expand') : t('ui.collapse')}
+                className="size-6 p-0"
+              >
+                <CaretDownIcon
+                  size={18}
+                  weight="bold"
+                  className={cn('transition-transform', {
+                    '-rotate-90': isCollapsed,
+                  })}
+                />
+              </Button>
+            </div>
+            <div>
+              <h2 className="font-title text-lg uppercase tracking-wide text-primary">
+                {title}
+              </h2>
+              <p className="text-xs text-muted-foreground">{subtitle}</p>
+            </div>
           </div>
           <div className="text-right">
             <p className="text-xs text-foreground">
@@ -180,7 +203,11 @@ export function ChecklistSectionCard({
         </div>
       </header>
 
-      <div className="flex-1 space-y-2 overflow-y-auto p-2">
+      <div
+        className={cn('flex-1 space-y-2 overflow-y-auto p-2 md:block', {
+          hidden: isCollapsed,
+        })}
+      >
         {visibleTasks.map((task) => {
           if (!task.subitems || task.subitems.length === 0) {
             return (
@@ -253,11 +280,13 @@ export function ChecklistSectionCard({
                     aria-label={isExpanded ? t('ui.collapse') : t('ui.expand')}
                     title={isExpanded ? t('ui.collapse') : t('ui.expand')}
                   >
-                    {isExpanded ? (
-                      <CaretDownIcon size={14} weight="bold" />
-                    ) : (
-                      <CaretRightIcon size={14} weight="bold" />
-                    )}
+                    <CaretDownIcon
+                      size={14}
+                      weight="bold"
+                      className={cn('transition-transform', {
+                        '-rotate-90': !isExpanded,
+                      })}
+                    />
                   </Button>
                 </div>
               </div>
