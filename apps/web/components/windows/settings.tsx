@@ -28,6 +28,12 @@ export function SettingsPortal({ isOpen, onCloseAction }: SettingsPortalProps) {
   }
 
   function onLanguageChange(value: string) {
+    metrics.count('locale_change', 1, {
+      attributes: {
+        from: locale,
+        to: value,
+      },
+    })
     router.replace(pathname, { locale: value })
   }
 
