@@ -13,6 +13,10 @@ export async function GET(
 ) {
   const start = Date.now()
   const { chatroom } = await ctx.params
+  const searchParams = request.nextUrl.searchParams
+  const locale = searchParams.get('locale') || 'en'
+  const stateText = searchParams.get('state')
+  const startNodeId = searchParams.get('startNodeId')
 
   try {
     if (!(CHATROOMS as readonly string[]).includes(chatroom)) {
@@ -21,11 +25,6 @@ export async function GET(
         { status: 400 }
       )
     }
-
-    const searchParams = request.nextUrl.searchParams
-    const locale = searchParams.get('locale') || 'en'
-    const stateText = searchParams.get('state')
-    const startNodeId = searchParams.get('startNodeId')
 
     let options: SimulationState = { booleans: {}, counters: {} }
 
@@ -74,7 +73,12 @@ export async function GET(
     const responseData = { checks, optimizedResults }
 
     metrics.count('chats_simulated', 1, {
-      attributes: { status: 'success', chatroom },
+      attributes: {
+        status: 'success',
+        chatroom,
+        locale,
+        start_node: startNodeId,
+      },
     })
 
     return Response.json(responseData, {
@@ -84,7 +88,12 @@ export async function GET(
     })
   } catch (error) {
     metrics.count('chats_simulated', 1, {
-      attributes: { status: 'failed', chatroom },
+      attributes: {
+        status: 'failed',
+        chatroom,
+        locale,
+        start_node: startNodeId,
+      },
     })
     return Response.json(
       { message: error instanceof Error ? error.message : undefined },
