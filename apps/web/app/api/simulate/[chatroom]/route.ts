@@ -102,6 +102,11 @@ export async function GET(
   } finally {
     metrics.distribution('simulation_latency', Date.now() - start, {
       unit: 'millisecond',
+      attributes: {
+        chatroom,
+        locale,
+        start_node: startNodeId,
+      },
     })
   }
 }
