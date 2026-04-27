@@ -1,5 +1,11 @@
 # tenno-companion
 
+## 0.3.5
+
+### Patch Changes
+
+- Style adjustments
+
 ## 0.3.4
 
 ### Patch Changes
