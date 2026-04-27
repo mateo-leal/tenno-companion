@@ -4,6 +4,9 @@ import { useLocale, useTranslations } from 'next-intl'
 import { FirstContentNode } from '@tenno-companion/kim/types'
 import { getStandardLocale } from '@tenno-companion/core/locales'
 
+import { cn } from '@/lib/utils'
+import { Panel } from '@/components/ui/panel'
+import { TextInput } from '@/components/ui/text-input'
 import { useKIMChat } from '@/components/providers/kim-chat'
 
 type DialogueOption = {
@@ -119,62 +122,63 @@ export function DialogueOptionsList({
   }, [searchFilter, dialogueOptions, query])
 
   return (
-    <div className="h-full min-h-0 overflow-y-auto border border-[#8f5d1f] bg-black p-2">
-      <div className="mb-2 relative">
-        <input
-          type="search"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder={t('searchByDialogue')}
-          className="w-full border border-[#6b4820] bg-[#120e08] px-2 py-1.5 text-sm text-[#ddd7c9] outline-none placeholder:text-[#8f7b5d] focus:border-[#cfad73]"
-        />
-      </div>
+    <Panel className="h-full min-h-0 overflow-y-auto space-y-2">
+      <TextInput
+        type="search"
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
+        placeholder={t('searchByDialogue')}
+      />
 
       {filteredOptions.length === 0 ? (
-        <p className="px-1 text-sm text-[#9f8a67]">{t('noDialoguesMatch')}</p>
-      ) : null}
+        <p className="px-1 text-sm text-muted-foreground">
+          {t('noDialoguesMatch')}
+        </p>
+      ) : (
+        <ul className="space-y-1">
+          {filteredOptions.map((item) => {
+            const active = item.id === selectedStartId
+            const isCompleted = !!completedDialogues[item.codename]
 
-      <ul className="space-y-1 pr-1">
-        {filteredOptions.map((item) => {
-          const active = item.id === selectedStartId
-          const isCompleted = !!completedDialogues[item.codename]
-
-          return (
-            <li key={item.id}>
-              <button
-                type="button"
-                onClick={() => onSelect(item.id)}
-                className={`flex w-full items-start gap-2 border px-2 py-1.5 text-left text-sm leading-snug transition ${
-                  active
-                    ? 'border-[#cfad73] bg-[#3e1f00] text-[#ffe2af]'
-                    : 'border-[#6b4820] bg-[#120e08] text-[#d8ccb5] hover:bg-[#2a1805]'
-                }`}
-              >
-                <span className="font-title text-base text-[#f0bb5f]">
-                  {item.option}.
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block overflow-hidden">{item.label}</span>
-                  <div className="flex justify-between gap-2">
-                    <span
-                      className={`mt-1 block text-xs ${
-                        active ? 'text-[#d7b785]' : 'text-[#9f8a67]'
-                      }`}
-                    >
-                      {item.codename}
-                    </span>
-                    {isCompleted ? (
-                      <CheckIcon className="inline-block text-success size-4" />
-                    ) : (
-                      ''
-                    )}
-                  </div>
-                </span>
-              </button>
-            </li>
-          )
-        })}
-      </ul>
-    </div>
+            return (
+              <li key={item.id}>
+                <button
+                  type="button"
+                  onClick={() => onSelect(item.id)}
+                  className={cn(
+                    'flex w-full items-start gap-2 border px-2 py-1.5 text-left text-sm leading-snug transition',
+                    {
+                      'border-primary bg-muted-primary/10 text-primary': active,
+                      'border-muted-primary/70 hover:bg-muted-primary/10 bg-pressable-bg':
+                        !active,
+                    }
+                  )}
+                >
+                  <span className="font-title text-base text-primary">
+                    {item.option}.
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block overflow-hidden">{item.label}</span>
+                    <div className="flex justify-between gap-2">
+                      <span
+                        className={cn('mt-1 block text-xs', {
+                          'text-foreground': active,
+                          'text-muted-foreground': !active,
+                        })}
+                      >
+                        {item.codename}
+                      </span>
+                      {isCompleted && (
+                        <CheckIcon className="inline-block text-success size-4" />
+                      )}
+                    </div>
+                  </span>
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+    </Panel>
   )
 }

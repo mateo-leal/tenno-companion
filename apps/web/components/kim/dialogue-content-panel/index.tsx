@@ -11,13 +11,14 @@ import { useLocale, useTranslations } from 'next-intl'
 import { CaretLeftIcon } from '@phosphor-icons/react'
 import { useEffect, useState, useTransition } from 'react'
 
+import { Panel } from '@/components/ui/panel'
 import { Button } from '@/components/ui/button'
 
 import { useKIMChat } from '../../providers/kim-chat'
 import { SimulationChecks } from './simulation-checks'
 import { SimulationLoadingState } from './loading-state'
-import { PreferredPathPanel } from './preferred-path-panel'
 import { DialogueViewerPanel } from './dialogue-viewer-panel'
+import { PreferredPathSelectorPanel } from './preferred-path-panel'
 
 type Props = {
   option: FirstContentNode
@@ -88,48 +89,54 @@ export function DialogueContentPanel({ option }: Props) {
   }, [option])
 
   return (
-    <section className="min-h-0 border border-muted-primary p-3 h-full overflow-y-auto">
-      <div className="space-y-3 text-foreground">
-        <div className="flex items-center gap-2">
-          {activeDialoguePath && (
-            <Button
-              variant="outline"
-              onClick={() => setActiveDialoguePath(undefined)}
-              className="size-7 p-0"
-            >
-              <CaretLeftIcon className="size-5" />
-            </Button>
-          )}
-          <p className="font-title text-xl text-primary">{label}</p>
-        </div>
-        <div className={activeDialoguePath !== undefined ? 'hidden' : ''}>
-          {isPending && <SimulationLoadingState />}
-          {!isPending && checks && optimizedResults ? (
-            <div className="animate-in fade-in duration-300 flex flex-col gap-2">
-              <SimulationChecks
-                checks={checks}
-                customState={customState}
-                setCustomState={setCustomState}
-              />
-              <PreferredPathPanel
-                optimizedResults={optimizedResults}
-                setActiveDialoguePath={setActiveDialoguePath}
-              />
-            </div>
-          ) : (
-            !isPending && (
-              <div className="text-center py-10 text-destructive">
+    <Panel
+      as="section"
+      className="min-h-0 h-full flex flex-col space-y-2 overflow-hidden"
+    >
+      <div className="flex items-center gap-2 px-1">
+        {activeDialoguePath && (
+          <Button
+            variant="ghost"
+            onClick={() => setActiveDialoguePath(undefined)}
+            className="size-7 p-0 animate-in fade-in slide-in-from-left-4 duration-200"
+          >
+            <CaretLeftIcon className="size-5" />
+          </Button>
+        )}
+        <p className="font-title text-xl text-primary">{label}</p>
+      </div>
+
+      <div className="relative flex-1 overflow-y-auto px-1">
+        {activeDialoguePath === undefined && (
+          <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-left-4 duration-300 fill-mode-forwards">
+            {isPending && <SimulationLoadingState />}
+            {!isPending && checks && optimizedResults && (
+              <>
+                <SimulationChecks
+                  checks={checks}
+                  customState={customState}
+                  setCustomState={setCustomState}
+                />
+                <PreferredPathSelectorPanel
+                  optimizedResults={optimizedResults}
+                  setActiveDialoguePath={setActiveDialoguePath}
+                />
+              </>
+            )}
+
+            {!isPending && !checks && (
+              <div className="text-center py-10 text-error">
                 {t('simulationFailed')}
               </div>
-            )
-          )}
-        </div>
+            )}
+          </div>
+        )}
         {activeDialoguePath !== undefined && (
-          <div className="animate-in slide-in-from-right-4 duration-300">
+          <div className="animate-in fade-in slide-in-from-right-6 duration-300 fill-mode-forwards">
             <DialogueViewerPanel dialoguePath={activeDialoguePath} />
           </div>
         )}
       </div>
-    </section>
+    </Panel>
   )
 }

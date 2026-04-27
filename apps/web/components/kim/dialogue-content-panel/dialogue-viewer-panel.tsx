@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl'
 import { useState, useTransition } from 'react'
 import { NodeType } from '@tenno-companion/kim/constants'
 
+import { Panel } from '@/components/ui/panel'
 import { Button } from '@/components/ui/button'
 import { useKIMChat } from '@/components/providers/kim-chat'
 
@@ -55,9 +56,9 @@ export function DialogueViewerPanel({ dialoguePath }: Props) {
   }
 
   return (
-    <div className="border border-[#6b4820] bg-[#120e08] p-2 space-y-3">
+    <Panel className="space-y-2">
       {dialoguePath.nodes.length > 0 ? (
-        <ul className="space-y-1 bg-[#0f0a06] text-sm text-[#ddd7c9]">
+        <ul className="space-y-1 text-sm">
           {dialoguePath.nodes.map((node, index) => (
             <li key={`${node.Id}-${index}`}>
               {isDialogueNode(node) ? (
@@ -69,32 +70,31 @@ export function DialogueViewerPanel({ dialoguePath }: Props) {
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-[#b9ac8f]">
-          {t('kim.chatroom.noDialogueTextAvailable')}
-        </p>
+        <p>{t('kim.chatroom.noDialogueTextAvailable')}</p>
       )}
 
       {showBooleanUpdateNotice ? (
         <p className="border border-success-border bg-success-bg px-2 py-1 text-sm text-success">
           {t('kim.chatroom.booleanUpdated')}
         </p>
-      ) : null}
-
-      {showBooleanUpdateNotice ? (
-        <p className="text-center text-xs text-[#b9ac8f]">
-          {t('kim.chatroom.futureSimulationsNotice')}
-        </p>
       ) : (
-        <Button
-          variant="default"
-          size="lg"
-          className="w-full"
-          onClick={handleUpdateGameState}
-          disabled={isPending}
-        >
-          {isPending ? t('ui.loading') : t('kim.chatroom.updateBooleanValues')}
-        </Button>
+        <>
+          <Button
+            variant="default"
+            size="lg"
+            className="w-full"
+            onClick={handleUpdateGameState}
+            disabled={isPending}
+          >
+            {isPending
+              ? t('ui.loading')
+              : t('kim.chatroom.updateBooleanValues')}
+          </Button>
+          <p className="text-center text-xs">
+            {t('kim.chatroom.futureSimulationsNotice')}
+          </p>
+        </>
       )}
-    </div>
+    </Panel>
   )
 }

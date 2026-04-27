@@ -16,7 +16,7 @@ export function ChatWindow({ chat }: { chat: Chat }) {
         <CloseButton href="/kim" />
       </WindowTitlebar>
       <WindowContent className="sm:p-3">
-        <div className="mt-2 grid min-h-0 flex-1 gap-2 grid-rows-[minmax(170px,30svh)_minmax(0,1fr)] md:grid-rows-1 md:grid-cols-[minmax(0,270px)_minmax(0,1fr)]">
+        <div className="grid min-h-0 flex-1 gap-2 grid-rows-[minmax(170px,30svh)_minmax(0,1fr)] md:grid-rows-1 md:grid-cols-[minmax(0,270px)_minmax(0,1fr)]">
           <KIMChatProvider
             initialData={{
               chatroom: chat.chatroom,

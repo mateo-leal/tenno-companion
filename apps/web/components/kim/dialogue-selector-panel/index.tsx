@@ -1,15 +1,16 @@
 'use client'
 
-import { useEffect, useMemo, useState, useTransition } from 'react'
+import { useMemo, useState } from 'react'
+import { useTranslations } from 'next-intl'
 
-import { cn } from '@/lib/utils'
+import { Panel } from '@/components/ui/panel'
 
 import { useKIMChat } from '../../providers/kim-chat'
 import { DialogueOptionsList } from './dialogue-options-list'
 import { DialogueContentPanel } from '../dialogue-content-panel'
 
 export function DialogueSelectorPanel() {
-  const [isPending, startTransition] = useTransition()
+  const t = useTranslations('kim.chatroom')
   const { simulation } = useKIMChat()
 
   const firstNodesContent = useMemo(
@@ -19,40 +20,27 @@ export function DialogueSelectorPanel() {
 
   const [selectedStartId, setSelectedStartId] = useState<number | null>(null)
 
-  useEffect(() => {
-    if (selectedStartId === null && firstNodesContent.length > 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setSelectedStartId(firstNodesContent[0].id)
-    }
-  }, [firstNodesContent, selectedStartId])
-
   const selectedOption = useMemo(
     () => firstNodesContent.find((item) => item.id === selectedStartId),
     [firstNodesContent, selectedStartId]
   )
-
-  const handleSelectStartId = (id: number) => {
-    startTransition(() => {
-      setSelectedStartId(id)
-    })
-  }
 
   return (
     <>
       <DialogueOptionsList
         firstNodes={firstNodesContent}
         selectedStartId={selectedStartId}
-        onSelect={handleSelectStartId}
+        onSelect={setSelectedStartId}
       />
 
-      {selectedOption && (
-        <div
-          className={cn({
-            'opacity-70': isPending,
-          })}
-        >
+      {selectedOption ? (
+        <div>
           <DialogueContentPanel option={selectedOption} />
         </div>
+      ) : (
+        <Panel className="h-full flex justify-center items-center">
+          {t('selectDialogue')}
+        </Panel>
       )}
     </>
   )

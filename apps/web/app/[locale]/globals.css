@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
 
 :root {
   --background: #120e08;
@@ -21,6 +22,7 @@
   --secondary-bg: #2c1300;
   --secondary-bg-hover: #4a2000;
   --taskbar-bg: #799787;
+  --pressable-bg: #0f0a06;
 }
 
 @theme {
@@ -49,6 +51,7 @@
   --color-secondary-bg: var(--secondary-bg);
   --color-secondary-bg-hover: var(--secondary-bg-hover);
   --color-taskbar-bg: var(--taskbar-bg);
+  --color-pressable-bg: var(--pressable-bg);
   --font-sans: var(--font-ui-sans);
   --font-title: var(--font-ui-title);
 }

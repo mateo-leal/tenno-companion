@@ -9,33 +9,33 @@ export function SystemChatLine({ node }: { node: Node }) {
   switch (node.type) {
     case NodeType.Chemistry:
       return (
-        <div className="rounded border border-[#5a3b13] bg-[#211103] px-2 py-1 text-[#f0bb5f]">
+        <div className="border border-[#5a3b13] bg-[#211103] px-2 py-1 text-[#f0bb5f]">
           <strong>{t('chemistry')}</strong>:{' '}
           {formatChemistryValue(node.ChemistryDelta)}
         </div>
       )
     case NodeType.SetBoolean:
       return (
-        <div className="rounded border border-[#3a5a2f] bg-[#0f1c0f] px-2 py-1 text-[#c6e0bc]">
+        <div className="border border-[#3a5a2f] bg-[#0f1c0f] px-2 py-1 text-[#c6e0bc]">
           <strong>{t('setBoolean')}</strong>: {node.Content} = {t('true')}
         </div>
       )
     case NodeType.ResetBoolean:
       return (
-        <div className="rounded border border-[#5a2f2f] bg-[#1f0f0f] px-2 py-1 text-[#f1c3c3]">
+        <div className="border border-[#5a2f2f] bg-[#1f0f0f] px-2 py-1 text-[#f1c3c3]">
           <strong>{t('resetBoolean')}</strong>: {node.Content} = false
         </div>
       )
     case NodeType.IncCounter:
       return (
-        <div className="rounded border border-[#3f3d1c] bg-[#181608] px-2 py-1 text-[#e6de9f]">
+        <div className="border border-[#3f3d1c] bg-[#181608] px-2 py-1 text-[#e6de9f]">
           <strong>{t('updateCounter')}</strong>: {node.Content}
         </div>
       )
     case NodeType.CheckBoolean:
     case NodeType.CheckBooleanScript:
       return (
-        <div className="rounded border border-[#2d3d5a] bg-[#0d1422] px-2 py-1 text-[#b8cbe9]">
+        <div className="border border-[#2d3d5a] bg-[#0d1422] px-2 py-1 text-[#b8cbe9]">
           <strong>{t('checkBoolean')}</strong>: {node.Content}
         </div>
       )
@@ -44,27 +44,27 @@ export function SystemChatLine({ node }: { node: Node }) {
         (output) => `[${output.Expression}]`
       ).join(', ')
       return (
-        <div className="rounded border border-[#2d3d5a] bg-[#0d1422] px-2 py-1 text-[#b8cbe9]">
+        <div className="border border-[#2d3d5a] bg-[#0d1422] px-2 py-1 text-[#b8cbe9]">
           <strong>{t('checkMultiBoolean')}</strong>: {booleans}
         </div>
       )
     }
     case NodeType.CheckCounter:
       return (
-        <div className="rounded border border-[#2d3d5a] bg-[#0d1422] px-2 py-1 text-[#b8cbe9]">
+        <div className="border border-[#2d3d5a] bg-[#0d1422] px-2 py-1 text-[#b8cbe9]">
           <strong>{t('checkCounter')}</strong>: {node.Content}
         </div>
       )
     case NodeType.Start:
       return (
-        <div className="rounded border border-[#403f33] bg-[#15140f] px-2 py-1 text-[#d5d0bf]">
+        <div className="border border-[#403f33] bg-[#15140f] px-2 py-1 text-[#d5d0bf]">
           {node.Content}
         </div>
       )
     case NodeType.End:
     case NodeType.SpecialCompletion:
       return (
-        <div className="rounded border border-[#403f33] bg-[#15140f] px-2 py-1 text-[#d5d0bf]">
+        <div className="border border-[#403f33] bg-[#15140f] px-2 py-1 text-[#d5d0bf]">
           {node.Content ?? t('end')}
         </div>
       )

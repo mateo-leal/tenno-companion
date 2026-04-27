@@ -10,6 +10,7 @@ import {
 import { DialoguePath, OptimizedResults } from '@tenno-companion/kim/types'
 
 import { cn } from '@/lib/utils'
+import { Panel } from '@/components/ui/panel'
 import { useKIMChat } from '@/components/providers/kim-chat'
 
 type Props = {
@@ -17,7 +18,7 @@ type Props = {
   setActiveDialoguePath: (path: DialoguePath) => void
 }
 
-export function PreferredPathPanel({
+export function PreferredPathSelectorPanel({
   optimizedResults,
   setActiveDialoguePath,
 }: Props) {
@@ -55,35 +56,31 @@ export function PreferredPathPanel({
 
   if (amountOfValidPaths === 0) {
     return (
-      <div className="space-y-3">
-        <div className="border border-[#6b4820] bg-[#120e08] p-2">
-          <p className="text-foreground">{t('noPathsForCurrentState')}</p>
-        </div>
-      </div>
+      <Panel>
+        <p className="text-foreground">{t('noPathsForCurrentState')}</p>
+      </Panel>
     )
   }
 
   return (
-    <div className="space-y-3">
-      <div className="border border-[#6b4820] bg-[#120e08] p-2">
-        <p className="font-title text-lg text-[#f0bb5f]">
-          {t('choosePreferredPath')}
-        </p>
-        <ul className="mt-2 space-y-2">
-          {sections.map((section) =>
-            section.data.map((path, index) => (
-              <PathItem
-                key={`${section.label}-${index}`}
-                path={path}
-                label={section.label}
-                counters={counters}
-                setActiveDialoguePath={setActiveDialoguePath}
-              />
-            ))
-          )}
-        </ul>
-      </div>
-    </div>
+    <Panel>
+      <p className="font-title text-lg text-primary">
+        {t('choosePreferredPath')}
+      </p>
+      <ul className="mt-2 space-y-2">
+        {sections.map((section) =>
+          section.data.map((path, index) => (
+            <PathItem
+              key={`${section.label}-${index}`}
+              path={path}
+              label={section.label}
+              counters={counters}
+              setActiveDialoguePath={setActiveDialoguePath}
+            />
+          ))
+        )}
+      </ul>
+    </Panel>
   )
 }
 
@@ -104,14 +101,16 @@ const PathItem = ({
       <button
         className={cn(
           'w-full flex flex-col cursor-pointer items-start p-2',
-          'border border-[#3f2a11] bg-[#0f0a06] hover:bg-[#161009] transition-colors'
+          'border border-muted-primary/70 bg-pressable-bg hover:bg-muted-primary/10 transition-colors'
         )}
         onClick={() => setActiveDialoguePath(path)}
       >
         <div className="text-start">
-          <p className="text-sm font-medium text-[#f0bb5f]">{label}</p>
+          <p className="text-sm font-medium text-primary">{label}</p>
           {path.isUncertain && (
-            <p className="text-xs text-[#d8ccb5]">{t('uncertainPath')}</p>
+            <p className="text-xs text-muted-foreground">
+              {t('uncertainPath')}
+            </p>
           )}
         </div>
         <ul className="mt-1.5 flex flex-wrap gap-1">
