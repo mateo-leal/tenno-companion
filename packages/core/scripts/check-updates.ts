@@ -17,7 +17,7 @@ Automated data sync with ${REPO} (${latestSHA.slice(0, 7)})
 async function run() {
   console.log('Checking for source updates...')
 
-  const { isUpdateAvailable, latestSHA } = await checkGitHubUpdate({
+  const { error, isUpdateAvailable, latestSHA } = await checkGitHubUpdate({
     owner: OWNER,
     repo: REPO,
     branch: BRANCH,
@@ -25,6 +25,11 @@ async function run() {
       ? fs.readFileSync(SHA_FILE, 'utf8').trim()
       : '',
   })
+
+  if (error) {
+    console.error('Failed to fetch GitHub status', error)
+    return
+  }
 
   if (!isUpdateAvailable) {
     console.log('Data is already up to date.')
