@@ -5,6 +5,7 @@ const SORTIE_BOSS_DICT_KEY = {
   SORTIE_BOSS_CORRUPTED_VOR: '/Lotus/Language/Game/VorTwo',
   SORTIE_BOSS_KRIL: '/Lotus/Language/Game/LieutenantLechKril',
   SORTIE_BOSS_JACKAL: '/Lotus/Language/Game/QuadRobot',
+  SORTIE_BOSS_ALAD: '/Lotus/Language/Game/AladV',
 }
 
 export function getSortieBossName(boss: string, dictionary: Dictionary) {
