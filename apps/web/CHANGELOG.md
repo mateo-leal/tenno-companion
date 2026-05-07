@@ -1,5 +1,12 @@
 # tenno-companion
 
+## 0.4.0
+
+### Minor Changes
+
+- 4c83cb1: mastery rank calculation and display in mastery panel
+  add drifter intrinsics data
+
 ## 0.3.13
 
 ### Patch Changes

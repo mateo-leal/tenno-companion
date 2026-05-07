@@ -1,6 +1,7 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
+import { metrics } from '@sentry/nextjs'
+import { useLocale, useTranslations } from 'next-intl'
 import { Faction, MissionType, Region } from '@tenno-companion/core/types'
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
 
@@ -56,6 +57,7 @@ type Props = {
 
 export function ChecklistPanel({ factions, missionTypes, regions }: Props) {
   const t = useTranslations()
+  const locale = useLocale()
   const { worldState, arbitrations, dictionaries, fetchDictionary } =
     useGameData()
 
@@ -408,16 +410,27 @@ export function ChecklistPanel({ factions, missionTypes, regions }: Props) {
   )
 
   const toggleTask = (section: ChecklistCategory, id: string) => {
-    setState((current) => ({
-      ...current,
-      [section]: {
-        ...current[section],
-        completed: {
-          ...current[section].completed,
-          [id]: !current[section].completed[id],
+    setState((current) => {
+      const isCompleting = !current[section].completed[id]
+      if (isCompleting) {
+        metrics.count('checklist-completion', 1, {
+          attributes: {
+            task: id,
+            locale,
+          },
+        })
+      }
+      return {
+        ...current,
+        [section]: {
+          ...current[section],
+          completed: {
+            ...current[section].completed,
+            [id]: !current[section].completed[id],
+          },
         },
-      },
-    }))
+      }
+    })
   }
   const toggleHidden = (s: ChecklistCategory, id: string) => {
     setState((p) => ({
