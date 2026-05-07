@@ -279,7 +279,7 @@
     "clearCategory": "Clear category",
     "activeCategoryCount": "{count} items in {category}",
     "rankPrefix": "Rank {rank}: {item}",
-    "masteryRank": "Mastery Rank",
+    "masteryRank": "Ранг мастерства",
     "legendaryRank": "Legendary Rank",
     "loading": "Loading items...",
     "loadFailed": "Could not load mastery data right now.",
