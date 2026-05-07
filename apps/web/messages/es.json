@@ -279,8 +279,8 @@
     "clearCategory": "Borrar categoría",
     "activeCategoryCount": "{count} elementos en {category}",
     "rankPrefix": "Rango {rank}: {item}",
-    "masteryRank": "Mastery Rank",
-    "legendaryRank": "Legendary Rank",
+    "masteryRank": "Rango de Maestría",
+    "legendaryRank": "Rango Legendario",
     "loading": "Cargando elementos...",
     "loadFailed": "No se pudo cargar los datos de maestría en este momento.",
     "emptyState": "Ningún elemento coincide con tu filtro actual."
