@@ -279,7 +279,8 @@
     "clearCategory": "카테고리 초기화",
     "activeCategoryCount": "{category} 내 {count}개 항목",
     "rankPrefix": "랭크 {rank}: {item}",
-    "masteryRequirement": "마스터리 랭크",
+    "masteryRank": "Mastery Rank",
+    "legendaryRank": "Legendary Rank",
     "loading": "아이템 로딩 중...",
     "loadFailed": "현재 마스터리 데이터를 불러올 수 없습니다.",
     "emptyState": "필터와 일치하는 아이템이 없습니다."
