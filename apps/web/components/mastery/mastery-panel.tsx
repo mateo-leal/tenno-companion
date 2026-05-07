@@ -7,7 +7,7 @@ import {
   EyeIcon,
 } from '@phosphor-icons/react'
 import Image from 'next/image'
-import { useTranslations } from 'next-intl'
+import { useFormatter, useTranslations } from 'next-intl'
 import { useEffect, useMemo, useState } from 'react'
 
 import {
@@ -19,17 +19,19 @@ import { cn, isDevelopment } from '@/lib/utils'
 import type { MasteryCategory, MasteryData } from '@/lib/mastery/types'
 
 import { Button } from '../ui/button'
+import { getMasteryRank } from '@/lib/mastery/mastery-ranks'
 
 const CATEGORY_ORDER: MasteryCategory[] = [
   'itemCompletion',
   'railjackIntrinsic',
-  // 'drifterIntrinsic',
+  'drifterIntrinsic',
   'starchartCompletion',
   'starchartCompletionSP',
 ]
 
 export function MasteryPanel({ masteryData }: { masteryData: MasteryData }) {
   const t = useTranslations('masteryChecklist')
+  const format = useFormatter()
 
   const [activeCategory, setActiveCategory] =
     useState<MasteryCategory>('itemCompletion')
@@ -123,6 +125,16 @@ export function MasteryPanel({ masteryData }: { masteryData: MasteryData }) {
     )
   }, [categorySubcategories, masteryData, progress])
 
+  const masteryRank = useMemo(() => {
+    const currentMP = Object.values(categoryStats).reduce(
+      (acc, { masteryPointsGained }) => {
+        return acc + masteryPointsGained
+      },
+      0
+    )
+    return { ...getMasteryRank(currentMP), mp: currentMP }
+  }, [categoryStats])
+
   function toggleItem(itemId: string) {
     setProgress((prev) => {
       const next = {
@@ -186,8 +198,40 @@ export function MasteryPanel({ masteryData }: { masteryData: MasteryData }) {
         )}
       >
         <div className="flex flex-col divide-y divide-muted-primary/40">
+          <div className="flex p-2 gap-2 items-center">
+            <Image
+              src={masteryRank.icon}
+              height={24}
+              width={24}
+              alt={`${masteryRank.id} icon`}
+            />
+            <div>
+              <div className="text-sm">
+                {masteryRank.id <= 30
+                  ? `${t('masteryRank')} ${masteryRank.id}`
+                  : `${t('legendaryRank')} ${masteryRank.id - 30}`}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {format.number(masteryRank.mp)}
+              </div>
+            </div>
+          </div>
           {CATEGORY_ORDER.map((category) => {
             const isExpanded = expandedCategories.has(category)
+            const totalGainedMP = categorySubcategories[category]?.reduce(
+              (acc, subcategory) =>
+                acc +
+                (categoryStats[`${category}:${subcategory}`]
+                  ?.masteryPointsGained ?? 0),
+              0
+            )
+            const totalMP = categorySubcategories[category]?.reduce(
+              (acc, subcategory) =>
+                acc +
+                (categoryStats[`${category}:${subcategory}`]
+                  ?.masteryPointsTotal ?? 0),
+              0
+            )
 
             return (
               <div key={category}>
@@ -196,9 +240,14 @@ export function MasteryPanel({ masteryData }: { masteryData: MasteryData }) {
                   onClick={() => toggleGroup(isExpanded, category)}
                   className="w-full flex items-center justify-between gap-2 px-2 py-2 text-left transition hover:bg-muted-primary/15"
                 >
-                  <p className="text-sm leading-tight font-semibold">
-                    {t(`categories.${category}`)}
-                  </p>
+                  <div className="flex flex-col">
+                    <p className="text-sm leading-tight font-semibold">
+                      {t(`categories.${category}`)}
+                    </p>
+                    <span className="text-xs text-muted-foreground">
+                      {format.number(totalGainedMP)}/{format.number(totalMP)}
+                    </span>
+                  </div>
                   <CaretDownIcon
                     size={16}
                     weight="bold"
@@ -383,8 +432,8 @@ export function MasteryPanel({ masteryData }: { masteryData: MasteryData }) {
                                 src="https://browse.wf/Lotus/Interface/Icons/MasteryRankIconSmall.png"
                                 height={20}
                                 width={20}
-                                alt={t('masteryRequirement')}
-                                title={t('masteryRequirement')}
+                                alt={t('masteryRank')}
+                                title={t('masteryRank')}
                               />
                               {item.masteryReq}
                             </span>

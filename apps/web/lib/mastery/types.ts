@@ -30,3 +30,9 @@ export type MasterySubcategoryLabels = Record<
 export type MasteryData = MasteryByCategory & {
   subcategoryLabels: MasterySubcategoryLabels
 }
+
+export type MasteryRank = {
+  id: number
+  xp: number
+  icon: string
+}

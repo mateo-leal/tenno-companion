@@ -15,6 +15,7 @@ import {
   MasteryItem,
   MasterySubcategoryLabels,
 } from './types'
+import { toTitleCase } from '../utils'
 
 export async function buildMasteryData(locale: string): Promise<MasteryData> {
   const [items, railjackIntrinsics, startChart] = await Promise.all([
@@ -22,11 +23,12 @@ export async function buildMasteryData(locale: string): Promise<MasteryData> {
     getRailjackIntrinsics(locale),
     getStarChart(locale),
   ])
+  const drifterIntrinsics = getDrifterIntrinsics()
 
   const data: MasteryByCategory = {
     itemCompletion: items,
     railjackIntrinsic: railjackIntrinsics.masteryItems,
-    drifterIntrinsic: {},
+    drifterIntrinsic: drifterIntrinsics.masteryItems,
     starchartCompletion: startChart.masteryItems,
     starchartCompletionSP: startChart.masteryItemsSP,
   }
@@ -34,7 +36,7 @@ export async function buildMasteryData(locale: string): Promise<MasteryData> {
   const subcategoryLabels: MasterySubcategoryLabels = {
     itemCompletion: {},
     railjackIntrinsic: railjackIntrinsics.labels,
-    drifterIntrinsic: {},
+    drifterIntrinsic: drifterIntrinsics.labels,
     starchartCompletion: startChart.labels,
     starchartCompletionSP: startChart.labels,
   }
@@ -217,12 +219,100 @@ async function getRailjackIntrinsics(locale: string) {
   const railjackIntrinsics = await RailjackIntrinsicProvider.create({ locale })
   return railjackIntrinsics.getAll().reduce(
     (data, intrinsic) => {
-      data.labels[intrinsic.uniqueName] = intrinsic.name
+      data.labels[intrinsic.uniqueName] = toTitleCase(intrinsic.name)
       data.masteryItems[intrinsic.uniqueName] = intrinsic.ranks.map(
         (rank, index) => ({
           id: `intrinsic:${intrinsic.uniqueName}:${index + 1}`,
           name: rank.name,
           iconUrl: `https://browse.wf${intrinsic.icon}`,
+          rankNumber: index + 1,
+          masteryPoints: 1500,
+        })
+      )
+      return data
+    },
+    { labels: {}, masteryItems: {} } as {
+      labels: Record<string, string>
+      masteryItems: Record<string, MasteryItem[]>
+    }
+  )
+}
+
+function getDrifterIntrinsics() {
+  const DRIFTER_INTRINSICS = [
+    {
+      icon: 'https://wiki.warframe.com/images/DrifterIntrinsicCombat.png',
+      uniqueName: 'COMBAT',
+      ranks: [
+        { name: 'Rank 1: Deadly Decrees' },
+        { name: 'Rank 2: Adrenaline Surge' },
+        { name: 'Rank 3: Transference Sync' },
+        { name: 'Rank 4: Swifter Strike' },
+        { name: 'Rank 5: Swifter Abilities' },
+        { name: 'Rank 6: Neural Pulse' },
+        { name: 'Rank 7: Weaponmaster' },
+        { name: 'Rank 8: Transference Synergy' },
+        { name: 'Rank 9: Muscle Mass' },
+        { name: 'Rank 10: Overpowering Abilities' },
+      ],
+    },
+    {
+      icon: 'https://wiki.warframe.com/images/DrifterIntrinsicRiding.png',
+      uniqueName: 'RIDING',
+      ranks: [
+        { name: 'Rank 1: Summon Kaithe' },
+        { name: 'Rank 2: Cavalier Strength' },
+        { name: 'Rank 3: Hoof Stomp' },
+        { name: 'Rank 4: Fast Travel' },
+        { name: 'Rank 5: Smooth Path' },
+        { name: 'Rank 6: Steadfast Dismount' },
+        { name: 'Rank 7: Endurance Racer' },
+        { name: 'Rank 8: Unique Identity' },
+        { name: 'Rank 9: Equestrian Bond' },
+        { name: 'Rank 10: Herd Travel' },
+      ],
+    },
+    {
+      icon: 'https://wiki.warframe.com/images/DrifterIntrinsicOpportunity.png',
+      uniqueName: 'OPPORTUNITY',
+      ranks: [
+        { name: 'Rank 1: Expanded Decrees' },
+        { name: 'Rank 2: Expanded Arsenal' },
+        { name: 'Rank 3: Lucky Opener' },
+        { name: 'Rank 4: Warframe Abundance' },
+        { name: 'Rank 5: Treasure Finder' },
+        { name: 'Rank 6: Fresh Hand' },
+        { name: 'Rank 7: Maximized Arsenal' },
+        { name: 'Rank 8: Warframe Diversity' },
+        { name: 'Rank 9: High Value Vendor' },
+        { name: 'Rank 10: Stranger in Black' },
+      ],
+    },
+    {
+      icon: 'https://wiki.warframe.com/images/DrifterIntrinsicEndurance.png',
+      uniqueName: 'ENDURANCE',
+      ranks: [
+        { name: 'Rank 1: Fortifying Decrees' },
+        { name: 'Rank 2: Restorative Decree' },
+        { name: 'Rank 3: Determination' },
+        { name: 'Rank 4: Deft Defender' },
+        { name: 'Rank 5: Born Survivor' },
+        { name: 'Rank 6: Precision Power' },
+        { name: 'Rank 7: Sharpshooter’s Bounty' },
+        { name: 'Rank 8: Tenacity' },
+        { name: 'Rank 9: Tough As Old Boots' },
+        { name: 'Rank 10: Cheat Death' },
+      ],
+    },
+  ]
+  return DRIFTER_INTRINSICS.reduce(
+    (data, intrinsic) => {
+      data.labels[intrinsic.uniqueName] = toTitleCase(intrinsic.uniqueName)
+      data.masteryItems[intrinsic.uniqueName] = intrinsic.ranks.map(
+        (rank, index) => ({
+          id: `drifter-intrinsic:${intrinsic.uniqueName}:${index + 1}`,
+          name: rank.name,
+          iconUrl: intrinsic.icon,
           rankNumber: index + 1,
           masteryPoints: 1500,
         })
