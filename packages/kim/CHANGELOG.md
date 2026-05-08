@@ -1,5 +1,11 @@
 # @tenno-companion/core
 
+## 0.2.0
+
+### Minor Changes
+
+- Added new avoidable variables for RoatheFail
+
 ## 0.1.3
 
 ### Patch Changes
