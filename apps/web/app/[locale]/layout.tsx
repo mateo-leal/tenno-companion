@@ -10,6 +10,7 @@ import { routing } from '@/i18n/routing'
 import { Taskbar } from '@/components/taskbar'
 import { getSiteOrigin, APP_TITLE } from '@/lib/seo'
 import { GameDataProvider } from '@/components/providers/game-data'
+import { KoreanTranslationSurvey } from '@/components/windows/korean-translation-survey'
 
 import './globals.css'
 
@@ -118,6 +119,7 @@ export default async function RootLayout({
             <main className="container mx-auto flex min-h-screen w-full flex-col overflow-y-auto p-2 sm:p-4 md:h-screen md:overflow-hidden">
               <GameDataProvider>{children}</GameDataProvider>
               <Taskbar />
+              <KoreanTranslationSurvey />
             </main>
           </NextIntlClientProvider>
         </div>
