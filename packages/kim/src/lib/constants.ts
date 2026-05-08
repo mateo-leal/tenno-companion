@@ -22,9 +22,15 @@ export const AVOIDABLE_BOOLEAN_NAMES = [
   'DrifterLiar',
   'RoatheInsulted',
   'MarieWarning',
+  'RoatheFail',
+  'RoatheFailStall',
+  'RoatheFailUltimate',
+  'RoatheFailNot21',
+  'RoatheFailUnloved',
+  'RoatheRepair1',
 ]
 
-// Exact names for flirting-related booleans that do not follow keyword patterns.
+// Exact names for flirting-related booleans
 export const ROMANCE_BOOLEAN_NAMES = [
   // General
   'IsDating',
