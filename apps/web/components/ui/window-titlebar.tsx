@@ -8,7 +8,7 @@ export function WindowTitlebar({
   return (
     <div
       className={cn(
-        'flex items-center justify-between py-1 px-2',
+        'flex gap-2 items-center justify-between py-1 px-2',
         // 'border-b border-muted-primary',
         'bg-linear-to-b from-[#590600] to-[#390200]',
         'text-primary font-title text-xl tracking-wide',

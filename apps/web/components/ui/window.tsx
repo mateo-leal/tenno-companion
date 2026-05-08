@@ -1,12 +1,20 @@
 import { cn } from '@/lib/utils'
-import { PropsWithChildren } from 'react'
+import { ComponentPropsWithoutRef, ElementType } from 'react'
 
-export function Window({
+type Props<T extends ElementType> = {
+  as?: T
+} & ComponentPropsWithoutRef<T>
+
+export function Window<T extends ElementType = 'div'>({
+  as,
   children,
   className,
-}: PropsWithChildren<{ className?: string }>) {
+  ...props
+}: Props<T>) {
+  const Component = as || 'div'
   return (
-    <div
+    <Component
+      {...props}
       className={cn(
         'border-2 border-muted-primary bg-background shadow-(--window-shadow) animate-window',
         'flex flex-col w-full',
@@ -14,6 +22,6 @@ export function Window({
       )}
     >
       {children}
-    </div>
+    </Component>
   )
 }
