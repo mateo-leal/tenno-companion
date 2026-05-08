@@ -75,7 +75,7 @@
     "SORTIE_MODIFIER_TOXIN": "Mejora Elemental Enemiga (Toxina)",
     "SORTIE_MODIFIER_POISON": "Mejora Elemental Enemiga (Toxina)",
     "SORTIE_MODIFIER_HAZARD_RADIATION": "Peligro de Radiación",
-    "SORTIE_MODIFIER_HAZARD_MAGNETIC": "Electromagnetic Anomalies",
+    "SORTIE_MODIFIER_HAZARD_MAGNETIC": "Anomalías Electromagnéticas",
     "SORTIE_MODIFIER_HAZARD_FOG": "Niebla Densa",
     "SORTIE_MODIFIER_HAZARD_FIRE": "Fuego",
     "SORTIE_MODIFIER_HAZARD_ICE": "Cryogenic Leakage",
@@ -279,7 +279,8 @@
     "clearCategory": "Borrar categoría",
     "activeCategoryCount": "{count} elementos en {category}",
     "rankPrefix": "Rango {rank}: {item}",
-    "masteryRequirement": "Rango de Maestría",
+    "masteryRank": "Rango de Maestría",
+    "legendaryRank": "Rango Legendario",
     "loading": "Cargando elementos...",
     "loadFailed": "No se pudo cargar los datos de maestría en este momento.",
     "emptyState": "Ningún elemento coincide con tu filtro actual."
