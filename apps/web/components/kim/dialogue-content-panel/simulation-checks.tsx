@@ -1,11 +1,46 @@
+'use client'
+
 import { useTranslations } from 'next-intl'
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 import { SimulationState } from '@tenno-companion/kim/types'
 
 import { Panel } from '@/components/ui/panel'
 import { Switch } from '@/components/ui/switch'
 import { TextInput } from '@/components/ui/text-input'
+
+function DebouncedCounterInput({
+  name,
+  initialValue,
+  onUpdate,
+}: {
+  name: string
+  initialValue: number
+  onUpdate: (name: string, value: number) => void
+}) {
+  // Local state allows immediate typing feedback without global re-renders
+  const [localValue, setLocalValue] = useState(initialValue.toString())
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const parsed = Number(localValue)
+      if (!isNaN(parsed) && parsed !== initialValue) {
+        onUpdate(name, parsed)
+      }
+    }, 500) // 500ms delay
+
+    return () => clearTimeout(timer)
+  }, [localValue, name, onUpdate, initialValue])
+
+  return (
+    <TextInput
+      type="number"
+      value={localValue}
+      onChange={(e) => setLocalValue(e.target.value)}
+      className="py-1"
+    />
+  )
+}
 
 type Props = {
   checks: {
@@ -22,6 +57,16 @@ export function SimulationChecks({
   setCustomState,
 }: Props) {
   const t = useTranslations('kim.chatroom')
+
+  const handleCounterUpdate = (name: string, value: number) => {
+    setCustomState((previous) => ({
+      ...previous,
+      counters: {
+        ...previous.counters,
+        [name]: value,
+      },
+    }))
+  }
 
   return (
     <div className="flex gap-2 flex-col md:flex-row justify-between">
@@ -70,22 +115,10 @@ export function SimulationChecks({
               >
                 <label className="flex items-center gap-1 text-sm">
                   <span className="w-full">{name}</span>
-                  <TextInput
-                    type="number"
-                    defaultValue={customState.counters[name] ?? 0}
-                    onChange={(event) => {
-                      const value = Number(event.target.value)
-                      if (!isNaN(value)) {
-                        setCustomState((previous) => ({
-                          ...previous,
-                          counters: {
-                            ...previous.counters,
-                            [name]: value,
-                          },
-                        }))
-                      }
-                    }}
-                    className="py-1"
+                  <DebouncedCounterInput
+                    name={name}
+                    initialValue={customState.counters[name] ?? 0}
+                    onUpdate={handleCounterUpdate}
                   />
                 </label>
               </li>

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 
 import { Popup } from '../ui/popup'
 import { Button } from '../ui/button'
-import { TextArea, TextInput } from '../ui/text-input'
+import { TextArea } from '../ui/text-input'
 import { useLocale } from 'next-intl'
 
 export function KoreanTranslationSurvey() {
