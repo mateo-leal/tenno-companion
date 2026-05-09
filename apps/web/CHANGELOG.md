@@ -1,5 +1,11 @@
 # tenno-companion
 
+## 0.4.4
+
+### Patch Changes
+
+- fix sentry version
+
 ## 0.4.3
 
 ### Patch Changes

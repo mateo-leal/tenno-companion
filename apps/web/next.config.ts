@@ -33,8 +33,8 @@ const sentryBuildOptions: SentryBuildOptions = {
   silent: !process.env.CI,
 
   release: {
-    name: 'web@' + process.env.version,
-    dist: 'web@' + process.env.version,
+    name: 'web@' + version,
+    dist: 'web@' + version,
   },
 
   // For all available options, see:
