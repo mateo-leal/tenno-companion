@@ -1,5 +1,11 @@
 # tenno-companion
 
+## 0.4.3
+
+### Patch Changes
+
+- kela key added for sorties
+
 ## 0.4.2
 
 ### Patch Changes

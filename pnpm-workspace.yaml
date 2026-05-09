@@ -13,8 +13,9 @@ catalog:
   typescript: ^5.9.3
 
 allowBuilds:
-  "@parcel/watcher": false
-  "@swc/core": false
+  '@parcel/watcher': false
+  '@sentry/cli': false
+  '@swc/core': false
   esbuild: false
   msw: false
   sharp: false

@@ -32,6 +32,11 @@ const sentryBuildOptions: SentryBuildOptions = {
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
 
+  release: {
+    name: 'web@' + process.env.version,
+    dist: 'web@' + process.env.version,
+  },
+
   // For all available options, see:
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
