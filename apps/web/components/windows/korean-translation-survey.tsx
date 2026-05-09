@@ -40,6 +40,12 @@ export function KoreanTranslationSurvey() {
         rating: selectedItem,
       },
     })
+
+    const noShowModalsRaw = localStorage.getItem('no-show-modals') ?? '{}'
+    const noShowModals: Record<string, boolean> = JSON.parse(noShowModalsRaw)
+    noShowModals[`${locale}-translation-survey`] = true
+    localStorage.setItem('no-show-modals', JSON.stringify(noShowModals))
+
     setShowSurvey(false)
   }
 
@@ -72,7 +78,9 @@ export function KoreanTranslationSurvey() {
           ))}
         </ul>
         <TextArea name="comment" placeholder="무엇을 개선할 수 있을까요?" />
-        <Button type="submit">제출하다</Button>
+        <Button type="submit" disabled={selectedItem === undefined}>
+          제출하다
+        </Button>
       </form>
     </Popup>
   )

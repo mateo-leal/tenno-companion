@@ -1,5 +1,11 @@
 # tenno-companion
 
+## 0.4.2
+
+### Patch Changes
+
+- small fixes
+
 ## 0.4.1
 
 ### Patch Changes
