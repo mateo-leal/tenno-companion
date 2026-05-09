@@ -31,10 +31,11 @@ export function Popup({
       if (noShowModalsRaw) {
         const noShowModals: Record<string, boolean> =
           JSON.parse(noShowModalsRaw)
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsSetNotShow(noShowModals[id] ?? false)
       }
     }
-  }, [])
+  }, [id])
 
   const handleDontShowAgain = () => {
     const noShowModalsRaw = localStorage.getItem('no-show-modals') ?? '{}'
@@ -69,7 +70,7 @@ export function Popup({
             variant="secondary"
             onClick={handleDontShowAgain}
           >
-            Don't show again
+            Don&apos;t show again
           </Button>
         )}
       </WindowContent>

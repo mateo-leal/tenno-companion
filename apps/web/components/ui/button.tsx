@@ -3,12 +3,12 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { ButtonHTMLAttributes } from 'react'
 
 const buttonVariants = cva(
-  'border px-2 py-1 transition text-foreground inline-flex items-center justify-center gap-1',
+  'border px-2 py-1 transition text-foreground inline-flex items-center justify-center gap-1 disabled:cursor-not-allowed',
   {
     variants: {
       variant: {
         default:
-          'border-success-border bg-success-bg text-success hover:bg-success-hover',
+          'border-success-border bg-success-bg text-success hover:bg-success-hover disabled:bg-success-bg/50 disabled:border-success-border/50 disabled:text-success/50',
         outline:
           'border-muted-primary bg-transparent hover:bg-muted-primary/30',
         secondary:
