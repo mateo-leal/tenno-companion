@@ -1,5 +1,11 @@
 # tenno-companion
 
+## 0.4.6
+
+### Patch Changes
+
+- add Tyl Regor boss entry to SORTIE_BOSS_DICT_KEY
+
 ## 0.4.5
 
 ### Patch Changes

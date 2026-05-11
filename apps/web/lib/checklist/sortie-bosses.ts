@@ -9,6 +9,7 @@ const SORTIE_BOSS_DICT_KEY = {
   SORTIE_BOSS_NEF: '/Lotus/Language/Bosses/NefAnyoName',
   SORTIE_BOSS_KELA: '/Lotus/Language/Game/KelaDeThaym',
   SORTIE_BOSS_INFALAD: '/Lotus/Language/Game/InfestedAladV',
+  SORTIE_BOSS_TYL: '/Lotus/Language/Game/TylRegor',
 }
 
 export function getSortieBossName(boss: string, dictionary: Dictionary) {
