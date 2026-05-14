@@ -1,5 +1,11 @@
 # tenno-companion
 
+## 0.4.9
+
+### Patch Changes
+
+- add Lephantis boss entry to SORTIE_BOSS_DICT_KEY
+
 ## 0.4.8
 
 ### Patch Changes
