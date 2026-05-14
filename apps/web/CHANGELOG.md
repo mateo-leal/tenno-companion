@@ -1,5 +1,11 @@
 # tenno-companion
 
+## 0.4.10
+
+### Patch Changes
+
+- add Archon bosses to SORTIE_BOSS_DICT_KEY and update boss name retrieval
+
 ## 0.4.9
 
 ### Patch Changes

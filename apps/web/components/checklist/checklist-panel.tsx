@@ -199,10 +199,11 @@ export function ChecklistPanel({ factions, missionTypes, regions }: Props) {
   )
 
   const archonRewardLabel = useMemo(() => {
+    const dict = dictionaries.default
     const sortie = worldState?.LiteSorties?.[0]
-    if (!sortie) return null
+    if (!sortie || !dict) return null
 
-    const boss = toTitleCase(sortie.Boss.replace('SORTIE_BOSS_', ''))
+    const boss = getSortieBossName(sortie.Boss, dict)
     const missions = sortie.Missions.map((m) => {
       const missionTypeName = missionTypes.find(
         (mt) => mt.uniqueName === m.missionType
@@ -211,7 +212,7 @@ export function ChecklistPanel({ factions, missionTypes, regions }: Props) {
     }).join(', ')
 
     return `${boss} (${missions})`
-  }, [worldState?.LiteSorties, missionTypes])
+  }, [dictionaries.default, worldState?.LiteSorties, missionTypes])
 
   const duviriRewardLabel = useMemo(() => {
     const endlessXpChoice = worldState?.EndlessXpChoices.find(
