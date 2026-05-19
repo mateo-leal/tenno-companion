@@ -69,7 +69,7 @@ export const DUVIRI_WEAPONS: Record<string, string> = {
   magistar: '/Lotus/Language/Items/PaladinMaceName',
   boltor: '/Lotus/Language/Items/BoltoRifleName',
   bronco: '/Lotus/Language/Items/HandCannonName',
-  'ceramic dagger': '/Lotus/Language/Items/CeramicDaggerName',
+  ceramicdagger: '/Lotus/Language/Items/CeramicDaggerName',
   // Week 5
   torid: '/Lotus/Language/ClanTech/Torid',
   'dual toxocyst': '/Lotus/Language/Items/InfestedLexName',

@@ -1,5 +1,11 @@
 # tenno-companion
 
+## 0.4.11
+
+### Patch Changes
+
+- add Hyena boss entry to SORTIE_BOSS_DICT_KEY
+
 ## 0.4.10
 
 ### Patch Changes

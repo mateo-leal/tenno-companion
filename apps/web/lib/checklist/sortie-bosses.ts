@@ -12,6 +12,7 @@ const SORTIE_BOSS_DICT_KEY = {
   SORTIE_BOSS_TYL: '/Lotus/Language/Game/TylRegor',
   SORTIE_BOSS_VOR: '/Lotus/Language/Game/CaptainVor',
   SORTIE_BOSS_LEPHANTIS: '/Lotus/Language/Game/GolemBossFull',
+  SORTIE_BOSS_HYENA: '/Lotus/Language/Bosses/BossTheHyena',
   // Archon
   SORTIE_BOSS_AMAR: '/Lotus/Language/Narmer/ArchonAmar',
   SORTIE_BOSS_BOREAL: '/Lotus/Language/Narmer/ArchonBoreal',
