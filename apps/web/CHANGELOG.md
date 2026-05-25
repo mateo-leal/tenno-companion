@@ -1,5 +1,11 @@
 # tenno-companion
 
+## 0.4.16
+
+### Patch Changes
+
+- feat: add apple-icon and icon images
+
 ## 0.4.15
 
 ### Patch Changes
