@@ -1,5 +1,11 @@
 # tenno-companion
 
+## 0.4.15
+
+### Patch Changes
+
+- feat: add Phorid entry to SORTIE_BOSS_DICT_KEY and update weapon names in DUVIRI_WEAPONS
+
 ## 0.4.14
 
 ### Patch Changes

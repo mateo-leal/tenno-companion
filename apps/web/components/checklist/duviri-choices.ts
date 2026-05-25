@@ -72,8 +72,8 @@ export const DUVIRI_WEAPONS: Record<string, string> = {
   ceramicdagger: '/Lotus/Language/Items/CeramicDaggerName',
   // Week 5
   torid: '/Lotus/Language/ClanTech/Torid',
-  'dual toxocyst': '/Lotus/Language/Items/InfestedLexName',
-  'dual ichor': '/Lotus/Language/Weapons/InfestedDualAxeName',
+  dualtoxocyst: '/Lotus/Language/Items/InfestedLexName',
+  dualichor: '/Lotus/Language/Weapons/InfestedDualAxeName',
   miter: '/Lotus/Language/Items/GrineerSawbladeGunName',
   atomos: '/Lotus/Language/Items/GrnHeatGunName',
   // Week 6
