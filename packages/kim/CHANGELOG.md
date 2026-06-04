@@ -1,5 +1,11 @@
 # @tenno-companion/core
 
+## 0.3.0
+
+### Minor Changes
+
+- Added new avoidable variables for MinVel and Flare
+
 ## 0.2.0
 
 ### Minor Changes

@@ -77,10 +77,10 @@ export const DUVIRI_WEAPONS: Record<string, string> = {
   miter: '/Lotus/Language/Items/GrineerSawbladeGunName',
   atomos: '/Lotus/Language/Items/GrnHeatGunName',
   // Week 6
-  'ack & brunt': '/Lotus/Language/Items/RegorAxeShieldName',
+  ackandbrunt: '/Lotus/Language/Items/RegorAxeShieldName',
   soma: '/Lotus/Language/Items/TennoAssaultRifleName',
   vasto: '/Lotus/Language/Items/TennoRevolverName',
-  'nami solo': '/Lotus/Language/Items/NamiSoloName',
+  namisolo: '/Lotus/Language/Items/NamiSoloName',
   burston: '/Lotus/Language/Items/BurstRifleName',
   // Week 7
   zylok: '/Lotus/Language/Weapons/SybarisPistolName',

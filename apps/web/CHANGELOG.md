@@ -1,5 +1,13 @@
 # tenno-companion
 
+## 0.4.19
+
+### Patch Changes
+
+- Added new avoidable variables for MinVel and Flare
+- Updated dependencies
+  - @tenno-companion/kim@0.3.0
+
 ## 0.4.18
 
 ### Patch Changes

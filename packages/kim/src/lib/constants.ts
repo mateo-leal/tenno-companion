@@ -28,6 +28,8 @@ export const AVOIDABLE_BOOLEAN_NAMES = [
   'RoatheFailNot21',
   'RoatheFailUnloved',
   'RoatheRepair1',
+  'FlareWar4b',
+  'MinVelApart',
 ]
 
 // Exact names for flirting-related booleans
