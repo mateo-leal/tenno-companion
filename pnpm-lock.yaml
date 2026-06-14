@@ -40,8 +40,8 @@ importers:
         version: 2.30.0(@types/node@20.19.39)
     devDependencies:
       turbo:
-        specifier: ^2.9.16
-        version: 2.9.16
+        specifier: ^2.9.18
+        version: 2.9.18
 
   apps/web:
     dependencies:
