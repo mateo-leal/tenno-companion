@@ -19,6 +19,7 @@ const nextConfig: NextConfig = {
   env: {
     version,
   },
+  output: 'standalone',
 }
 
 const sentryBuildOptions: SentryBuildOptions = {
