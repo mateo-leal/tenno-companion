@@ -13,7 +13,8 @@
     "dev": "turbo run dev",
     "start": "turbo run start",
     "fetch-data": "turbo run fetch-data",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "docker:push": "docker build -f apps/web/Dockerfile -t git.mateoleal.com/mateoleal/tennocompanion:$npm_package_version . && docker tag git.mateoleal.com/mateoleal/tennocompanion:$npm_package_version git.mateoleal.com/mateoleal/tennocompanion:latest && docker push git.mateoleal.com/mateoleal/tennocompanion:$npm_package_version && docker push git.mateoleal.com/mateoleal/tennocompanion:latest"
   },
   "dependencies": {
     "@changesets/cli": "^2.30.0"
