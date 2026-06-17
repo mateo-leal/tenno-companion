@@ -1,5 +1,11 @@
 # tenno-companion
 
+## 0.4.22
+
+### Patch Changes
+
+- fix: add optional chaining to prevent errors when accessing properties
+
 ## 0.4.21
 
 ### Patch Changes
