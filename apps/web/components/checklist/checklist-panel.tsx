@@ -215,7 +215,7 @@ export function ChecklistPanel({ factions, missionTypes, regions }: Props) {
   }, [dictionaries.default, worldState?.LiteSorties, missionTypes])
 
   const duviriRewardLabel = useMemo(() => {
-    const endlessXpChoice = worldState?.EndlessXpChoices.find(
+    const endlessXpChoice = worldState?.EndlessXpChoices?.find(
       (exc) => exc.Category === 'EXC_NORMAL'
     )
 
@@ -231,7 +231,7 @@ export function ChecklistPanel({ factions, missionTypes, regions }: Props) {
   }, [dictionaries.default, worldState?.EndlessXpChoices])
 
   const duviriSteelPathRewardLabel = useMemo(() => {
-    const endlessXpChoice = worldState?.EndlessXpChoices.find(
+    const endlessXpChoice = worldState?.EndlessXpChoices?.find(
       (exc) => exc.Category === 'EXC_HARD'
     )
 
