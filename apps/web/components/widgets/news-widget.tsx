@@ -100,7 +100,7 @@ export function NewsWidget() {
           (l) => l.LanguageCode === locale
         )?.Link
 
-        const link = parseLink(event.Prop.length > 0 ? event.Prop : eventLink)
+        const link = parseLink(event.Prop?.length > 0 ? event.Prop : eventLink)
 
         // Filter out system messages/discord invites
         if (
