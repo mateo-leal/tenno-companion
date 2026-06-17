@@ -1,5 +1,12 @@
 # tenno-companion
 
+## 0.4.21
+
+### Patch Changes
+
+- Updated dependencies
+  - @tenno-companion/core@0.2.16
+
 ## 0.4.20
 
 ### Patch Changes
