@@ -1,5 +1,12 @@
 # tenno-companion
 
+## 0.4.23
+
+### Patch Changes
+
+- Updated dependencies
+  - @tenno-companion/kim@0.3.1
+
 ## 0.4.22
 
 ### Patch Changes
