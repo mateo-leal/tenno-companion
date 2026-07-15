@@ -19,6 +19,9 @@
   "common": {
     "steelPath": "Camino de Acero"
   },
+  "popup": {
+    "dontShowAgain": "Don't show again"
+  },
   "locations": {
     "title": "Ubicación",
     "baseOfOperations": "Base de Operaciones",
@@ -295,6 +298,12 @@
       "legalDisclaimer": "Este sitio no está afiliado con Digital Extremes. Warframe y el logo de Warframe son marcas registradas de Digital Extremes Ltd.",
       "browseWfCredits": "Los datos y recursos multimedia son proporcionados por <link>browse.wf</link>, una base de datos y sitio de recursos de Warframe gestionado por la comunidad.",
       "version": "Versión"
+    },
+    "donate": {
+      "title": "Donate",
+      "description": "If you find this tool useful and would like to support its development, please consider making a donation. Your support helps cover server costs and allows me to continue improving the tool.",
+      "ghSponsors": "Support on GitHub Sponsors",
+      "paypal": "Donate via PayPal"
     }
   },
   "worldCycles": {
@@ -315,5 +324,10 @@
     "empty": "No hay noticias disponibles en este momento.",
     "community": "Comunidad",
     "official": "Oficial"
+  },
+  "donationPopup": {
+    "message": "I want to apologize for the recent stability issues the website has experienced. I currently lack the resources to maintain the project and ensure it's 100% available 24/7. Although I spent a long time trying to avoid reaching this point, I believe the best way to keep the project alive is to accept donations. So, if this tool brings you value and you have the means, please consider donating to help cover the server costs.",
+    "ghSponsors": "Support on GitHub Sponsors",
+    "paypal": "Donate via PayPal"
   }
 }
