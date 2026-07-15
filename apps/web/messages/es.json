@@ -20,7 +20,7 @@
     "steelPath": "Camino de Acero"
   },
   "popup": {
-    "dontShowAgain": "Don't show again"
+    "dontShowAgain": "No mostrar de nuevo"
   },
   "locations": {
     "title": "Ubicación",
@@ -300,10 +300,10 @@
       "version": "Versión"
     },
     "donate": {
-      "title": "Donate",
-      "description": "If you find this tool useful and would like to support its development, please consider making a donation. Your support helps cover server costs and allows me to continue improving the tool.",
-      "ghSponsors": "Support on GitHub Sponsors",
-      "paypal": "Donate via PayPal"
+      "title": "Donar",
+      "description": "Si encuentras esta herramienta útil y deseas apoyar su desarrollo, por favor considera hacer una donación. Tu apoyo ayuda a cubrir los costos del servidor y me permite seguir mejorando la herramienta.",
+      "ghSponsors": "Apoya en GitHub Sponsors",
+      "paypal": "Dona vía PayPal"
     }
   },
   "worldCycles": {
@@ -326,8 +326,8 @@
     "official": "Oficial"
   },
   "donationPopup": {
-    "message": "I want to apologize for the recent stability issues the website has experienced. I currently lack the resources to maintain the project and ensure it's 100% available 24/7. Although I spent a long time trying to avoid reaching this point, I believe the best way to keep the project alive is to accept donations. So, if this tool brings you value and you have the means, please consider donating to help cover the server costs.",
-    "ghSponsors": "Support on GitHub Sponsors",
-    "paypal": "Donate via PayPal"
+    "message": "Me quiero disculpar por los problemas recientes de estabilidad que ha tenido la web. Actualmente no cuento con las fuentes para mantener el proyecto para que esté 100% disponible 24/7. Aunque estuve mucho tiempo intentando evitar llegar a este punto, creo que lo mejor para mantener vivo el proyecto es aceptar donaciones. Asi que si este proyecto te genera algún valor y cuentas con los medios considera donar para poder costear el servidor.",
+    "ghSponsors": "Apoya en GitHub Sponsors",
+    "paypal": "Dona vía PayPal"
   }
 }
