@@ -11,6 +11,7 @@ import { Link, usePathname, useRouter } from '@/i18n/navigation'
 import { Window } from '../ui/window'
 import { WindowContent } from '../ui/window-content'
 import { WindowTitlebar } from '../ui/window-titlebar'
+import { Button } from '../ui/button'
 
 type SettingsPortalProps = {
   isOpen: boolean
@@ -115,6 +116,30 @@ export function SettingsPortal({ isOpen, onCloseAction }: SettingsPortalProps) {
                 ),
               })}
             </p>
+          </section>
+          <section className="mt-2 border border-muted-primary/70 p-2 text-xs text-muted-foreground">
+            <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-foreground">
+              {t('donate.title')}
+            </p>
+            <p>{t('donate.description')}</p>
+            <div className="flex flex-col gap-2 sm:flex-row sm:justify-center mt-2">
+              <Link
+                href="https://github.com/sponsors/mateo-leal"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto"
+              >
+                <Button>{t('donate.ghSponsors')}</Button>
+              </Link>
+              <Link
+                href="https://www.paypal.com/donate/?hosted_button_id=SZCHE6EGL2FYC"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto"
+              >
+                <Button variant="outline">{t('donate.paypal')}</Button>
+              </Link>
+            </div>
           </section>
           <section className="mt-2 border border-muted-primary/70 p-2 text-xs text-muted-foreground flex gap-2">
             <p className="font-semibold uppercase tracking-wide text-foreground">

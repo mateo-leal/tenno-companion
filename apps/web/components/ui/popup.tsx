@@ -1,11 +1,13 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { PropsWithChildren, useEffect, useState } from 'react'
+
+import { Button } from './button'
 import { Window } from './window'
-import { WindowTitlebar } from './window-titlebar'
 import { CloseButton } from '../close-button'
 import { WindowContent } from './window-content'
-import { Button } from './button'
+import { WindowTitlebar } from './window-titlebar'
 
 type Props = {
   id?: string
@@ -23,6 +25,7 @@ export function Popup({
   show,
   title,
 }: PropsWithChildren<Props>) {
+  const t = useTranslations('popup')
   const [isSetNotShow, setIsSetNotShow] = useState(false)
 
   useEffect(() => {
@@ -70,7 +73,7 @@ export function Popup({
             variant="secondary"
             onClick={handleDontShowAgain}
           >
-            Don&apos;t show again
+            {t('dontShowAgain')}
           </Button>
         )}
       </WindowContent>

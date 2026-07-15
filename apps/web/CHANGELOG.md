@@ -1,5 +1,60 @@
 # tenno-companion
 
+## 0.4.30
+
+### Patch Changes
+
+- Add donation popup and update settings with donation links
+
+## 0.4.29
+
+### Patch Changes
+
+- Updated dependencies
+  - @tenno-companion/core@0.2.22
+
+## 0.4.28
+
+### Patch Changes
+
+- Updated dependencies
+  - @tenno-companion/core@0.2.21
+
+## 0.4.27
+
+### Patch Changes
+
+- Updated dependencies
+  - @tenno-companion/core@0.2.20
+
+## 0.4.26
+
+### Patch Changes
+
+- Updated dependencies
+  - @tenno-companion/core@0.2.19
+
+## 0.4.25
+
+### Patch Changes
+
+- Updated dependencies
+  - @tenno-companion/core@0.2.18
+
+## 0.4.24
+
+### Patch Changes
+
+- Updated dependencies
+  - @tenno-companion/core@0.2.17
+
+## 0.4.23
+
+### Patch Changes
+
+- Updated dependencies
+  - @tenno-companion/kim@0.3.1
+
 ## 0.4.22
 
 ### Patch Changes

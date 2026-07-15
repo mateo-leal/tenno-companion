@@ -19,6 +19,9 @@
   "common": {
     "steelPath": "Steel Path"
   },
+  "popup": {
+    "dontShowAgain": "Don't show again"
+  },
   "locations": {
     "title": "Location",
     "baseOfOperations": "Base of Operations",
@@ -295,6 +298,12 @@
       "legalDisclaimer": "This site is not affiliated with Digital Extremes. Warframe and the Warframe logo are trademarks of Digital Extremes Ltd.",
       "browseWfCredits": "Data and media resources are provided by <link>browse.wf</link>, a community-driven Warframe database and resource site.",
       "version": "Version"
+    },
+    "donate": {
+      "title": "Donate",
+      "description": "If you find this tool useful and would like to support its development, please consider making a donation. Your support helps cover server costs and allows me to continue improving the tool.",
+      "ghSponsors": "Support on GitHub Sponsors",
+      "paypal": "Donate via PayPal"
     }
   },
   "worldCycles": {
@@ -315,5 +324,10 @@
     "empty": "No news is available right now.",
     "community": "Community",
     "official": "Official"
+  },
+  "donationPopup": {
+    "message": "I want to apologize for the recent stability issues the website has experienced. I currently lack the resources to maintain the project and ensure it's 100% available 24/7. Although I spent a long time trying to avoid reaching this point, I believe the best way to keep the project alive is to accept donations. So, if this tool brings you value and you have the means, please consider donating to help cover the server costs.",
+    "ghSponsors": "Support on GitHub Sponsors",
+    "paypal": "Donate via PayPal"
   }
 }
