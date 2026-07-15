@@ -1,5 +1,11 @@
 # tenno-companion
 
+## 0.4.30
+
+### Patch Changes
+
+- Add donation popup and update settings with donation links
+
 ## 0.4.29
 
 ### Patch Changes

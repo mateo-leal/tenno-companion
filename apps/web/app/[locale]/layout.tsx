@@ -10,6 +10,7 @@ import { routing } from '@/i18n/routing'
 import { Taskbar } from '@/components/taskbar'
 import { getSiteOrigin, APP_TITLE } from '@/lib/seo'
 import { GameDataProvider } from '@/components/providers/game-data'
+import { DonationPopup } from '@/components/windows/donation-popup'
 import { KoreanTranslationSurvey } from '@/components/windows/korean-translation-survey'
 
 import './globals.css'
@@ -120,6 +121,7 @@ export default async function RootLayout({
               <GameDataProvider>{children}</GameDataProvider>
               <Taskbar />
               <KoreanTranslationSurvey />
+              <DonationPopup />
             </main>
           </NextIntlClientProvider>
         </div>
