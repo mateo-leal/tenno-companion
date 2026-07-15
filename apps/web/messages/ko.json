@@ -19,6 +19,9 @@
   "common": {
     "steelPath": "강철의 길"
   },
+  "popup": {
+    "dontShowAgain": "Don't show again"
+  },
   "locations": {
     "title": "장소",
     "baseOfOperations": "작전 기지",
@@ -279,7 +282,7 @@
     "clearCategory": "카테고리 초기화",
     "activeCategoryCount": "{category} 내 {count}개 항목",
     "rankPrefix": "랭크 {rank}: {item}",
-    "masteryRank": "Mastery Rank",
+    "masteryRank": "마스터리 랭크",
     "legendaryRank": "Legendary Rank",
     "loading": "아이템 로딩 중...",
     "loadFailed": "현재 마스터리 데이터를 불러올 수 없습니다.",
@@ -295,6 +298,12 @@
       "legalDisclaimer": "이 사이트는 Digital Extremes와 제휴 관계가 아닙니다. Warframe 및 Warframe 로고는 Digital Extremes Ltd의 상표입니다.",
       "browseWfCredits": "데이터 및 미디어 리소스는 커뮤니티 기반 워프레임 데이터베이스 사이트인 <link>browse.wf</link>에서 제공됩니다.",
       "version": "버전"
+    },
+    "donate": {
+      "title": "Donate",
+      "description": "If you find this tool useful and would like to support its development, please consider making a donation. Your support helps cover server costs and allows me to continue improving the tool.",
+      "ghSponsors": "Support on GitHub Sponsors",
+      "paypal": "Donate via PayPal"
     }
   },
   "worldCycles": {
@@ -315,5 +324,10 @@
     "empty": "현재 표시할 소식이 없습니다.",
     "community": "커뮤니티",
     "official": "공식"
+  },
+  "donationPopup": {
+    "message": "I want to apologize for the recent stability issues the website has experienced. I currently lack the resources to maintain the project and ensure it's 100% available 24/7. Although I spent a long time trying to avoid reaching this point, I believe the best way to keep the project alive is to accept donations. So, if this tool brings you value and you have the means, please consider donating to help cover the server costs.",
+    "ghSponsors": "Support on GitHub Sponsors",
+    "paypal": "Donate via PayPal"
   }
 }
