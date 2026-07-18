@@ -19,6 +19,7 @@ const nextConfig: NextConfig = {
   env: {
     version,
   },
+  output: process.env.STANDALONE === 'true' ? 'standalone' : undefined,
 }
 
 const sentryBuildOptions: SentryBuildOptions = {

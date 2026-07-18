@@ -1,0 +1,7 @@
+services:
+  web:
+    container_name: tennocompanion
+    image: git.mateoleal.com/mateoleal/tennocompanion:latest
+    restart: always
+    ports:
+      - 3000:3000
