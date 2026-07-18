@@ -4,6 +4,8 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME/bin:$PATH"
 RUN corepack enable
 
+ENV STANDALONE=true
+
 # This Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
 # Make sure you update both files!
 
@@ -32,9 +34,6 @@ COPY --from=prepare /app/out/full/ .
 
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
-
-ARG STANDALONE
-ENV STANDALONE=true
 
 RUN pnpm turbo build
 
