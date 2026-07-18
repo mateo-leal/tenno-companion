@@ -1,5 +1,11 @@
 # tenno-companion
 
+## 0.4.31
+
+### Patch Changes
+
+- Add data-nosnippet attribute to Popup component for SEO optimization
+
 ## 0.4.30
 
 ### Patch Changes
