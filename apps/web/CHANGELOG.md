@@ -1,5 +1,11 @@
 # tenno-companion
 
+## 0.4.32
+
+### Patch Changes
+
+- Fix Duviri rewards label
+
 ## 0.4.31
 
 ### Patch Changes

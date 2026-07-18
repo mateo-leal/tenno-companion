@@ -36,7 +36,7 @@ import { getSortieBossName } from '@/lib/checklist/sortie-bosses'
 
 import { useGameData } from '../providers/game-data'
 import { ChecklistSectionCard } from './checklist-section-card'
-import { DUVIRI_FRAMES, DUVIRI_WEAPONS } from './duviri-choices'
+import { DUVIRI_FRAMES, DUVIRI_WEAPONS } from '@/lib/checklist/duviri-choices'
 
 function loadChecklistState(now: Date): ChecklistState {
   try {
@@ -215,36 +215,22 @@ export function ChecklistPanel({ factions, missionTypes, regions }: Props) {
   }, [dictionaries.default, worldState?.LiteSorties, missionTypes])
 
   const duviriRewardLabel = useMemo(() => {
-    const endlessXpChoice = worldState?.EndlessXpChoices?.find(
-      (exc) => exc.Category === 'EXC_NORMAL'
-    )
+    const EPOCH = 1_734_307_200 * 1000
+    const week = Math.trunc((now.getTime() - EPOCH) / 604_800_000)
 
-    if (!endlessXpChoice) return null
-
-    return endlessXpChoice.Choices.map((choice) => {
-      const key = DUVIRI_FRAMES[choice.toLowerCase()]
-      if (key) {
-        return dictionaries.default?.[key] ?? choice
-      }
-      return choice
-    }).join(' - ')
-  }, [dictionaries.default, worldState?.EndlessXpChoices])
+    return DUVIRI_FRAMES[week % DUVIRI_FRAMES.length]
+      .map((key) => dictionaries.default?.[key])
+      .join(' - ')
+  }, [dictionaries.default, now])
 
   const duviriSteelPathRewardLabel = useMemo(() => {
-    const endlessXpChoice = worldState?.EndlessXpChoices?.find(
-      (exc) => exc.Category === 'EXC_HARD'
-    )
+    const EPOCH = 1_734_307_200 * 1000
+    const week = Math.trunc((now.getTime() - EPOCH) / 604_800_000)
 
-    if (!endlessXpChoice) return null
-
-    return endlessXpChoice.Choices.map((choice) => {
-      const key = DUVIRI_WEAPONS[choice.toLowerCase()]
-      if (key) {
-        return dictionaries.default?.[key] ?? choice
-      }
-      return choice
-    }).join(' - ')
-  }, [dictionaries.default, worldState?.EndlessXpChoices])
+    return DUVIRI_WEAPONS[week % DUVIRI_WEAPONS.length]
+      .map((key) => dictionaries.default?.[key])
+      .join(' - ')
+  }, [dictionaries.default, now])
 
   const arbitrationLabels = useMemo(() => {
     if (arbitrations) {
