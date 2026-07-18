@@ -19,7 +19,7 @@
     "@changesets/cli": "^2.30.0"
   },
   "devDependencies": {
-    "turbo": "^2.9.18"
+    "turbo": "^2.10.5"
   },
   "engines": {
     "node": ">=22.17.0"

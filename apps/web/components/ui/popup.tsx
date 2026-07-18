@@ -60,6 +60,7 @@ export function Popup({
       role="dialog"
       aria-labelledby="dialog-label"
       className="w-auto fixed bottom-18 right-4 md:right-18 z-50"
+      data-nosnippet
     >
       <WindowTitlebar>
         <h2 id="dialog-label">{title}</h2>
