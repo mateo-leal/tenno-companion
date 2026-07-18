@@ -33,6 +33,9 @@ COPY --from=prepare /app/out/full/ .
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
+ARG STANDALONE
+ENV STANDALONE=true
+
 RUN pnpm turbo build
 
 # ---
