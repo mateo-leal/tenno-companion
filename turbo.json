@@ -9,7 +9,8 @@
     "build": {
       "passThroughEnv": ["SENTRY_AUTH_TOKEN"],
       "dependsOn": ["^build", "fetch-data"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": ["STANDALONE"]
     },
     "check-updates": {
       "outputs": [

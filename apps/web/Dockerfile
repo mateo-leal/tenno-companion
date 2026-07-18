@@ -4,8 +4,6 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME/bin:$PATH"
 RUN corepack enable
 
-ENV STANDALONE=true
-
 # This Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
 # Make sure you update both files!
 
@@ -27,6 +25,9 @@ COPY --from=prepare /app/out/json/ .
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 # Build the project
 COPY --from=prepare /app/out/full/ .
+
+ARG STANDALONE="true"
+ENV STANDALONE=$STANDALONE
 
 # Uncomment and use build args to enable remote caching
 # ARG TURBO_TEAM
@@ -50,4 +51,4 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 
-CMD node apps/web/server.js
+CMD ["node" "apps/web/server.js"]
