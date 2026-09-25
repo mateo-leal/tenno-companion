@@ -1,5 +1,11 @@
 # tenno-companion
 
+## 0.4.40
+
+### Patch Changes
+
+- Disable donation popup
+
 ## 0.4.39
 
 ### Patch Changes
