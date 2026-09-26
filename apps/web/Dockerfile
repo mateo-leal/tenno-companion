@@ -36,6 +36,7 @@ ENV STANDALONE=$STANDALONE
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
+RUN pnpm build:packages
 RUN pnpm turbo build
 
 # ---
