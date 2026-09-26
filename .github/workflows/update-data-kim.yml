@@ -46,11 +46,11 @@ jobs:
         if: steps.update.outcome == 'failure'
         run: pnpm --filter @tenno-companion/kim publish --access public --no-git-checks --provenance
 
-      - name: Upload KIM Data to Cloudflare R2
-        if: steps.update.outcome == 'failure'
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: |
-            r2 object put "tenno-companion-data/kim" --file="packages/kim/data" --recursive
+      # - name: Upload KIM Data to Cloudflare R2
+      #   if: steps.update.outcome == 'failure'
+      #   uses: cloudflare/wrangler-action@v4
+      #   with:
+      #     apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      #     accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      #     command: |
+      #       r2 object put "tenno-companion-data/kim" --file="packages/kim/data" --recursive

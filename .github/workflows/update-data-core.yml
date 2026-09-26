@@ -46,11 +46,11 @@ jobs:
         if: steps.update.outcome == 'failure'
         run: pnpm --filter @tenno-companion/core publish --access public --no-git-checks --provenance
 
-      - name: Upload Core Data to Cloudflare R2
-        if: steps.update.outcome == 'failure'
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: |
-            r2 object put "tenno-companion-data/core" --file="packages/core/data" --recursive
+      # - name: Upload Core Data to Cloudflare R2
+      #   if: steps.update.outcome == 'failure'
+      #   uses: cloudflare/wrangler-action@v4
+      #   with:
+      #     apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      #     accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      #     command: |
+      #       r2 object put "tenno-companion-data/core" --file="packages/core/data" --recursive
