@@ -1,5 +1,11 @@
 # @tenno-companion/core
 
+## 0.2.31
+
+### Patch Changes
+
+- Automated data sync with warframe-public-export-plus (fb0bcf1)
+
 ## 0.2.30
 
 ### Patch Changes
