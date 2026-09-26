@@ -13,7 +13,11 @@
     "dev": "turbo run dev",
     "start": "turbo run start",
     "fetch-data": "turbo run fetch-data",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "docker:build": "docker compose -f compose.dev.yaml up --build ",
+    "docker:dev": "docker compose -f compose.dev.yaml up --build ",
+    "docker:start": "docker compose up",
+    "docker:push": "docker buildx build --file apps/web/Dockerfile --build-arg STANDALONE=true -t git.mateoleal.com/mateoleal/tennocompanion:$(node -p \"require('./apps/web/package.json').version\") -t git.mateoleal.com/mateoleal/tennocompanion:latest --push ."
   },
   "dependencies": {
     "@changesets/cli": "^2.30.0"
