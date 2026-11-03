@@ -1,4 +1,4 @@
-import { OracleWorldState } from './types'
+import type { WorldState } from 'warframe-worldstate-parser';
 
 // Known Baro weekend anchor in UTC. Availability repeats every 14 days.
 // Baro arrives Friday 13:00 UTC and leaves Sunday 13:00 UTC.
@@ -7,25 +7,23 @@ export const BARO_ANCHOR_START_UTC = Date.UTC(2026, 2, 20, 13, 0, 0)
 export const BARO_PERIOD_MS = 14 * 24 * 60 * 60 * 1000
 export const BARO_ACTIVE_WINDOW_MS = 48 * 60 * 60 * 1000
 
-export function getBaro(worldState?: OracleWorldState) {
-  return worldState?.VoidTraders.find(
-    (trader) => trader.Character === "Baro'Ki Teel"
-  )
+export function getBaro(worldState?: WorldState) {
+  return worldState?.voidTraders[0]
 }
 
-function getBaroTimes(worldState?: OracleWorldState) {
+function getBaroTimes(worldState?: WorldState) {
   const baro = getBaro(worldState)
   if (!baro) return undefined
 
   return {
-    activationMs: Number(baro.Activation.$date.$numberLong),
-    expiryMs: Number(baro.Expiry.$date.$numberLong),
+    activationMs: Number(baro.activation),
+    expiryMs: Number(baro.expiry),
   }
 }
 
 export function isBaroKiteerAvailable(
   now: Date,
-  worldState?: OracleWorldState
+  worldState?: WorldState
 ): boolean {
   const nowMs = now.getTime()
 
@@ -55,7 +53,7 @@ export function getBaroPeriodKey(now: Date): string {
 
 export function getTimeUntilNextBaroChange(
   now: Date,
-  worldState?: OracleWorldState
+  worldState?: WorldState
 ): number {
   const nowMs = now.getTime()
 

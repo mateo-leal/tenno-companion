@@ -69,47 +69,47 @@ export const HEX_CHATROOMS = [
   {
     id: 'arthur',
     name: 'Broadsword (Arthur)',
-    icon: 'https://browse.wf/Lotus/Interface/Icons/Player/ArthurPixelGlyph.png',
+    icon: 'https://content.warframe.com/PublicExport/Lotus/Interface/Icons/Player/ArthurPixelGlyph.png!00_mSqMUmRKwYuq8rp5HdXJvg',
   },
   {
     id: 'eleanor',
     name: 'Salem (Eleanor)',
-    icon: 'https://browse.wf/Lotus/Interface/Icons/Player/EleanorPixelGlyph.png',
+    icon: 'https://content.warframe.com/PublicExport/Lotus/Interface/Icons/Player/EleanorPixelGlyph.png!00_eLusw4MWAAtEk3tebWtIug',
   },
   {
     id: 'lettie',
     name: 'Belladona ~{@ (Lettie)',
-    icon: 'https://browse.wf/Lotus/Interface/Icons/Player/LettiePixelGlyph.png',
+    icon: 'https://content.warframe.com/PublicExport/Lotus/Interface/Icons/Player/LettiePixelGlyph.png!00_-Cligx9E+eh9tZSBKI0cdw',
   },
   {
     id: 'amir',
     name: 'H16h V0l7463 (Amir)',
-    icon: 'https://browse.wf/Lotus/Interface/Icons/Player/AmirPixelGlyph.png',
+    icon: 'https://content.warframe.com/PublicExport/Lotus/Interface/Icons/Player/AmirPixelGlyph.png!00_YM14yufwLCiU8eYzLAHIfw',
   },
   {
     id: 'aoi',
     name: 'xX GLIMMER Xx (Aoi)',
-    icon: 'https://browse.wf/Lotus/Interface/Icons/Player/AoiPixelGlyph.png',
+    icon: 'https://content.warframe.com/PublicExport/Lotus/Interface/Icons/Player/AoiPixelGlyph.png!00_ntr541WmUPdk+u15tTOEsA',
   },
   {
     id: 'quincy',
     name: 'Soldja1Shot1kil (Quincy)',
-    icon: 'https://browse.wf/Lotus/Interface/Icons/Player/QuincyPixelGlyph.png',
+    icon: 'https://content.warframe.com/PublicExport/Lotus/Interface/Icons/Player/QuincyPixelGlyph.png!00_TpuB7XAs9XqUIVj2x9tnEQ',
   },
   {
     id: 'flare',
     name: 'Liminus_Star (Flare)',
-    icon: 'https://browse.wf/Lotus/Interface/Icons/Player/FlarePixelGlyph.png',
+    icon: 'https://content.warframe.com/PublicExport/Lotus/Interface/Icons/Player/FlarePixelGlyph.png!00_kdlJzsYZfxM8GIet2P4dLQ',
   },
   {
     id: 'kaya',
     name: 'KOLTrial_5115 (Kaya)',
-    icon: 'https://browse.wf/Lotus/Interface/Icons/Player/KayaPixelGlyph.png',
+    icon: 'https://content.warframe.com/PublicExport/Lotus/Interface/Icons/Player/KayaPixelGlyph.png!00_CLCWvXSMd1iOkYdjEhMLQg',
   },
   {
     id: 'minerva-velimir',
     name: 'Minerva & Velimir',
-    icon: 'https://browse.wf/Lotus/Interface/Icons/Player/MinervaPixelGlyph.png',
+    icon: 'https://content.warframe.com/PublicExport/Lotus/Interface/Icons/Player/MinervaPixelGlyph.png!00_Sz+J5chqLE7dZ32iDYcyUA',
   },
 ]
 
@@ -117,21 +117,22 @@ export const CATHEDRALE_CHATROOMS = [
   {
     id: 'loid',
     name: 'POM2_LAB1 (Loid)',
-    icon: 'https://wiki.warframe.com/images/LoidPrime.PNG',
+    icon: '/loid.webp',
   },
   {
     id: 'lyon',
     name: 'Lyon',
-    icon: 'https://wiki.warframe.com/images/LyonInfobox.png',
+    icon: 'https://content.warframe.com/PublicExport/Lotus/Interface/Icons/Player/StarDaysLyonGlyph.png!00_GG03wuBivHEbwlHrPyQigw',
   },
   {
     id: 'marie',
     name: 'Marie',
-    icon: 'https://wiki.warframe.com/images/MarieInfobox.png',
+    icon: 'https://content.warframe.com/PublicExport/Lotus/Interface/Icons/Player/StarDaysMarieGlyph.png!00_4x1GAUz5sdR3ncLzX7dJjQ',
   },
   {
     id: 'roathe',
     name: 'Roathe',
-    icon: 'https://wiki.warframe.com/images/RoatheInfobox.png',
+    icon: 'https://content.warframe.com/PublicExport/Lotus/Interface/Icons/Player/StarDaysRoatheGlyph.png!00_haRfZOlP1kXeccDfvPjBtw'
+    // icon: 'https://wiki.warframe.com/images/RoatheInfobox.png',
   },
 ]

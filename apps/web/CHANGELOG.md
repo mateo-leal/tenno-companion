@@ -1,5 +1,16 @@
 # tenno-companion
 
+## 0.5.0
+
+### Minor Changes
+
+- Replace browse.wf worldstate api, and image source
+
+### Patch Changes
+
+- Updated dependencies
+  - @tenno-companion/core@0.3.0
+
 ## 0.4.47
 
 ### Patch Changes

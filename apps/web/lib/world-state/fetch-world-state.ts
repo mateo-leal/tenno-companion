@@ -1,16 +1,26 @@
+import type { WorldState } from 'warframe-worldstate-parser'
+
 import { FetchError } from '../errors'
-import { OracleWorldState } from './types'
 
-const ORACLE_WORLD_STATE_URL = 'https://oracle.browse.wf/worldState.json'
 
-export async function fetchOracleWorldState(): Promise<OracleWorldState> {
-  const response = await fetch(ORACLE_WORLD_STATE_URL, {
+const ORACLE_WORLD_STATE_URL = 'https://api.warframestat.us/pc'
+
+export async function fetchOracleWorldState(locale: string): Promise<WorldState> {
+  const supportedLocales = ['de', 'es', 'fr', 'it', 'ko', 'pl', 'pt', 'ru', 'zh', 'cs', 'sr', 'uk', 'en']
+  let url = ORACLE_WORLD_STATE_URL
+  if (locale && supportedLocales.includes(locale)) {
+    url += `?language=${locale}`
+  }
+  const response = await fetch(url, {
     cache: 'no-store',
+    headers: {
+      "Accept-Language": locale,
+    }
   })
 
   if (!response.ok) {
     throw new FetchError(response.status)
   }
 
-  return (await response.json()) as OracleWorldState
+  return (await response.json()) as WorldState
 }

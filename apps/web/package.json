@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.4.47",
+  "version": "0.5.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -27,7 +27,8 @@
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "shadcn": "^4.0.6",
-    "tailwind-merge": "^3.5.0"
+    "tailwind-merge": "^3.5.0",
+    "warframe-worldstate-parser": "^5.5.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

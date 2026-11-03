@@ -1,5 +1,11 @@
 # @tenno-companion/core
 
+## 0.3.0
+
+### Minor Changes
+
+- contentHash added to every object with icon
+
 ## 0.2.36
 
 ### Patch Changes

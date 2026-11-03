@@ -1,5 +1,5 @@
 import { FACTION_IDS, MISSION_TYPE_IDS } from '../lib/constants'
-import { BaseItem, TranslationKey, UniqueName } from './base'
+import { BaseItem, IconData, TranslationKey, UniqueName } from './base'
 
 type MissionTypeId = (typeof MISSION_TYPE_IDS)[number]
 type FactionId = (typeof FACTION_IDS)[number]
@@ -57,10 +57,9 @@ export type Region = BaseItem & {
 
 // --- PROGRESSION (Intrinsics) ---
 
-export type Intrinsic = BaseItem & {
+export type Intrinsic = BaseItem & IconData & {
   name: TranslationKey
   description: TranslationKey
-  icon: string
   ranks: Rank[]
 }
 

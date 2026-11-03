@@ -14,10 +14,29 @@ function collectKeys(obj: any, keys: Set<string>) {
   }
 }
 
+function addContentHashes(
+  obj: any,
+  images: Record<string, { contentHash: string }>
+) {
+  if (!obj || typeof obj !== 'object') return
+
+  if (typeof obj.icon === 'string') {
+    const image = images[obj.icon]
+    if (image) obj.contentHash = image.contentHash
+  }
+
+  for (const value of Object.values(obj)) {
+    addContentHashes(value, images)
+  }
+}
+
 async function updateData() {
   const allKeys = new Set<string>()
   const statsDir = path.join(__dirname, '../data/stats')
   const dictsDir = path.join(__dirname, '../data/dicts')
+  const imagesResponse = await fetch(`${BASE_URL}ExportImages.json`)
+  const images: Record<string, { contentHash: string }> =
+    await imagesResponse.json()
 
   // Ensure directories exist
   ;[statsDir, dictsDir].forEach((dir) => {
@@ -28,6 +47,8 @@ async function updateData() {
   for (const [name, fileName] of Object.entries(SOURCES)) {
     const response = await fetch(`${BASE_URL}${fileName}.json`)
     const data = await response.json()
+
+    addContentHashes(data, images)
 
     // Collect all translation keys used in these items
     collectKeys(data, allKeys)

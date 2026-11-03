@@ -10,8 +10,8 @@ import {
   isBaroKiteerAvailable,
 } from '../world-state/baro'
 import type { Counter } from '../types'
-import { OracleWorldState } from '../world-state/types'
 import { DAILY_TASKS, OTHER_TASKS, WEEKLY_TASKS } from './tasks'
+import WorldState from 'warframe-worldstate-parser'
 
 const EIGHT_HOURS_ANCHOR_UTC = Date.UTC(1970, 0, 1, 8, 0, 0)
 const EIGHT_HOURS_PERIOD_MS = 8 * 60 * 60 * 1000
@@ -291,15 +291,15 @@ export function getSortiePeriodKey(now: Date): string {
 
 function getTimeUntilNextSortieReset(
   date: Date,
-  worldState?: OracleWorldState
+  worldState?: WorldState
 ) {
   const nowMs = date.getTime()
-  const sortie = worldState?.Sorties?.[0]
+  const sortie = worldState?.sortie
 
   if (sortie) {
     const sortieTimes = {
-      expiryMs: Number(sortie.Expiry.$date.$numberLong),
-      activationMs: Number(sortie.Activation.$date.$numberLong),
+      expiryMs: Number(sortie.expiry),
+      activationMs: Number(sortie.activation),
     }
     if (sortieTimes.expiryMs > nowMs) {
       // API data is still relevant (Sortie is active or upcoming)
@@ -337,7 +337,7 @@ export function formatRemainingTime(totalMs: number): Counter {
 export function getChecklistTaskCounter(
   task: Pick<ChecklistTask, 'resets'>,
   now: Date,
-  worldState?: OracleWorldState
+  worldState?: WorldState
 ): ChecklistCounter | undefined {
   switch (task.resets) {
     case 'hourly':

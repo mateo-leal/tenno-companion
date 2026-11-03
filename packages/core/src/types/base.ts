@@ -13,9 +13,13 @@ export interface BaseItem {
   uniqueName: UniqueName
 }
 
-export interface VisualData {
-  name: TranslationKey
+export interface IconData {
   icon: string
+  contentHash: string
+}
+
+export interface VisualData extends IconData {
+  name: TranslationKey
   description: TranslationKey
   codexSecret: boolean
   introducedAt?: number

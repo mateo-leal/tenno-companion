@@ -35,6 +35,7 @@ import { counterToString, toTitleCase } from '@/lib/utils'
 import { getSortieBossName } from '@/lib/checklist/sortie-bosses'
 
 import { useGameData } from '../providers/game-data'
+import { missionTypeKeys } from '@/lib/checklist/mission-types'
 import { ChecklistSectionCard } from './checklist-section-card'
 import { DUVIRI_FRAMES, DUVIRI_WEAPONS } from '@/lib/checklist/duviri-choices'
 
@@ -200,19 +201,21 @@ export function ChecklistPanel({ factions, missionTypes, regions }: Props) {
 
   const archonRewardLabel = useMemo(() => {
     const dict = dictionaries.default
-    const sortie = worldState?.LiteSorties?.[0]
-    if (!sortie || !dict) return null
+    const archonHunt = worldState?.archonHunt
+    if (!archonHunt || !dict) return null
 
-    const boss = getSortieBossName(sortie.Boss, dict)
-    const missions = sortie.Missions.map((m) => {
+    const boss = getSortieBossName(archonHunt.boss, dict)
+    // TODO: Fix mission type translations
+    const missions = archonHunt.missions.map((m) => {
+      const missionTypeKey = missionTypeKeys[m.type as keyof typeof missionTypeKeys]
       const missionTypeName = missionTypes.find(
-        (mt) => mt.uniqueName === m.missionType
+        (mt) => mt.uniqueName === missionTypeKey
       )?.name
-      return missionTypeName ? toTitleCase(missionTypeName) : m.missionType
+      return missionTypeName ? toTitleCase(missionTypeName) : m.type
     }).join(', ')
 
     return `${boss} (${missions})`
-  }, [dictionaries.default, worldState?.LiteSorties, missionTypes])
+  }, [dictionaries.default, worldState?.archonHunt, missionTypes])
 
   const duviriRewardLabel = useMemo(() => {
     const EPOCH = 1_734_307_200 * 1000
@@ -260,20 +263,20 @@ export function ChecklistPanel({ factions, missionTypes, regions }: Props) {
   }, [arbitrations, factions, now, regions])
 
   const sortieRewardLabel = useMemo(() => {
-    const sortie = worldState?.Sorties?.[0]
+    const sortie = worldState?.sortie
     const dict = dictionaries.default
     if (!sortie || !dict) return null
 
     // TODO: Migrate this to core
-    const boss = getSortieBossName(sortie.Boss, dict)
-    const missions = sortie.Variants.map((variant, index) => {
+    const boss = getSortieBossName(sortie.boss, dict)
+    const missions = sortie.variants.map((variant, index) => {
+      const missionTypeKey = missionTypeKeys[variant.missionType as keyof typeof missionTypeKeys]
       let missionName = missionTypes.find(
-        (mt) => mt.uniqueName === variant.missionType
+        (mt) => mt.uniqueName === missionTypeKey
       )?.name
       missionName = missionName ? toTitleCase(missionName) : variant.missionType
-      const modifier = variant.modifierType
-        ? `${t(`sortieModifiers.${variant.modifierType}`)}`
-        : ''
+      // TODO: Fix sortie modifier translations
+      const modifier = variant.modifier
       return (
         <li key={`${index}-${variant.missionType}`}>
           {missionName} - {modifier}
@@ -287,7 +290,7 @@ export function ChecklistPanel({ factions, missionTypes, regions }: Props) {
         <ul className="list-disc list-inside">{missions}</ul>
       </>
     )
-  }, [worldState?.Sorties, dictionaries.default, missionTypes, t])
+  }, [worldState?.sortie, dictionaries.default, missionTypes])
 
   const teshinRewardLabel = useMemo(() => {
     const EPOCH = 1736121600 * 1000
@@ -356,17 +359,8 @@ export function ChecklistPanel({ factions, missionTypes, regions }: Props) {
         CHECKLIST_TASKS.other.map((task) => {
           if (task.id === 'other-baro') {
             let baroLocation = t('checklist.other.relayLocationPending')
-            const region = baro?.Node
-              ? regions.find((r) => r.uniqueName === baro.Node)
-              : undefined
-
-            if (region) {
-              baroLocation =
-                region.name && region.systemName
-                  ? `${region.name}, ${region.systemName}`
-                  : baro!.Node
-            } else if (baro?.Node) {
-              baroLocation = baro.Node
+            if (baro) {
+              baroLocation = baro.location
             }
             return {
               ...task,
@@ -385,15 +379,7 @@ export function ChecklistPanel({ factions, missionTypes, regions }: Props) {
           return task
         })
       ),
-    [
-      applyDictionaryTitles,
-      arbitrationLabels,
-      baro,
-      isBaroAvailable,
-      regions,
-      sortieRewardLabel,
-      t,
-    ]
+    [applyDictionaryTitles, arbitrationLabels, baro, isBaroAvailable, sortieRewardLabel, t]
   )
 
   const toggleTask = (section: ChecklistCategory, id: string) => {

@@ -8,6 +8,7 @@ import {
   WeaponProvider,
 } from '@tenno-companion/core/server'
 import { sortByName } from '@tenno-companion/core/locales'
+import type { IconData } from '@tenno-companion/core/types'
 
 import {
   MasteryByCategory,
@@ -47,6 +48,13 @@ export async function buildMasteryData(locale: string): Promise<MasteryData> {
   }
 }
 
+function getImageSource(data: IconData) {
+  if ("contentHash" in data && data.contentHash) {
+    return `https://content.warframe.com/PublicExport/${data.icon}!${data.contentHash}`
+  }
+  return `https://browse.wf${data.icon}`
+}
+
 async function getItems(locale: string) {
   const data: Record<string, MasteryItem[]> = {}
   const warframes = await WarframeProvider.create({ locale })
@@ -58,7 +66,7 @@ async function getItems(locale: string) {
   data.warframe = warframes.getAll().map((warframe) => ({
     id: warframe.uniqueName,
     name: warframe.name,
-    iconUrl: `https://browse.wf${warframe.icon}`,
+    iconUrl: getImageSource(warframe),
     masteryReq: warframe.masteryReq,
     masteryPoints: 6000,
   }))
@@ -66,7 +74,7 @@ async function getItems(locale: string) {
   data.primary = weapons.getPrimaries().map((weapon) => ({
     id: weapon.uniqueName,
     name: weapon.name,
-    iconUrl: `https://browse.wf${weapon.icon}`,
+    iconUrl: getImageSource(weapon),
     masteryReq: weapon.masteryReq,
     masteryPoints: weapon.maxLevelCap === 40 ? 4000 : 3000,
   }))
@@ -76,14 +84,14 @@ async function getItems(locale: string) {
       ...weapons.getSecondaries({ masterable: true }).map((weapon) => ({
         id: weapon.uniqueName,
         name: weapon.name,
-        iconUrl: `https://browse.wf${weapon.icon}`,
+        iconUrl: getImageSource(weapon),
         masteryReq: weapon.masteryReq,
         masteryPoints: weapon.maxLevelCap === 40 ? 4000 : 3000,
       })),
       ...weapons.getKitguns({ masterable: true }).map((weapon) => ({
         id: weapon.uniqueName,
         name: weapon.name,
-        iconUrl: `https://browse.wf${weapon.icon}`,
+        iconUrl: getImageSource(weapon),
         masteryReq: weapon.masteryReq,
         masteryPoints: weapon.maxLevelCap === 40 ? 4000 : 3000,
       })),
@@ -96,14 +104,14 @@ async function getItems(locale: string) {
       ...weapons.getMelees({ masterable: true }).map((weapon) => ({
         id: weapon.uniqueName,
         name: weapon.name,
-        iconUrl: `https://browse.wf${weapon.icon}`,
+        iconUrl: getImageSource(weapon),
         masteryReq: weapon.masteryReq,
         masteryPoints: weapon.maxLevelCap === 40 ? 4000 : 3000,
       })),
       ...weapons.getZaws({ masterable: true }).map((weapon) => ({
         id: weapon.uniqueName,
         name: weapon.name,
-        iconUrl: `https://browse.wf${weapon.icon}`,
+        iconUrl: getImageSource(weapon),
         masteryReq: weapon.masteryReq,
         masteryPoints: weapon.maxLevelCap === 40 ? 4000 : 3000,
       })),
@@ -116,27 +124,27 @@ async function getItems(locale: string) {
       ...pets.getSentinels({ masterable: true }).map((pet) => ({
         id: pet.uniqueName,
         name: pet.name,
-        iconUrl: `https://browse.wf${pet.icon}`,
+        iconUrl: getImageSource(pet),
         masteryPoints: 6000,
       })),
       ...pets.getMOAs({ masterable: true }).map((pet) => ({
         id: pet.uniqueName,
         name: pet.name,
-        iconUrl: `https://browse.wf${pet.icon}`,
+        iconUrl: getImageSource(pet),
         masteryReq: pet.masteryReq,
         masteryPoints: 6000,
       })),
       ...pets.getHounds({ masterable: true }).map((pet) => ({
         id: pet.uniqueName,
         name: pet.name,
-        iconUrl: `https://browse.wf${pet.icon}`,
+        iconUrl: getImageSource(pet),
         masteryReq: pet.masteryReq,
         masteryPoints: 6000,
       })),
       ...pets.getSentinelWeapons({ masterable: true }).map((weapon) => ({
         id: weapon.uniqueName,
         name: weapon.name,
-        iconUrl: `https://browse.wf${weapon.icon}`,
+        iconUrl: getImageSource(weapon),
         masteryReq: weapon.masteryReq,
         masteryPoints: weapon.maxLevelCap === 40 ? 4000 : 3000,
       })),
@@ -149,7 +157,7 @@ async function getItems(locale: string) {
     .map((pet) => ({
       id: pet.uniqueName,
       name: pet.name,
-      iconUrl: `https://browse.wf${pet.icon}`,
+      iconUrl: getImageSource(pet),
       masteryPoints: 6000,
     }))
 
@@ -158,28 +166,28 @@ async function getItems(locale: string) {
       ...archwings.getAll().map((archwing) => ({
         id: archwing.uniqueName,
         name: archwing.name,
-        iconUrl: `https://browse.wf${archwing.icon}`,
+        iconUrl: getImageSource(archwing),
         masteryReq: archwing.masteryReq,
         masteryPoints: 6000,
       })),
       ...necramechs.getAll().map((necramech) => ({
         id: necramech.uniqueName,
         name: necramech.name,
-        iconUrl: `https://browse.wf${necramech.icon}`,
+        iconUrl: getImageSource(necramech),
         masteryReq: necramech.masteryReq,
         masteryPoints: 8000,
       })),
       ...weapons.getKDrives({ masterable: true }).map((kdrive) => ({
         id: kdrive.uniqueName,
         name: kdrive.name,
-        iconUrl: `https://browse.wf${kdrive.icon}`,
+        iconUrl: getImageSource(kdrive),
         masteryReq: kdrive.masteryReq,
         masteryPoints: 6000,
       })),
       {
         id: 'railjack-plexus',
         name: 'Plexus',
-        iconUrl: 'https://wiki.warframe.com/images/Plexus.png?25d71',
+        iconUrl: 'plexus.webp',
         masteryPoints: 6000,
       },
     ],
@@ -189,7 +197,7 @@ async function getItems(locale: string) {
   data.archgun = weapons.getArchguns({ masterable: true }).map((weapon) => ({
     id: weapon.uniqueName,
     name: weapon.name,
-    iconUrl: `https://browse.wf${weapon.icon}`,
+    iconUrl: getImageSource(weapon),
     masteryReq: weapon.masteryReq,
     masteryPoints: weapon.maxLevelCap === 40 ? 4000 : 3000,
   }))
@@ -199,7 +207,7 @@ async function getItems(locale: string) {
     .map((weapon) => ({
       id: weapon.uniqueName,
       name: weapon.name,
-      iconUrl: `https://browse.wf${weapon.icon}`,
+      iconUrl: getImageSource(weapon),
       masteryReq: weapon.masteryReq,
       masteryPoints: weapon.maxLevelCap === 40 ? 4000 : 3000,
     }))
@@ -207,7 +215,7 @@ async function getItems(locale: string) {
   data.amp = weapons.getAmps({ masterable: true }).map((weapon) => ({
     id: weapon.uniqueName,
     name: weapon.name,
-    iconUrl: `https://browse.wf${weapon.icon}`,
+    iconUrl: getImageSource(weapon),
     masteryReq: weapon.masteryReq,
     masteryPoints: weapon.maxLevelCap === 40 ? 4000 : 3000,
   }))
@@ -224,7 +232,7 @@ async function getRailjackIntrinsics(locale: string) {
         (rank, index) => ({
           id: `intrinsic:${intrinsic.uniqueName}:${index + 1}`,
           name: rank.name,
-          iconUrl: `https://browse.wf${intrinsic.icon}`,
+          iconUrl: getImageSource(intrinsic),
           rankNumber: index + 1,
           masteryPoints: 1500,
         })
@@ -241,7 +249,7 @@ async function getRailjackIntrinsics(locale: string) {
 function getDrifterIntrinsics() {
   const DRIFTER_INTRINSICS = [
     {
-      icon: 'https://wiki.warframe.com/images/DrifterIntrinsicCombat.png',
+      icon: '/images/DrifterIntrinsicCombat.webp',
       uniqueName: 'COMBAT',
       ranks: [
         { name: 'Deadly Decrees' },
@@ -257,7 +265,7 @@ function getDrifterIntrinsics() {
       ],
     },
     {
-      icon: 'https://wiki.warframe.com/images/DrifterIntrinsicRiding.png',
+      icon: '/images/DrifterIntrinsicRiding.webp',
       uniqueName: 'RIDING',
       ranks: [
         { name: 'Summon Kaithe' },
@@ -273,7 +281,7 @@ function getDrifterIntrinsics() {
       ],
     },
     {
-      icon: 'https://wiki.warframe.com/images/DrifterIntrinsicOpportunity.png',
+      icon: '/images/DrifterIntrinsicOpportunity.webp',
       uniqueName: 'OPPORTUNITY',
       ranks: [
         { name: 'Expanded Decrees' },
@@ -289,7 +297,7 @@ function getDrifterIntrinsics() {
       ],
     },
     {
-      icon: 'https://wiki.warframe.com/images/DrifterIntrinsicEndurance.png',
+      icon: '/images/DrifterIntrinsicEndurance.webp',
       uniqueName: 'ENDURANCE',
       ranks: [
         { name: 'Fortifying Decrees' },

@@ -11,15 +11,15 @@ import {
 } from 'react'
 import { useLocale } from 'next-intl'
 import { logger } from '@sentry/nextjs'
+import type { WorldState } from 'warframe-worldstate-parser'
 
 import { FetchError } from '@/lib/errors'
-import { OracleWorldState } from '@/lib/world-state/types'
 import { ArbitrationCycle, BountyCycles } from '@/lib/types'
 import { fetchOracleWorldState } from '@/lib/world-state/fetch-world-state'
 import { Dictionary, DictionarySource, getDictionary } from '@/lib/language'
 
 type GameDataContextValue = {
-  worldState?: OracleWorldState
+  worldState?: WorldState
   dictionaries: Partial<Record<DictionarySource, Dictionary>>
   bountyCycle?: BountyCycles
   arbitrations?: ArbitrationCycle[]
@@ -37,7 +37,7 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
   const fetchingRefs = useRef<Set<string>>(new Set())
   const bountyCycleRef = useRef<BountyCycles | undefined>(undefined)
 
-  const [worldState, setWorldState] = useState<OracleWorldState>()
+  const [worldState, setWorldState] = useState<WorldState>()
   const [bountyCycle, setBountyCycle] = useState<BountyCycles>()
   const [arbitrations, setArbitrations] = useState<ArbitrationCycle[]>()
   const [dictionaries, setDictionaries] = useState<
@@ -56,7 +56,7 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
     fetchingRefs.current.add('world-state')
 
     try {
-      const fetched = await fetchOracleWorldState()
+      const fetched = await fetchOracleWorldState(locale)
       setWorldState(fetched)
     } catch (error) {
       if (error instanceof FetchError) {
@@ -69,7 +69,7 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
     } finally {
       fetchingRefs.current.delete('world-state')
     }
-  }, [])
+  }, [locale])
 
   // Bounty Cycles (Refetch based on expiry)
   const loadBountyCycles = useCallback(async () => {
