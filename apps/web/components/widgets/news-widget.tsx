@@ -10,7 +10,7 @@ type EventItem = {
   id: string
   type: 'community' | 'official'
   message: string
-  time: number
+  time: Date
   link?: string
 }
 
@@ -35,7 +35,7 @@ function NewsItem({ item }: { item: EventItem }) {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
-    }).format(new Date(item.time * 1000))
+    }).format(item.time)
   }, [locale, item.time])
 
   const content = (
@@ -84,23 +84,19 @@ export function NewsWidget() {
   }, [])
 
   const eventItems = useMemo(() => {
-    if (!worldState?.Events) return []
+    if (!worldState?.news) return []
 
-    return worldState.Events.filter((event) => event.Date)
+    return worldState.news
+      .filter((event) => new Date(event.date).getTime() > 0 && event.id)
       .map((event): EventItem | undefined => {
-        const time = Math.trunc(Number(event.Date!.$date.$numberLong) / 1000)
 
         // Find localized message
-        const message = event.Messages.find(
-          (m) => m.LanguageCode === locale
-        )?.Message
+        const message = event.translations[locale] ?? event.message
 
         // Find localized link
-        const eventLink = event.Links?.find(
-          (l) => l.LanguageCode === locale
-        )?.Link
+        const eventLink = event.link
 
-        const link = parseLink(event.Prop?.length > 0 ? event.Prop : eventLink)
+        const link = parseLink(eventLink)
 
         // Filter out system messages/discord invites
         if (
@@ -108,16 +104,17 @@ export function NewsWidget() {
           message !== '/Lotus/Language/CommunityMessages/JoinDiscord'
         ) {
           return {
-            id: event._id.$oid,
-            type: event.Community ? 'community' : 'official',
+            id: event.id!,
+            type: /* event.Community ? 'community' : 'official', */ 'official',
             message,
-            time,
+            time: new Date(event.date),
             link,
           }
         }
         return undefined
       })
       .filter((item): item is EventItem => !!item)
+      // @ts-expect-error: TypeScript doesn't know that `time` is a number, but it is because we created it as a Date object
       .sort((a, b) => b.time - a.time)
   }, [worldState, locale])
 
