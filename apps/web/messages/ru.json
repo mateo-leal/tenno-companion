@@ -326,7 +326,7 @@
     "official": "Official"
   },
   "donationPopup": {
-    "message": "I want to apologize for the recent stability issues the website has experienced. I currently lack the resources to maintain the project and ensure it's 100% available 24/7. Although I spent a long time trying to avoid reaching this point, I believe the best way to keep the project alive is to accept donations. So, if this tool brings you value and you have the means, please consider donating to help cover the server costs.",
+    "message": "Я бы хотел извиниться за недавние проблемы со стабильностью сайта. У меня сейчас нехватает ресурсов, чтобы поддерживать проект и проверять его 100% доступность 24 на 7. Хоть я и делал все возможное, чтобы избежать этого момента, я считаю, что лучший способ оставить проект в живых - начать принимать донаты. Если эта программа оказалась вам полезной и у вас есть возможность, пожалуйтса рассмотрите вариант задонатить на помощь в оплате серверов.",
     "ghSponsors": "Support on GitHub Sponsors",
     "paypal": "Donate via PayPal"
   }
